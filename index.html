@@ -3,83 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAYZOTA PREMIUM - 8A7</title>
+    <title>GAYZOTA PREMIUM - 8A7 EDITION</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: sans-serif; background-color: #fcfcfc; color: #334155; }
-        .glass-card { background: white; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
+        .glass-card { background: white; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .azota-purple { color: #8b5cf6; }
         
         /* GIAO DIỆN CHUẨN MENU */
         .link-style { font-weight: bold; text-decoration: underline; cursor: pointer; font-style: italic; text-transform: uppercase; }
         
-        /* DÒNG CHỮ XANH LÁ THẦN THÁNH */
+        /* DÒNG CHỮ XANH LÁ (THAY CHO ALERT) */
         #status-msg { 
             font-weight: bold; 
             font-size: 15px; 
-            color: #16a34a; /* Màu xanh lá chuẩn */
+            color: #16a34a; 
             margin-top: 15px;
             min-height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
+            text-align: center;
         }
 
-        input, textarea { border-radius: 12px; border: 1px solid #e2e8f0; padding: 12px; outline: none; width: 100%; }
-        .btn-save { background-color: #7c2d12; color: white; font-weight: bold; padding: 16px; border-radius: 15px; width: 100%; text-transform: uppercase; }
-        .opt-btn { border: 2px solid #f1f5f9; width: 100%; text-align: left; padding: 16px; border-radius: 18px; font-weight: 600; margin-bottom: 12px; cursor: pointer; font-style: italic; }
+        input, textarea { border-radius: 15px !important; border: 1.5px solid #e2e8f0 !important; padding: 12px 18px !important; outline: none; }
+        .btn-save { background-color: #7c2d12; color: white; font-weight: bold; padding: 16px; border-radius: 18px; width: 100%; text-transform: uppercase; transition: 0.2s; }
+        .btn-save:active { transform: scale(0.98); }
+        .opt-btn { border: 2px solid #f1f5f9; width: 100%; text-align: left; padding: 16px; border-radius: 18px; font-weight: 600; margin-bottom: 12px; cursor: pointer; font-style: italic; background: white; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <div id="mainMenu" class="glass-card p-12 w-full max-w-lg mt-20 text-center">
+    <nav id="navbar" class="hidden w-full max-w-2xl flex justify-between items-center py-6 mb-4 border-b border-dashed border-gray-200">
+        <div class="font-black azota-purple italic uppercase text-xl">GAYZOTA</div>
+        <button onclick="location.reload()" class="text-[10px] font-black text-red-400 uppercase border border-red-100 px-2 py-1 rounded-lg tracking-tighter">Đăng xuất</button>
+    </nav>
+
+    <div id="loginPage" class="glass-card p-10 w-full max-w-sm mt-20 text-center">
+        <h2 class="text-3xl font-black mb-10 azota-purple uppercase italic underline decoration-wavy">GAYZOTA</h2>
+        <div class="space-y-4">
+            <input type="text" id="username" placeholder="Tên đăng nhập" class="w-full">
+            <input type="password" id="password" placeholder="Mật khẩu" class="w-full">
+            <button onclick="handleLogin()" class="w-full bg-[#8b5cf6] text-white font-bold py-4 rounded-2xl shadow-lg mt-4 uppercase">Vào hệ thống</button>
+        </div>
+    </div>
+
+    <div id="mainMenu" class="glass-card p-12 w-full max-w-lg hidden mt-10 text-center">
         <p class="text-gray-300 text-[10px] font-bold uppercase tracking-[0.3em] mb-10">LỰA CHỌN CHỨC NĂNG</p>
         <div class="flex flex-col items-center space-y-8">
-            <div onclick="showSection('adminPage')" class="link-style text-lg text-orange-500">
-                📝 QUẢN LÝ ĐỀ THI (ADMIN)
-            </div>
-            <div onclick="showSection('selectExamPage')" class="link-style text-xl text-[#8b5cf6]">
-                ✍️ VÀO THI NGAY (AUTO XÁO)
-            </div>
+            <div onclick="showSection('adminPage')" class="link-style text-lg text-orange-500">📝 QUẢN LÝ ĐỀ THI (ADMIN)</div>
+            <div onclick="showSection('selectExamPage')" class="link-style text-xl text-[#8b5cf6]">✍️ VÀO THI NGAY (AUTO XÁO)</div>
+            <div onclick="showSection('resultBoard')" class="link-style text-sm text-gray-400">📊 KẾT QUẢ LỚP 8A7</div>
         </div>
     </div>
 
     <div id="adminPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
-        <div onclick="showSection('mainMenu')" class="text-purple-600 font-bold mb-6 cursor-pointer text-sm italic">← Quay lại Menu</div>
-        <h2 class="text-xl font-bold mb-4 border-l-4 border-orange-600 pl-3">Trình tạo đề thi</h2>
+        <div onclick="showSection('mainMenu')" class="text-purple-600 font-bold mb-6 cursor-pointer text-xs italic uppercase">← Quay lại</div>
+        <h2 class="text-xl font-bold mb-6 border-l-4 border-orange-600 pl-3 uppercase italic">Trình tạo đề thi</h2>
         
-        <input type="text" id="examTitle" placeholder="Nhập tên đề thi..." class="mb-4 bg-gray-50">
-        <textarea id="rawInput" class="h-64 mb-4 font-mono text-sm bg-gray-50" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án 1&#10;B. Đáp án đúng @t"></textarea>
+        <input type="text" id="examTitle" placeholder="Nhập tên đề thi..." class="w-full mb-4 bg-gray-50">
+        <textarea id="rawInput" class="w-full h-64 mb-4 font-mono text-sm bg-gray-50" placeholder="Câu 1: ...&#10;A. Đáp án 1&#10;B. Đáp án đúng @t"></textarea>
         
         <button onclick="saveExam()" class="btn-save">LƯU ĐỀ VÀO MÁY</button>
         
         <div id="status-msg"></div>
 
-        <div class="mt-10">
-            <p class="text-gray-400 font-bold text-[10px] uppercase mb-4 tracking-widest">DANH SÁCH ĐỀ ĐÃ TẠO</p>
+        <div class="mt-10 border-t pt-6">
+            <p class="text-gray-400 font-bold text-[10px] uppercase mb-4 tracking-widest italic">Kho đề thi đã lưu</p>
             <div id="adminExamList" class="space-y-3"></div>
         </div>
     </div>
 
     <div id="selectExamPage" class="glass-card p-10 w-full max-w-lg hidden mt-4 text-center">
-        <div onclick="showSection('mainMenu')" class="text-purple-600 font-bold mb-8 cursor-pointer text-sm italic">← Quay lại</div>
+        <div onclick="showSection('mainMenu')" class="text-purple-600 font-bold mb-8 cursor-pointer text-xs italic uppercase">← Quay lại</div>
         <div id="userExamList" class="flex flex-col space-y-6"></div>
     </div>
 
+    <div id="examView" class="w-full max-w-2xl hidden mt-4">
+        <div class="glass-card p-6 mb-4 flex justify-between items-center">
+            <span id="qIdx" class="font-black text-purple-600 uppercase text-xs">CÂU 1</span>
+            <div id="timer" class="text-xl font-bold text-red-500 bg-red-50 px-4 py-1 rounded-full">15:00</div>
+        </div>
+        <div class="glass-card p-10">
+            <h3 id="qText" class="text-xl font-bold mb-10 leading-relaxed italic"></h3>
+            <div id="optionsArea"></div>
+        </div>
+    </div>
+
+    <div id="resultView" class="glass-card p-12 w-full max-w-sm hidden mt-20 text-center">
+        <p class="text-gray-400 uppercase text-xs font-bold mb-2">Điểm của bạn</p>
+        <div id="finalScore" class="text-7xl font-black azota-purple mb-8">0.0</div>
+        <button onclick="showSection('mainMenu')" class="link-style text-sm text-gray-500">QUAY LẠI MENU</button>
+    </div>
+
+    <div id="resultBoard" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
+        <div onclick="showSection('mainMenu')" class="text-purple-600 font-bold mb-8 cursor-pointer text-xs italic uppercase">← Quay lại</div>
+        <h3 class="font-black mb-6 uppercase italic underline decoration-double">Bảng điểm lớp 8A7</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead><tr class="text-gray-400 border-b"><th class="pb-3">TÊN</th><th class="pb-3 text-center">ĐIỂM</th><th class="pb-3 text-right">GIỜ</th></tr></thead>
+                <tbody id="resultTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
+        const USERS = { 'mrduc': 'admin8a7', '8a7': '8a7' };
         let allExams = JSON.parse(localStorage.getItem('g_exams')) || [];
+        let history = JSON.parse(localStorage.getItem('g_history')) || [];
+        let state = { user: '', currentExam: null, shuffledQs: [], currentIdx: 0, corrects: 0, timerInterval: null };
 
         function showSection(id) {
             document.querySelectorAll('body > div').forEach(div => div.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             if(id === 'adminPage') renderAdmin();
             if(id === 'selectExamPage') renderUserExams();
+            if(id === 'resultBoard') renderHistory();
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('username').value.trim().toLowerCase();
+            const p = document.getElementById('password').value;
+            if(USERS[u] === p) {
+                state.user = u;
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('navbar').classList.remove('hidden');
+                showSection('mainMenu');
+            }
         }
 
         function saveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
-            
             if(!title || !text) return;
 
             const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
@@ -97,12 +149,10 @@
             allExams.unshift({ id: Date.now(), title, questions });
             localStorage.setItem('g_exams', JSON.stringify(allExams));
             
-            // HIỆN DÒNG CHỮ XANH GIỐNG ẢNH CỦA ÔNG
-            const msgEl = document.getElementById('status-msg');
-            msgEl.innerHTML = `✅ Đã thêm đề: ${title} (${questions.length} câu)`;
-            
-            // Xóa chữ sau 3 giây
-            setTimeout(() => { msgEl.innerHTML = ""; }, 3000);
+            // DÒNG CHỮ XANH ✅ GIỐNG ẢNH
+            const msg = document.getElementById('status-msg');
+            msg.innerHTML = `✅ Đã thêm đề: ${title} (${questions.length} câu)`;
+            setTimeout(() => { msg.innerHTML = ""; }, 3000);
             
             document.getElementById('examTitle').value = "";
             document.getElementById('rawInput').value = "";
@@ -111,9 +161,9 @@
 
         function renderAdmin() {
             document.getElementById('adminExamList').innerHTML = allExams.map(ex => `
-                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
-                    <span class="font-bold italic uppercase text-xs">${ex.title}</span>
-                    <button onclick="deleteExam(${ex.id})" class="text-red-500 font-bold text-[10px]">XÓA</button>
+                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-2xl italic">
+                    <span class="font-bold text-gray-600 uppercase text-xs">${ex.title}</span>
+                    <button onclick="deleteExam(${ex.id})" class="text-red-400 font-black text-[10px]">XÓA</button>
                 </div>
             `).join('');
         }
@@ -128,8 +178,72 @@
 
         function renderUserExams() {
             document.getElementById('userExamList').innerHTML = allExams.map(ex => `
-                <div class="link-style text-lg text-[#8b5cf6]" onclick="alert('Bắt đầu làm bài!')">${ex.title}</div>
-            `).join('') || 'Chưa có đề nào';
+                <div class="link-style text-lg text-[#8b5cf6]" onclick="startExam(${ex.id})">${ex.title}</div>
+            `).join('') || 'Chưa có đề';
+        }
+
+        function startExam(id) {
+            const exam = allExams.find(e => e.id === id);
+            state.currentExam = exam;
+            state.currentIdx = 0; state.corrects = 0;
+            state.shuffledQs = [...exam.questions].sort(() => Math.random() - 0.5);
+            showSection('examView');
+            loadQuestion();
+            startTimer(15 * 60);
+        }
+
+        function startTimer(sec) {
+            clearInterval(state.timerInterval);
+            let t = sec;
+            state.timerInterval = setInterval(() => {
+                let m = Math.floor(t / 60), s = t % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                if (--t < 0) { clearInterval(state.timerInterval); finishExam(); }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            const q = state.shuffledQs[state.currentIdx];
+            document.getElementById('qIdx').innerText = `CÂU ${state.currentIdx + 1}`;
+            document.getElementById('qText').innerText = q.qText;
+            const area = document.getElementById('optionsArea'); area.innerHTML = '';
+            
+            [...q.opts].sort(() => Math.random() - 0.5).forEach(opt => {
+                const b = document.createElement('div');
+                b.className = 'opt-btn shadow-sm';
+                b.innerText = opt.text;
+                b.onclick = function() {
+                    if(area.style.pointerEvents === 'none') return;
+                    area.style.pointerEvents = 'none';
+                    this.style.borderColor = opt.isCorrect ? '#22c55e' : '#ef4444';
+                    if(opt.isCorrect) state.corrects++;
+                    setTimeout(() => {
+                        state.currentIdx++; area.style.pointerEvents = 'auto';
+                        if(state.currentIdx < state.shuffledQs.length) loadQuestion();
+                        else finishExam();
+                    }, 500);
+                };
+                area.appendChild(b);
+            });
+        }
+
+        function finishExam() {
+            clearInterval(state.timerInterval);
+            const score = ((state.corrects / state.shuffledQs.length) * 10).toFixed(1);
+            history.unshift({ name: state.user.toUpperCase(), score, time: new Date().toLocaleTimeString() });
+            localStorage.setItem('g_history', JSON.stringify(history));
+            document.getElementById('finalScore').innerText = score;
+            showSection('resultView');
+        }
+
+        function renderHistory() {
+            document.getElementById('resultTableBody').innerHTML = history.map(h => `
+                <tr class="border-b border-gray-50 italic">
+                    <td class="py-4 font-bold text-gray-700">${h.name}</td>
+                    <td class="py-4 text-center font-black text-purple-600">${h.score}</td>
+                    <td class="py-4 text-right text-[10px] text-gray-400">${h.time}</td>
+                </tr>
+            `).join('');
         }
     </script>
 </body>
