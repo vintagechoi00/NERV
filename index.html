@@ -12,7 +12,6 @@
         .bg-azota { background-color: #7c3aed; }
         .btn-admin { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
         
-        /* Giao diện ô đáp án trong phần chi tiết bài làm */
         .opt-review { 
             border-radius: 16px; 
             padding: 14px 20px; 
@@ -23,18 +22,8 @@
             justify-content: space-between;
             align-items: center;
         }
-        /* Ô màu xanh cho đáp án đúng */
-        .opt-correct { 
-            background-color: #dcfce7 !important; 
-            border-color: #4ade80 !important; 
-            color: #166534 !important; 
-        } 
-        /* Ô màu đỏ cho đáp án người dùng chọn sai */
-        .opt-wrong { 
-            background-color: #fee2e2 !important; 
-            border-color: #f87171 !important; 
-            color: #991b1b !important; 
-        }
+        .opt-correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; color: #166534 !important; } 
+        .opt-wrong { background-color: #fee2e2 !important; border-color: #f87171 !important; color: #991b1b !important; }
         .btn-finish { background-color: #1e293b; color: white; font-weight: 800; border-radius: 20px; }
     </style>
 </head>
@@ -150,52 +139,50 @@
     </div>
 
     <script>
-        const USERS = { 'mrduc': 'admin8a7', 'hoanggay': 'missgay' };
+        const USERS = { 'mrduc': 'admin8a7', 'hoanggay': 'missgay', 'tranhunghuyhoang8a7': 'missgay', 'huynhphamminhduc8a7': 'missgay', 'nguyentrandangkhoa8a7': 'missgay' };
         
-        // PHẦN ĐỀ ĐỊA LÝ 8 ĐƯỢC THÊM VÀO ĐÂY
+        // BỘ ĐỀ 30 CÂU MỚI ĐÃ ĐƯỢC NHẬP TẠI ĐÂY
         let defaultExams = [
             {
-                id: 1715000000000,
-                title: "ĐỊA LÝ 8 - CHƯƠNG ĐẤT VIỆT NAM",
+                id: Date.now(),
+                title: "ÔN TẬP ĐỊA LÝ 8 - ĐẤT VIỆT NAM (30 CÂU)",
                 questions: [
-                    { q: "Đặc điểm chung của đất Việt Nam là gì?", opts: [{t: "Đất feralit chiếm diện tích lớn nhất", c: true}, {t: "Chủ yếu là đất phù sa", c: false}, {t: "Đất nghèo dinh dưỡng", c: false}, {t: "Chỉ có 2 nhóm đất chính", c: false}] },
-                    { q: "Nhóm đất chiếm diện tích lớn nhất nước ta là?", opts: [{t: "Nhóm đất feralit", c: true}, {t: "Nhóm đất phù sa", c: false}, {t: "Nhóm đất mùn núi cao", c: false}, {t: "Nhóm đất xám", c: false}] },
-                    { q: "Đất feralit hình thành trên loại đá nào cho màu đỏ thẫm đặc trưng?", opts: [{t: "Đá ba-zan", c: true}, {t: "Đá vôi", c: false}, {t: "Đá sét", c: false}, {t: "Đá biến chất", c: false}] },
-                    { q: "Quá trình hình thành đất đặc trưng ở vùng khí hậu nhiệt đới ẩm là?", opts: [{t: "Quá trình feralit", c: true}, {t: "Quá trình bồi tụ", c: false}, {t: "Quá trình xói mòn", c: false}, {t: "Quá trình phong hóa lý học", c: false}] },
-                    { q: "Đất feralit có đặc tính gì?", opts: [{t: "Chua, nghèo mùn, nhiều sét", c: true}, {t: "Tơi xốp, giàu chất dinh dưỡng", c: false}, {t: "Rất kiềm", c: false}, {t: "Không có oxit sắt, nhôm", c: false}] },
-                    { q: "Nhóm đất phù sa chiếm khoảng bao nhiêu % diện tích đất tự nhiên?", opts: [{t: "24%", c: true}, {t: "65%", c: false}, {t: "11%", c: false}, {t: "50%", c: false}] },
-                    { q: "Đất phù sa sông Hồng có đặc điểm gì nổi bật?", opts: [{t: "Không được bồi đắp hằng năm (trong đê)", c: true}, {t: "Được bồi đắp hằng năm thường xuyên", c: false}, {t: "Nhiều cát ven biển", c: false}, {t: "Chủ yếu là đất phèn", c: false}] },
-                    { q: "Đất phù sa sông Cửu Long có đặc điểm gì?", opts: [{t: "Diện tích đất phèn, đất mặn lớn", c: true}, {t: "Tầng đất mỏng", c: false}, {t: "Bị bạc màu nghiêm trọng", c: false}, {t: "Chủ yếu là đất mùn", c: false}] },
-                    { q: "Nhóm đất mùn núi cao hình thành ở độ cao từ?", opts: [{t: "1600m trở lên", c: true}, {t: "600m trở xuống", c: false}, {t: "1000m trở lên", c: false}, {t: "2000m trở lên", c: false}] },
-                    { q: "Sử dụng đất ở nước ta cần chú ý vấn đề gì nhất?", opts: [{t: "Chống xói mòn và ô nhiễm đất", c: true}, {t: "Mở rộng diện tích đất hoang", c: false}, {t: "Bỏ hoang đất đồi núi", c: false}, {t: "Chỉ trồng cây lương thực", c: false}] },
-                    { q: "Đất feralit thích hợp nhất để trồng loại cây nào?", opts: [{t: "Cây công nghiệp lâu năm", c: true}, {t: "Lúa nước", c: false}, {t: "Cây hoa màu ngắn ngày", c: false}, {t: "Rừng ngập mặn", c: false}] },
-                    { q: "Đất phù sa thích hợp nhất để trồng cây gì?", opts: [{t: "Lúa nước và cây ngắn ngày", c: true}, {t: "Cà phê, cao su", c: false}, {t: "Chè, quế", c: false}, {t: "Cây gỗ lớn", c: false}] },
-                    { q: "Nguyên nhân chính gây ô nhiễm đất là?", opts: [{t: "Sử dụng quá nhiều phân bón hóa học, thuốc trừ sâu", c: true}, {t: "Trồng rừng", c: false}, {t: "Canh tác lúa nước", c: false}, {t: "Thủy lợi hóa", c: false}] },
-                    { q: "Đất mặn tập trung nhiều nhất ở đâu?", opts: [{t: "Ven biển miền Tây Nam Bộ", c: true}, {t: "Trung du miền núi phía Bắc", c: false}, {t: "Tây Nguyên", c: false}, {t: "Vùng nội địa", c: false}] },
-                    { q: "Đất phèn có đặc tính hóa học là?", opts: [{t: "Rất chua", c: true}, {t: "Rất kiềm", c: false}, {t: "Trung tính", c: false}, {t: "Ngọt", c: false}] },
-                    { q: "Tại sao đất đồi núi dễ bị xói mòn?", opts: [{t: "Độ dốc lớn và mất lớp phủ thực vật", c: true}, {t: "Do con người bón phân", c: false}, {t: "Do mưa quá ít", c: false}, {t: "Do đất quá cứng", c: false}] },
-                    { q: "Biện pháp bảo vệ đất đồi núi hữu hiệu nhất là?", opts: [{t: "Làm ruộng bậc thang và trồng rừng", c: true}, {t: "Đào ao nuôi cá", c: false}, {t: "Xây dựng nhà cao tầng", c: false}, {t: "Phát quang bụi rậm", c: false}] },
-                    { q: "Nhóm đất feralit có màu đỏ vàng do có sự tích tụ của?", opts: [{t: "Oxit sắt và oxit nhôm", c: true}, {t: "Canxi", c: false}, {t: "Kali", c: false}, {t: "Natri", c: false}] },
-                    { q: "Đất xám bạc màu thường phân bố ở?", opts: [{t: "Vùng chuyển tiếp giữa đồng bằng và miền núi", c: true}, {t: "Đỉnh núi cao", c: false}, {t: "Dưới lòng sông", c: false}, {t: "Các bãi bồi ven biển", c: false}] },
-                    { q: "Sự suy giảm diện tích đất trồng lúa hiện nay chủ yếu do?", opts: [{t: "Chuyển sang đất thổ cư và công nghiệp", c: true}, {t: "Đất bị biến mất", c: false}, {t: "Do bão lũ tiêu hủy", c: false}, {t: "Do người dân bỏ quê", c: false}] },
-                    { q: "Đất ở đồng bằng ven biển miền Trung thường có đặc điểm?", opts: [{t: "Nhiều cát, nghèo dinh dưỡng", c: true}, {t: "Rất màu mỡ", c: false}, {t: "Chủ yếu là đất đen Ba-zan", c: false}, {t: "Đất mùn dày", c: false}] },
-                    { q: "Đất feralit hình thành trên đá vôi phân bố nhiều ở?", opts: [{t: "Vùng núi Đông Bắc", c: true}, {t: "Đông Nam Bộ", c: false}, {t: "Tây Nguyên", c: false}, {t: "Đồng bằng sông Cửu Long", c: false}] },
-                    { q: "Tác hại của việc đất bị thoái hóa là gì?", opts: [{t: "Năng suất cây trồng giảm", c: true}, {t: "Cây trồng phát triển nhanh hơn", c: false}, {t: "Đất trở nên quá giàu dinh dưỡng", c: false}, {t: "Tăng khả năng giữ nước", c: false}] },
-                    { q: "Trong các nhóm đất sau, nhóm nào có tầng mùn dày nhất?", opts: [{t: "Đất mùn núi cao", c: true}, {t: "Đất cát", c: false}, {t: "Đất bạc màu", c: false}, {t: "Đất phèn", c: false}] },
-                    { q: "Hoạt động nào giúp cải tạo đất mặn?", opts: [{t: "Thủy lợi và bón vôi", c: true}, {t: "Bón thêm muối", c: false}, {t: "Phun thuốc trừ sâu", c: false}, {t: "Đốt rừng làm nương rẫy", c: false}] },
-                    { q: "Đất trong đê sông Hồng không được bồi đắp vì?", opts: [{t: "Hệ thống đê ngăn lũ", c: true}, {t: "Sông Hồng không còn phù sa", c: false}, {t: "Do mưa ít", c: false}, {t: "Do thủy điện chặn lại", c: false}] },
-                    { q: "Đất rừng ngập mặn thường là?", opts: [{t: "Đất mặn", c: true}, {t: "Đất mùn núi cao", c: false}, {t: "Đất đá vôi", c: false}, {t: "Đất Ba-zan", c: false}] },
-                    { q: "Loại đất nào sau đây không thuộc nhóm đất phù sa?", opts: [{t: "Đất feralit trên đá sét", c: true}, {t: "Đất mặn", c: false}, {t: "Đất phèn", c: false}, {t: "Đất phù sa ngọt", c: false}] },
-                    { q: "Việc bón phân hữu cơ có tác dụng gì cho đất?", opts: [{t: "Tăng độ phì nhiêu và làm tơi xốp đất", c: true}, {t: "Làm đất nhanh bạc màu", c: false}, {t: "Làm chết vi sinh vật có lợi", c: false}, {t: "Làm đất cứng hơn", c: false}] },
-                    { q: "Đất feralit thường có độ pH như thế nào?", opts: [{t: "Thấp (tính axit)", c: true}, {t: "Cao (tính kiềm)", c: false}, {t: "Bằng 7 (trung tính)", c: false}, {t: "Không có độ pH", c: false}] }
+                    { q: "Quá trình hình thành đất đặc trưng ở nước ta là", opts: [{t: "feralit.", c: true}, {t: "phù sa.", c: false}, {t: "o-xít.", c: false}, {t: "bồi tụ.", c: false}] },
+                    { q: "Ở miền núi, lượng mưa lớn gây ra hiện tượng nào sau đây?", opts: [{t: "Xói mòn, rửa trôi.", c: true}, {t: "Sạt lở, cháy rừng.", c: false}, {t: "Hạn hán, bóc mòn", c: false}, {t: "Xâm thực, bồi tụ.", c: false}] },
+                    { q: "Nước ta có mấy nhóm đất chính?", opts: [{t: "3 nhóm.", c: true}, {t: "4 nhóm.", c: false}, {t: "2 nhóm.", c: false}, {t: "5 nhóm.", c: false}] },
+                    { q: "Đất mùn núi cao được dùng vào mục đích nào dưới đây?", opts: [{t: "Trồng rừng đầu nguồn.", c: true}, {t: "Trồng cây ăn quả.", c: false}, {t: "Trồng cây công nghiệp.", c: false}, {t: "Trồng rau quả ôn đới.", c: false}] },
+                    { q: "Đất nông nghiệp nước ta cải tạo và sử dụng hiệu quả thích hợp trồng loại cây nào dưới đây?", opts: [{t: "Cây lương thực.", c: true}, {t: "Cây hoa màu.", c: false}, {t: "Cây ăn quả.", c: false}, {t: "Cây công nghiệp.", c: false}] },
+                    { q: "Đất phù sa cổ phân bố chủ yếu ở khu vực nào dưới đây?", opts: [{t: "Đông Nam Bộ.", c: true}, {t: "Ven sông Tiền.", c: false}, {t: "Vùng ven biển.", c: false}, {t: "Tây Nam Bộ.", c: false}] },
+                    { q: "Sự hình thành đất, rất ít chịu tác động của nhân tố nào sau đây?", opts: [{t: "Khoáng sản.", c: true}, {t: "Sinh vật.", c: false}, {t: "Đá mẹ.", c: false}, {t: "Địa hình.", c: false}] },
+                    { q: "Ở nước ta, loại đất feralit trên đá vôi phân bố chủ yếu ở khu vực nào sau đây?", opts: [{t: "Tây Bắc.", c: true}, {t: "Đông Nam Bộ.", c: false}, {t: "Tây Nguyên.", c: false}, {t: "Đồng bằng sông Hồng.", c: false}] },
+                    { q: "Ở nước ta, đất feralit hình thành trên đá vôi không phổ biến ở khu vực nào sau đây?", opts: [{t: "Tây Nguyên.", c: true}, {t: "Tây Bắc.", c: false}, {t: "Bắc Trung Bộ.", c: false}, {t: "Đông Bắc.", c: false}] },
+                    { q: "Đất phù sa ở đồng bằng sông Hồng có đặc điểm nào sau đây?", opts: [{t: "Ít chua, tơi xốp, giàu chất dinh dưỡng.", c: true}, {t: "Đất phù sa ngọt có độ phì cao, tơi xốp.", c: false}, {t: "Đất phèn nghèo dinh dưỡng, đất chặt.", c: false}, {t: "Độ phì thấp, nhiều cát, ít phù sa sông.", c: false}] },
+                    { q: "Đất mùn núi cao phân bố rải rác ở các khu vực núi có độ cao từ", opts: [{t: "1600 - 1700m trở lên.", c: true}, {t: "1400 - 1500m trở lên.", c: false}, {t: "1500 - 1600m trở lên.", c: false}, {t: "1700 - 1800m trở lên.", c: false}] },
+                    { q: "Nhóm đất feralit chiếm khoảng bao nhiêu % diện tích đất tự nhiên?", opts: [{t: "65%.", c: true}, {t: "24%.", c: false}, {t: "56%.", c: false}, {t: "42%.", c: false}] },
+                    { q: "Nhóm đất phù sa chiếm khoảng bao nhiêu % diện tích đất tự nhiên?", opts: [{t: "24%.", c: true}, {t: "65%.", c: false}, {t: "56%.", c: false}, {t: "42%.", c: false}] },
+                    { q: "Nhóm đất mùn núi cao chiếm khoảng bao nhiêu % diện tích đất tự nhiên?", opts: [{t: "11%.", c: true}, {t: "23%.", c: false}, {t: "24%.", c: false}, {t: "15%.", c: false}] },
+                    { q: "Nhóm đất feralit phân bố chủ yếu ở các khu vực núi có độ cao từ", opts: [{t: "1600 - 1700m trở xuống.", c: true}, {t: "1700 - 1800m trở lên.", c: false}, {t: "Dưới 2000m trở xuống.", c: false}, {t: "1400 - 1500m trở lên.", c: false}] },
+                    { q: "Các loại cây công nghiệp lâu năm phù hợp với loại đất nào dưới đây?", opts: [{t: "Feralit.", c: true}, {t: "Phù sa.", c: false}, {t: "Đất mặn.", c: false}, {t: "Đất xám.", c: false}] },
+                    { q: "Đất bị rửa trôi, xói mòn chiếm diện tích lớn ở các vùng đồi núi do", opts: [{t: "nạn phá rừng.", c: true}, {t: "lượng mưa lớn.", c: false}, {t: "cháy rừng.", c: false}, {t: "khai khoáng.", c: false}] },
+                    { q: "Diện tích đất bị thoái hoá ở Việt Nam khoảng", opts: [{t: "10 triệu ha.", c: true}, {t: "12 triệu ha.", c: false}, {t: "11 triệu ha.", c: false}, {t: "13 triệu ha.", c: false}] },
+                    { q: "Ở nước ta, vùng nào sau đây có nguy cơ hoang mạc hóa cao nhất?", opts: [{t: "Duyên hải Nam Trung Bộ.", c: true}, {t: "Đồng bằng sông Hồng.", c: false}, {t: "Trung du và miền núi Bắc Bộ.", c: false}, {t: "Đồng bằng sông Cửu Long.", c: false}] },
+                    { q: "Trong nông nghiệp, đất feralit được khai thác và sử dụng chủ yếu để trồng loại cây nào sau đây?", opts: [{t: "Cây công nghiệp.", c: true}, {t: "Cây lương thực.", c: false}, {t: "Cây lúa nước.", c: false}, {t: "Cây hàng năm.", c: false}] },
+                    { q: "“Đất bị chua, nghèo dinh dưỡng” là đặc điểm chủ yếu của loại đất nào sau đây?", opts: [{t: "Đất phèn.", c: true}, {t: "Phù sa sông.", c: false}, {t: "Đất mặn.", c: false}, {t: "Đất feralit.", c: false}] },
+                    { q: "“Đất chua, nghèo các chất badơ và mùn” là đặc điểm chủ yếu của loại đất nào sau đây?", opts: [{t: "Đất feralit.", c: true}, {t: "Đất badan.", c: false}, {t: "Đất phèn.", c: false}, {t: "Đất mặn.", c: false}] },
+                    { q: "Các hợp chất oxit sắt và oxit nhôm thường tích tụ thành kết von là do", opts: [{t: "bị rửa trôi mạnh.", c: true}, {t: "nền nhiệt độ cao.", c: false}, {t: "thảm thực vật ít.", c: false}, {t: "bị phong hóa ít.", c: false}] },
+                    { q: "Ở những nơi đất có độ dốc nhỏ có thể trồng kết hợp những cây nào sau đây?", opts: [{t: "Cây công nghiệp hàng năm, cây thực phẩm và cây lương thực.", c: true}, {t: "Cây công nghiệp lâu năm, cây thực phẩm và cây lương thực.", c: false}, {t: "Cây công nghiệp hàng năm, cây ăn quả và cây lương thực.", c: false}, {t: "Cây công nghiệp lâu năm, cây thực phẩm và cây lúa nước.", c: false}] },
+                    { q: "Trong nông nghiệp, đất phù sa thích hợp phát triển các loại cây nào sau đây?", opts: [{t: "Cây công nghiệp hàng năm, cây ăn quả.", c: true}, {t: "Cây lúa nước, cây công nghiệp lâu năm.", c: false}, {t: "Cây công nghiệp, ăn quả và cây ôn đới.", c: false}, {t: "Cây lương thực, hoa màu và cây ăn quả.", c: false}] },
+                    { q: "Đất phèn có đặc điểm nào sau đây?", opts: [{t: "Đất bị chua, nghèo dinh dưỡng.", c: true}, {t: "Giàu dinh dưỡng, nghèo mùn.", c: false}, {t: "Nhiều cát biển, phù sa tơi xốp.", c: false}, {t: "Có màu nâu, tơi xốp và ít chưa.", c: false}] },
+                    { q: "Đất phù sa sông không có đặc điểm nào sau đây?", opts: [{t: "Đất bị chua nhiều.", c: true}, {t: "Ít chưa, tơi xốp.", c: false}, {t: "Giàu dinh dưỡng.", c: false}, {t: "Đất có màu nâu.", c: false}] },
+                    { q: "Loại cây nào sau đây ít được trồng ở khu vực có đất phù sa?", opts: [{t: "Cây lâu năm.", c: true}, {t: "Cây hàng năm.", c: false}, {t: "Cây rau đậu.", c: false}, {t: "Cây hoa màu.", c: false}] },
+                    { q: "Khu vực nào sau đây không phải nơi thuận lợi để nuôi trồng thủy sản?", opts: [{t: "Bãi biển quanh đảo.", c: true}, {t: "Ở các bãi triều.", c: false}, {t: "Vùng cửa sông.", c: false}, {t: "Khu vực ngập mặn.", c: false}] },
+                    { q: "Đất ở khu vực nào sau đây của nước ta dễ nhiễm mặn, nhiễm phèn?", opts: [{t: "Cửa sông, ven biển.", c: true}, {t: "Đồng bằng, đồi núi.", c: false}, {t: "Hải đảo, trung du.", c: false}, {t: "Cao nguyên, các đảo.", c: false}] }
                 ]
             }
         ];
 
         let exams = JSON.parse(localStorage.getItem('myExams')) || defaultExams;
-        if (JSON.parse(localStorage.getItem('myExams')) === null) {
-            localStorage.setItem('myExams', JSON.stringify(defaultExams));
-        }
+        if (!localStorage.getItem('myExams')) localStorage.setItem('myExams', JSON.stringify(defaultExams));
 
         let history = JSON.parse(localStorage.getItem('myHistory')) || [];
         let state = { user: '', exam: null, idx: 0, corrects: 0, timer: null, time: 900, startTime: 0, userAnswers: [] };
@@ -274,20 +261,16 @@
             document.getElementById('nextBtn').classList.add('hidden');
             const grp = document.getElementById('optionsGroup'); grp.innerHTML = '';
             
-            q.opts.forEach((o) => {
+            // Xáo trộn đáp án để không bị lộ A là đúng
+            let shuffledOpts = [...q.opts].sort(() => Math.random() - 0.5);
+
+            shuffledOpts.forEach((o) => {
                 const b = document.createElement('button');
                 b.className = "w-full text-left p-5 border-2 border-gray-100 rounded-2xl font-bold transition-all";
                 b.innerText = o.t;
                 b.onclick = () => {
                     if(!document.getElementById('nextBtn').classList.contains('hidden')) return;
-                    
-                    state.userAnswers.push({ 
-                        question: q.q, 
-                        selected: o.t, 
-                        options: q.opts, 
-                        isRight: o.c 
-                    });
-                    
+                    state.userAnswers.push({ question: q.q, selected: o.t, options: q.opts, isRight: o.c });
                     if(o.c) { b.classList.add('bg-green-500', 'text-white'); state.corrects++; }
                     else b.classList.add('bg-red-500', 'text-white');
                     document.getElementById('nextBtn').classList.remove('hidden');
@@ -307,10 +290,8 @@
             const totalQ = state.exam.questions.length;
             const score = Math.round((state.corrects / totalQ) * 10 * 10) / 10;
             const timeDiff = Math.floor((Date.now() - state.startTime) / 1000);
-            
             const now = new Date();
-            const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
-            const formattedDate = `${days[now.getDay()]}, ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+            const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
             const formattedTime = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
             const duration = `${Math.floor(timeDiff/60)}p ${timeDiff%60}s`;
 
@@ -324,10 +305,7 @@
             else if (score > 5) roast.innerText = "chưa tài đâu🤪";
             else roast.innerText = "ăn chi ngu rứa🤓";
 
-            history.unshift({ 
-                name: state.user, exam: state.exam.title, score, 
-                time: formattedTime, date: formattedDate, duration: duration
-            });
+            history.unshift({ name: state.user, exam: state.exam.title, score, time: formattedTime, date: formattedDate, duration: duration });
             localStorage.setItem('myHistory', JSON.stringify(history));
         }
 
@@ -336,46 +314,22 @@
             const container = document.getElementById('reviewContent');
             container.innerHTML = state.userAnswers.map((ans, i) => {
                 let optionsHtml = ans.options.map(opt => {
-                    let statusClass = '';
-                    let badge = '';
-                    
-                    if (opt.c) {
-                        statusClass = 'opt-correct'; 
-                        badge = '<span class="text-[10px] font-black uppercase">✓ Đáp án đúng</span>';
-                    } else if (opt.t === ans.selected) {
-                        statusClass = 'opt-wrong'; 
-                        badge = '<span class="text-[10px] font-black uppercase">✗ Bạn chọn</span>';
-                    }
-
-                    return `<div class="opt-review ${statusClass}"><span>${opt.t}</span> ${badge}</div>`;
+                    let statusClass = opt.c ? 'opt-correct' : (opt.t === ans.selected ? 'opt-wrong' : '');
+                    let badge = opt.c ? '✓ Đáp án đúng' : (opt.t === ans.selected ? '✗ Bạn chọn' : '');
+                    return `<div class="opt-review ${statusClass}"><span>${opt.t}</span> <span class="text-[10px] uppercase font-black">${badge}</span></div>`;
                 }).join('');
-
-                return `
-                    <div class="glass-card p-6 shadow-sm border-t-8 border-purple-500 mx-2">
-                        <p class="font-black text-lg mb-4 text-slate-800 tracking-tight">Câu ${i+1}: ${ans.question}</p>
-                        <div class="space-y-1">${optionsHtml}</div>
-                    </div>
-                `;
+                return `<div class="glass-card p-6 shadow-sm border-t-8 border-purple-500 mx-2"><p class="font-black text-lg mb-4">Câu ${i+1}: ${ans.question}</p><div class="space-y-1">${optionsHtml}</div></div>`;
             }).join('');
         }
 
         function renderResultBoard() {
             document.getElementById('resultTableBody').innerHTML = history.map(h => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-3">
-                        <div class="font-bold text-gray-800 uppercase text-xs">${h.name}</div>
-                        <div class="text-[10px] text-gray-400 italic">${h.exam}</div>
-                    </td>
-                    <td class="p-3 text-center">
-                        <div class="font-black text-purple-600 text-lg">${h.score}</div>
-                    </td>
-                    <td class="p-3 text-right">
-                        <div class="text-[10px] font-bold text-gray-500">${h.time}</div>
-                        <div class="text-[9px] text-gray-400">${h.date}</div>
-                        <div class="text-[9px] text-red-400 font-medium">⏳ ${h.duration}</div>
-                    </td>
+                <tr class="border-b">
+                    <td class="p-3"><div class="font-bold uppercase text-xs">${h.name}</div><div class="text-[10px] text-gray-400">${h.exam}</div></td>
+                    <td class="p-3 text-center"><div class="font-black text-purple-600 text-lg">${h.score}</div></td>
+                    <td class="p-3 text-right text-[9px] font-bold"><div>${h.time} | ${h.date}</div><div class="text-red-400">⏳ ${h.duration}</div></td>
                 </tr>
-            `).join('') || '<tr><td colspan="3" class="p-4 text-center text-gray-400 italic">Chưa có ai thi...</td></tr>';
+            `).join('') || '<tr><td colspan="3" class="p-4 text-center">Chưa có dữ liệu</td></tr>';
         }
     </script>
 </body>
