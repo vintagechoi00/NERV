@@ -19,17 +19,17 @@
 
     <nav id="navbar" class="hidden bg-white shadow-sm p-4 flex justify-between items-center px-6 border-b">
         <div class="font-bold azota-purple text-lg italic underline uppercase">GAYZOTA BY ME</div>
-        <button onclick="location.reload()" class="bg-red-50 text-red-500 text-xs font-bold px-4 py-2 rounded-xl italic">THOÁT / MENU</button>
+        <button onclick="location.reload()" class="bg-red-50 text-red-500 text-xs font-bold px-4 py-2 rounded-xl">THOÁT / MENU</button>
     </nav>
 
     <main class="flex-grow p-4 flex flex-col items-center justify-start">
         
-        <div id="loginPage" class="glass-card p-10 w-full max-w-md mt-16 text-center">
-            <h2 class="text-4xl font-black mb-10 tracking-widest text-gray-900 uppercase">GAYZOTA</h2>
-            <div class="space-y-6">
-                <input type="text" id="username" placeholder="Tên đăng nhập" class="w-full p-5 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-200 transition-all shadow-sm">
-                <input type="password" id="password" placeholder="Mật khẩu" class="w-full p-5 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-200 transition-all shadow-sm">
-                <button onclick="handleLogin()" class="w-full bg-azota text-white font-bold py-5 rounded-2xl shadow-xl active:scale-95 transition-all text-lg">ĐĂNG NHẬP</button>
+        <div id="loginPage" class="glass-card p-8 w-full max-w-md mt-10 text-center">
+            <h2 class="text-3xl font-black mb-6 azota-purple uppercase tracking-widest">GAYZOTA</h2>
+            <div class="space-y-4">
+                <input type="text" id="username" placeholder="Tên đăng nhập" class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all">
+                <input type="password" id="password" placeholder="Mật khẩu" class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all">
+                <button onclick="handleLogin()" class="w-full bg-azota text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-transform">ĐĂNG NHẬP</button>
             </div>
         </div>
 
@@ -45,13 +45,13 @@
         <div id="adminPage" class="glass-card p-8 w-full max-w-4xl hidden mt-4">
             <button onclick="showSection('mainMenu')" class="mb-4 text-violet-600 font-bold text-sm underline">← Quay lại Menu</button>
             <h3 id="formTitle" class="font-bold mb-2 text-gray-600 uppercase">Tạo/Sửa đề thi</h3>
-            <input type="text" id="examTitle" placeholder="Tên đề thi" class="w-full p-3 rounded-xl border mb-4 outline-none">
-            <textarea id="rawInput" class="w-full h-48 p-3 rounded-xl border mb-4 outline-none" placeholder="Câu 1. Nội dung... A. ĐA1 B. ĐA2 @t"></textarea>
+            <input type="text" id="examTitle" placeholder="Tên đề thi" class="w-full p-3 rounded-xl border mb-4 focus:ring-2 focus:ring-violet-200 outline-none">
+            <textarea id="rawInput" class="w-full h-48 p-3 rounded-xl border mb-4 focus:outline-none focus:ring-2 focus:ring-violet-200" placeholder="Câu 1. Nội dung... A. ĐA1 B. ĐA2 @t"></textarea>
             <div class="flex gap-2 mb-6">
                 <button id="saveBtn" onclick="saveExamAction()" class="flex-1 bg-azota text-white py-4 rounded-xl font-bold shadow-md">LƯU ĐỀ THI</button>
                 <button onclick="resetAdminForm()" class="px-6 bg-gray-100 text-gray-500 rounded-xl font-bold">HỦY</button>
             </div>
-            <div id="adminExamList" class="space-y-2"></div>
+            <div id="adminExamListContent" class="mt-4"></div>
         </div>
 
         <div id="selectExamPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
@@ -87,7 +87,7 @@
 
         <div id="reviewPage" class="glass-card p-8 w-full max-w-3xl hidden mt-4">
             <div id="reviewContainer" class="space-y-6"></div>
-            <button onclick="showSection('resultPage')" class="mt-10 w-full bg-gray-800 text-white py-4 rounded-xl font-bold">QUAY LẠI</button>
+            <button onclick="showSection('resultPage')" class="mt-10 w-full bg-gray-800 text-white py-4 rounded-xl font-bold uppercase">Quay lại kết quả</button>
         </div>
 
         <div id="resultBoard" class="glass-card p-8 w-full max-w-3xl hidden mt-4">
@@ -98,17 +98,29 @@
 
     <script>
         const USERS = { 'mrduc': { pass: 'admin8a7', role: 'admin' }, 'hoanggay': { pass: 'missgay', role: 'user' } };
-        let allExams = JSON.parse(localStorage.getItem('allExams')) || [];
+        
+        // ĐỀ THI MẪU CỐ ĐỊNH - SỬA NỘI DUNG TẠI ĐÂY
+        const sampleExams = [
+            {
+                id: 1001,
+                title: "KIỂM TRA 15 PHÚT MẪU",
+                questions: [
+                    { q: "1 + 1 bằng mấy?", opts: [{text:"1",correct:false}, {text:"2",correct:true}, {text:"3",correct:false}] },
+                    { q: "Thủ đô của Việt Nam là gì?", opts: [{text:"TP.HCM",correct:false}, {text:"Đà Nẵng",correct:false}, {text:"Hà Nội",correct:true}] }
+                ]
+            }
+        ];
+
+        let allExams = JSON.parse(localStorage.getItem('allExams')) || sampleExams;
         let history = JSON.parse(localStorage.getItem('quizHistory')) || [];
         let state = { user: '', role: '', currentExam: null, editingId: null, idx: 0, correctCount: 0, userAnswers: [], shuffledOptions: [], startTime: 0, timer: null, timeLeft: 900 };
 
-        // Lấy IP từ API
         async function getIP() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
                 const data = await response.json();
                 return data.ip;
-            } catch (e) { return 'Ẩn danh'; }
+            } catch (e) { return 'Không rõ'; }
         }
 
         function handleLogin() {
@@ -120,7 +132,7 @@
                 document.getElementById('navbar').classList.remove('hidden');
                 if (state.role === 'admin') document.getElementById('adminOnlyBtn').classList.remove('hidden');
                 showSection('mainMenu');
-            } else { alert("Sai tài khoản hoặc mật khẩu!"); }
+            } else { alert("Sai thông tin!"); }
         }
 
         function showSection(id) {
@@ -156,7 +168,7 @@
         }
 
         function renderAdminExams() {
-            document.getElementById('adminExamList').innerHTML = allExams.map(ex => `
+            document.getElementById('adminExamListContent').innerHTML = allExams.map(ex => `
                 <div class="flex justify-between items-center p-4 border rounded-2xl bg-white mb-2 cursor-pointer" onclick="editExam(${ex.id})">
                     <span class="font-bold text-gray-700">${ex.title}</span>
                     <button onclick="event.stopPropagation(); deleteExam(${ex.id})" class="text-red-400 font-bold text-xs uppercase">Xóa</button>
@@ -179,10 +191,10 @@
             document.getElementById('saveBtn').innerText = "LƯU ĐỀ THI";
         }
 
-        function deleteExam(id) { if(confirm("Xóa đề này?")) { allExams = allExams.filter(e => e.id !== id); localStorage.setItem('allExams', JSON.stringify(allExams)); renderAdminExams(); } }
+        function deleteExam(id) { if(confirm("Xóa?")) { allExams = allExams.filter(e => e.id !== id); localStorage.setItem('allExams', JSON.stringify(allExams)); renderAdminExams(); } }
 
         function renderUserExams() {
-            document.getElementById('userExamList').innerHTML = allExams.map(ex => `<button onclick="state.currentExam=allExams.find(e=>e.id==${ex.id});startExam()" class="p-6 border-2 border-violet-100 rounded-3xl font-bold text-violet-700 uppercase shadow-sm">${ex.title}</button>`).join('');
+            document.getElementById('userExamList').innerHTML = allExams.map(ex => `<button onclick="state.currentExam=allExams.find(e=>e.id==${ex.id});startExam()" class="p-6 border-2 border-violet-100 rounded-3xl font-bold text-violet-700 uppercase shadow-sm active:scale-95 transition-all">${ex.title}</button>`).join('');
         }
 
         function startExam() {
@@ -209,7 +221,7 @@
             state.shuffledOptions.push(shuffled);
             shuffled.forEach((o, i) => {
                 const b = document.createElement('button');
-                b.className = "w-full text-left p-4 border-2 border-gray-100 rounded-2xl font-medium transition-all active:scale-[0.98]";
+                b.className = "w-full text-left p-4 border-2 border-gray-100 rounded-2xl font-medium transition-all";
                 b.innerText = o.text;
                 b.onclick = () => {
                     if (!document.getElementById('nextBtn').classList.contains('hidden')) return;
@@ -235,17 +247,15 @@
             history.unshift({ examTitle: state.currentExam.title, name: state.user, score, time: timeStr, ip: userIP });
             localStorage.setItem('quizHistory', JSON.stringify(history));
 
-            // --- GỬI DỮ LIỆU VỀ GMAIL QUA GOOGLE SCRIPT ---
-            const scriptURL = "DÁN_LINK_GOOGLE_SCRIPT_CỦA_BẠN_VÀO_ĐÂY"; 
-            if(scriptURL !== "DÁN_LINK_GOOGLE_SCRIPT_CỦA_BẠN_VÀO_ĐÂY") {
-                fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ name: state.user, exam: state.currentExam.title, score: score, time: timeStr, ip: userIP })
-                });
-            }
+            // LINK GOOGLE SCRIPT CỦA BẠN ĐÃ ĐƯỢC DÁN TẠI ĐÂY
+            const scriptURL = "https://script.google.com/macros/s/AKfycbw3fT7tR8qnbFOgmfLftZ5--ZvAij5f6RdVvtCq2Q0yBNHrz4_aCuXO5tlSAFR5XYSG/exec"; 
             
-            // Hiện giao diện kết quả chuẩn
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ name: state.user, exam: state.currentExam.title, score: score, time: timeStr, ip: userIP })
+            });
+            
             showSection('resultPage');
             document.getElementById('finalScore').innerText = score;
             document.getElementById('statCorrect').innerText = `Đúng: ${state.correctCount}/${state.currentExam.questions.length} câu`;
@@ -257,7 +267,7 @@
             showSection('reviewPage');
             document.getElementById('reviewContainer').innerHTML = state.currentExam.questions.map((q, i) => {
                 const userIdx = state.userAnswers[i], opts = state.shuffledOptions[i];
-                return `<div class="p-5 border rounded-2xl bg-white shadow-sm"><div class="font-bold mb-3">Câu ${i+1}: ${q.q}</div>
+                return `<div class="p-5 border rounded-2xl bg-white mb-4"><div class="font-bold mb-3">Câu ${i+1}: ${q.q}</div>
                     ${opts.map((o, oi) => {
                         let cls = (oi === userIdx) ? (o.correct ? 'review-correct' : 'review-wrong') : '';
                         return `<div class="review-opt ${cls}">${o.text} ${o.correct ? '✓' : ''}</div>`;
@@ -266,7 +276,7 @@
         }
 
         function showResultBoardContent() {
-            document.getElementById('resultTableBody').innerHTML = history.map(h => `<tr class="border-b"><td class="p-3 text-xs font-bold text-gray-500">${h.examTitle}</td><td class="p-3 text-sm font-medium text-gray-800">${h.name}</td><td class="p-3 text-sm font-black text-violet-600 text-right">${h.score}đ</td></tr>`).join('') || '<tr><td colspan="3" class="p-10 text-center text-gray-400 italic text-sm">Chưa có lịch sử làm bài nào...</td></tr>';
+            document.getElementById('resultTableBody').innerHTML = history.map(h => `<tr class="border-b"><td class="p-3 text-xs font-bold text-gray-500">${h.examTitle}</td><td class="p-3 text-sm font-medium text-gray-800">${h.name}</td><td class="p-3 text-sm font-black text-violet-600 text-right">${h.score}đ</td></tr>`).join('') || '<tr><td colspan="3" class="p-10 text-center text-gray-400 italic text-sm">Chưa có ai làm bài...</td></tr>';
         }
     </script>
 </body>
