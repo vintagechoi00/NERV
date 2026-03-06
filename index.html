@@ -38,13 +38,14 @@
         <div id="mainMenu" class="glass-card p-8 w-full max-w-2xl hidden mt-6">
             <h2 class="text-xl font-bold mb-6 azota-purple border-b pb-2 text-center uppercase">Bảng Điều Khiển</h2>
             <div class="grid grid-cols-1 gap-4">
-                <button id="adminOnlyBtn" onclick="showSection('adminPage')" class="hidden p-5 border-2 border-violet-100 rounded-2xl hover:bg-violet-50 text-left font-bold italic text-violet-600">📝 Quản lý đề thi (Admin)</button>
+                <!-- SỬA LẠI ONCLICK TẠI ĐÂY -->
+                <button id="adminOnlyBtn" onclick="openAdmin()" class="hidden p-5 border-2 border-violet-100 rounded-2xl hover:bg-violet-50 text-left font-bold italic text-violet-600">📝 Quản lý đề thi (Admin)</button>
                 <button onclick="showSection('selectExamPage')" class="p-5 border-2 border-violet-100 rounded-2xl hover:bg-violet-50 text-left font-bold uppercase text-gray-700">✍️ Vào thi</button>
                 <button onclick="showSection('resultBoard')" class="p-5 border-2 border-violet-100 rounded-2xl hover:bg-violet-50 text-left font-bold uppercase text-gray-700">📊 Xem kết quả</button>
             </div>
         </div>
 
-        <!-- TRANG QUẢN LÝ (ADMIN) -->
+        <!-- TRANG QUẢN LÝ (PHẢI TRÙNG ID LÀ adminPage) -->
         <div id="adminPage" class="glass-card p-8 w-full max-w-4xl hidden mt-4">
             <button onclick="showSection('mainMenu')" class="mb-4 text-violet-600 font-bold text-sm underline">← Quay lại Menu</button>
             <h3 id="formTitle" class="font-bold mb-2 text-gray-600 uppercase">Tạo/Sửa đề thi</h3>
@@ -57,7 +58,7 @@
             <div id="adminExamListContent" class="mt-4"></div>
         </div>
 
-        <!-- CÁC PHẦN KHÁC GIỮ NGUYÊN ... -->
+        <!-- CÁC TRANG KHÁC -->
         <div id="selectExamPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
              <button onclick="showSection('mainMenu')" class="mb-4 text-violet-600 font-bold text-sm underline">← Quay lại</button>
              <div id="userExamList" class="grid grid-cols-1 gap-4"></div>
@@ -106,7 +107,7 @@
                 title: "KIỂM TRA 15 PHÚT MẪU",
                 questions: [
                     { q: "1 + 1 bằng mấy?", opts: [{text:"1",correct:false}, {text:"2",correct:true}, {text:"3",correct:false}] },
-                    { q: "Thủ đô của Việt Nam là gì?", opts: [{text:"TP.HCM",correct:false}, {text:"Đà Nẵng",correct:false}, {text:"Hà Nội",correct:true}] }
+                    { q: "Thủ đô Việt Nam?", opts: [{text:"Hà Nội",correct:true}, {text:"HCM",correct:false}] }
                 ]
             }
         ];
@@ -114,6 +115,26 @@
         let allExams = JSON.parse(localStorage.getItem('allExams')) || sampleExams;
         let history = JSON.parse(localStorage.getItem('quizHistory')) || [];
         let state = { user: '', role: '', currentExam: null, editingId: null, idx: 0, correctCount: 0, userAnswers: [], shuffledOptions: [], startTime: 0, timer: null, timeLeft: 900 };
+
+        // HÀM CHUYỂN SECTION CHUNG
+        function showSection(id) {
+            const list = ['loginPage', 'mainMenu', 'adminPage', 'selectExamPage', 'examPage', 'resultPage', 'reviewPage', 'resultBoard'];
+            list.forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(id);
+            if (target) target.classList.remove('hidden');
+
+            if(id === 'selectExamPage') renderUserExams();
+            if(id === 'resultBoard') showResultBoardContent();
+            if(id === 'adminPage') renderAdminExams();
+        }
+
+        // HÀM MỞ ADMIN RIÊNG BIỆT ĐỂ KHÔNG LỖI
+        function openAdmin() {
+            showSection('adminPage');
+        }
 
         async function getIP() {
             try {
@@ -130,23 +151,11 @@
                 state.user = u; state.role = USERS[u].role;
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('navbar').classList.remove('hidden');
-                if (state.role === 'admin') document.getElementById('adminOnlyBtn').classList.remove('hidden');
+                if (state.role === 'admin') {
+                    document.getElementById('adminOnlyBtn').classList.remove('hidden');
+                }
                 showSection('mainMenu');
             } else { alert("Sai thông tin!"); }
-        }
-
-        // HÀM CHUYỂN TRANG QUAN TRỌNG NHẤT
-        function showSection(id) {
-            const sections = ['mainMenu', 'adminPage', 'resultBoard', 'examPage', 'resultPage', 'loginPage', 'reviewPage', 'selectExamPage'];
-            sections.forEach(s => {
-                const el = document.getElementById(s);
-                if(el) el.classList.add('hidden');
-            });
-            document.getElementById(id).classList.remove('hidden');
-            
-            if(id === 'selectExamPage') renderUserExams();
-            if(id === 'resultBoard') showResultBoardContent();
-            if(id === 'adminPage') renderAdminExams();
         }
 
         function saveExamAction() {
@@ -213,7 +222,8 @@
             state.timer = setInterval(() => {
                 state.timeLeft--;
                 const min = Math.floor(state.timeLeft/60), sec = state.timeLeft%60;
-                document.getElementById('timerDisplay').innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
+                const display = document.getElementById('timerDisplay');
+                if(display) display.innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
                 if(state.timeLeft <= 0) finishExam();
             }, 1000);
         }
