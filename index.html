@@ -24,9 +24,9 @@
 
     <main class="flex-grow p-4 flex flex-col items-center justify-start">
         
-        <!-- TRANG ĐĂNG NHẬP -->
+        <!-- ĐĂNG NHẬP -->
         <div id="loginPage" class="glass-card p-8 w-full max-w-md mt-10 text-center">
-            <h2 class="text-3xl font-black mb-6 azota-purple uppercase">GAYZOTA</h2>
+            <h2 class="text-3xl font-black mb-6 azota-purple uppercase text-center italic underline">GAYZOTA</h2>
             <div class="space-y-4">
                 <input type="text" id="username" placeholder="Tên đăng nhập" class="w-full p-4 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-purple-200">
                 <input type="password" id="password" placeholder="Mật khẩu" class="w-full p-4 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-purple-200">
@@ -34,62 +34,68 @@
             </div>
         </div>
 
-        <!-- MENU CHÍNH -->
+        <!-- BẢNG ĐIỀU KHIỂN -->
         <div id="mainMenu" class="glass-card p-8 w-full max-w-2xl hidden mt-6">
-            <h2 class="text-xl font-bold mb-6 azota-purple border-b pb-2 text-center uppercase">Bảng Điều Khiển</h2>
+            <h2 class="text-xl font-bold mb-6 azota-purple border-b pb-2 text-center uppercase italic">Bảng Điều Khiển</h2>
             <div class="grid grid-cols-1 gap-4">
-                <button onclick="showSection('selectExamPage')" class="p-6 border-2 border-violet-100 rounded-2xl hover:bg-violet-50 text-left font-bold uppercase text-gray-700">✍️ Vào thi ngay</button>
-                <button onclick="showSection('resultBoard')" class="p-6 border-2 border-violet-100 rounded-2xl hover:bg-violet-50 text-left font-bold uppercase text-gray-700">📊 Xem kết quả (Lớp)</button>
+                <!-- NÚT ADMIN: SẼ HIỆN KHI DÙNG mrduc -->
+                <button id="adminOnlyBtn" onclick="showSection('adminPage')" class="hidden p-6 border-2 border-violet-100 rounded-3xl hover:bg-violet-50 text-left font-bold italic text-violet-600 shadow-sm">📝 Quản lý đề thi (Admin)</button>
+                <button onclick="showSection('selectExamPage')" class="p-6 border-2 border-violet-100 rounded-3xl hover:bg-violet-50 text-left font-bold uppercase text-gray-700 shadow-sm">✍️ Vào thi</button>
+                <button onclick="showSection('resultBoard')" class="p-6 border-2 border-violet-100 rounded-3xl hover:bg-violet-50 text-left font-bold uppercase text-gray-700 shadow-sm">📊 Xem kết quả lớp</button>
             </div>
         </div>
 
-        <!-- CHỌN ĐỀ THI -->
+        <!-- QUẢN LÝ ĐỀ THI -->
+        <div id="adminPage" class="glass-card p-8 w-full max-w-4xl hidden mt-4">
+            <button onclick="showSection('mainMenu')" class="mb-4 text-violet-600 font-bold text-sm underline">← Quay lại Menu</button>
+            <h3 class="font-bold mb-2 text-gray-600 uppercase italic">Tạo đề thi mới</h3>
+            <p class="text-[10px] text-red-500 mb-2 italic underline">Lưu ý: Đề tạo tại đây chỉ máy này thấy. Muốn cả lớp thấy phải dán vào code GitHub.</p>
+            <input type="text" id="examTitle" placeholder="Tên đề thi (Vd: Địa Lý 15p)" class="w-full p-3 rounded-xl border mb-4 outline-none focus:ring-2 focus:ring-violet-200">
+            <textarea id="rawInput" class="w-full h-48 p-3 rounded-xl border mb-4 focus:ring-2 focus:ring-violet-200 outline-none" placeholder="Câu 1. Nội dung... A. ĐA1 B. ĐA2 @t"></textarea>
+            <button onclick="saveExamAction()" class="w-full bg-azota text-white py-4 rounded-xl font-bold mb-6 shadow-md">LƯU ĐỀ VÀO TRÌNH DUYỆT</button>
+            <div id="adminExamListContent" class="space-y-2"></div>
+        </div>
+
+        <!-- CHỌN ĐỀ -->
         <div id="selectExamPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
              <button onclick="showSection('mainMenu')" class="mb-4 text-violet-600 font-bold text-sm underline">← Quay lại</button>
              <div id="userExamList" class="grid grid-cols-1 gap-4"></div>
         </div>
 
-        <!-- TRANG LÀM BÀI -->
-        <div id="examPage" class="glass-card p-8 w-full max-w-2xl hidden">
+        <!-- TRANG THI -->
+        <div id="examPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
             <div class="flex justify-between mb-6 border-b pb-4">
-                <div id="qNum" class="azota-purple font-bold text-lg"></div>
-                <div id="timerDisplay" class="text-red-500 font-mono font-bold text-xl">15:00</div>
+                <div id="qNum" class="azota-purple font-bold"></div>
+                <div id="timerDisplay" class="text-red-500 font-mono font-bold text-lg">15:00</div>
             </div>
             <h3 id="qText" class="text-xl mb-8 font-semibold text-gray-800 leading-relaxed"></h3>
             <div id="optionsGroup" class="space-y-3"></div>
-            <button id="nextBtn" onclick="nextQuestion()" class="mt-8 w-full bg-azota text-white py-4 rounded-xl font-bold hidden uppercase shadow-lg">Câu tiếp theo</button>
+            <button id="nextBtn" onclick="nextQuestion()" class="mt-8 w-full bg-azota text-white py-4 rounded-xl font-bold hidden uppercase">Câu tiếp theo</button>
         </div>
 
-        <!-- KẾT QUẢ CÁ NHÂN -->
+        <!-- KẾT QUẢ -->
         <div id="resultPage" class="glass-card p-10 text-center hidden mt-10 w-full max-w-md">
             <h2 class="text-2xl font-bold text-gray-800 mb-2">Hoàn thành!</h2>
             <div class="text-8xl font-black azota-purple mb-4" id="finalScore">0</div>
-            <div class="mb-6">
-                <p class="text-xl font-bold text-gray-700" id="statCorrect">Đúng: 0/0 câu</p>
-                <p class="text-xs text-gray-400 mt-2 italic">* Kết quả đã được lưu vào hệ thống giáo viên.</p>
-            </div>
-            <button onclick="showReview()" class="w-full bg-[#f3e8ff] text-violet-700 font-bold py-4 rounded-2xl mb-4">XEM CHI TIẾT ĐÁP ÁN</button>
+            <p class="text-xl font-bold text-gray-700" id="statCorrect">Đúng: 0/0 câu</p>
+            <button onclick="showReview()" class="w-full bg-[#f3e8ff] text-violet-700 font-bold py-4 rounded-2xl my-4">XEM LẠI ĐÁP ÁN</button>
             <button onclick="showSection('mainMenu')" class="w-full bg-azota text-white font-bold py-4 rounded-2xl shadow-lg">VỀ MENU CHÍNH</button>
         </div>
 
-        <!-- XEM LẠI ĐÁP ÁN -->
+        <!-- XEM LẠI -->
         <div id="reviewPage" class="glass-card p-8 w-full max-w-3xl hidden mt-4">
             <div id="reviewContainer" class="space-y-6"></div>
             <button onclick="showSection('resultPage')" class="mt-10 w-full bg-gray-800 text-white py-4 rounded-xl font-bold uppercase">Quay lại</button>
         </div>
 
-        <!-- BẢNG ĐIỂM CẢ LỚP -->
+        <!-- BẢNG ĐIỂM -->
         <div id="resultBoard" class="glass-card p-8 w-full max-w-3xl hidden mt-4">
             <button onclick="showSection('mainMenu')" class="mb-4 text-violet-600 font-bold text-sm underline">← Quay lại</button>
-            <h2 class="text-center font-bold azota-purple mb-6 text-xl uppercase">BẢNG VÀNG LỚP 8A7</h2>
+            <h2 class="text-center font-bold azota-purple mb-6 uppercase text-lg italic">Lịch sử làm bài của lớp</h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                    <thead class="bg-violet-50 text-xs uppercase text-violet-400">
-                        <tr>
-                            <th class="p-4 rounded-l-xl">Học sinh</th>
-                            <th class="p-4 text-center">Điểm số</th>
-                            <th class="p-4 text-right rounded-r-xl">Thông tin IP</th>
-                        </tr>
+                    <thead class="bg-violet-50 text-[10px] uppercase text-violet-400">
+                        <tr><th class="p-3">Học sinh</th><th class="p-3 text-center">Điểm</th><th class="p-3 text-right">Thông tin IP</th></tr>
                     </thead>
                     <tbody id="resultTableBody"></tbody>
                 </table>
@@ -98,52 +104,105 @@
     </main>
 
     <script>
-        // CẤU HÌNH HỆ THỐNG
-        const USERS = { 'mrduc': { pass: 'admin8a7', role: 'admin' }, 'hoanggay': { pass: 'missgay', role: 'user' } };
+        // CẤU HÌNH TÀI KHOẢN
+        const USERS = { 
+            'mrduc': { pass: 'admin8a7', role: 'admin' }, 
+            'hoanggay': { pass: 'missgay', role: 'user' } 
+        };
         const scriptURL = "https://script.google.com/macros/s/AKfycbxDPqvBmtCt1Oj_BvSV8UtLdMLyJwnE4F1Qr6EV1POEOPC3qW5U2eQJn9D2KMtg0eb_/exec";
 
-        // --- ĐỀ THI ĐÃ GỘP SẴN 30 CÂU ĐỊA LÍ (MÁY NÀO CŨNG THẤY) ---
+        // ĐỀ THI MẪU (SỬA Ở ĐÂY ĐỂ ĐỒNG BỘ CẢ LỚP)
         const sampleExams = [
             {
-                id: 888,
-                title: "KIỂM TRA ĐỊA LÍ - 30 CÂU CHÍNH THỨC",
+                id: 111,
+                title: "KIỂM TRA ĐỊA LÝ 8A7",
                 questions: [
-                    { q: "Đất ở khu vực nào sau đây của nước ta dễ nhiễm mặn, nhiễm phèn?", opts: [{text:"Đồng bằng, đồi núi",correct:false}, {text:"Cửa sông, ven biển",correct:true}, {text:"Hải đảo, trung du",correct:false}, {text:"Cao nguyên, các đảo",correct:false}] },
-                    { q: "Loại đất nào chiếm diện tích lớn nhất ở nước ta?", opts: [{text:"Đất phù sa",correct:false}, {text:"Đất feralit",correct:true}, {text:"Đất mùn núi cao",correct:false}, {text:"Đất xám bạc màu",correct:false}] },
-                    { q: "Nhóm đất feralit thường có màu đỏ vàng do có sự tích tụ của?", opts: [{text:"Nito và Kali",correct:false}, {text:"Nhôm và Sắt",correct:true}, {text:"Canxi và Magie",correct:false}, {text:"Phốt pho",correct:false}] }
-                    // Bạn có thể thêm tiếp các câu khác vào đây theo cấu trúc trên
+                    { q: "Nước ta có bao nhiêu nhóm đất chính?", opts: [{text:"2 nhóm",correct:false}, {text:"3 nhóm",correct:true}, {text:"4 nhóm",correct:false}, {text:"5 nhóm",correct:false}] }
                 ]
             }
         ];
 
+        let allExams = JSON.parse(localStorage.getItem('allExams')) || sampleExams;
         let history = JSON.parse(localStorage.getItem('quizHistory')) || [];
-        let state = { user: '', currentExam: null, idx: 0, correctCount: 0, userAnswers: [], shuffledOptions: [], startTime: 0, timer: null, timeLeft: 1200 };
+        let state = { user: '', role: '', currentExam: null, idx: 0, correctCount: 0, userAnswers: [], shuffledOptions: [], startTime: 0, timer: null, timeLeft: 900 };
 
         function showSection(id) {
-            ['loginPage', 'mainMenu', 'selectExamPage', 'examPage', 'resultPage', 'reviewPage', 'resultBoard'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            const ids = ['loginPage', 'mainMenu', 'adminPage', 'selectExamPage', 'examPage', 'resultPage', 'reviewPage', 'resultBoard'];
+            ids.forEach(i => document.getElementById(i).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             if(id === 'selectExamPage') renderUserExams();
+            if(id === 'adminPage') renderAdminExams();
             if(id === 'resultBoard') showResultBoardContent();
         }
 
         function handleLogin() {
             const u = document.getElementById('username').value.trim().toLowerCase();
             const p = document.getElementById('password').value;
+            
             if (USERS[u] && USERS[u].pass === p) {
                 state.user = u;
+                state.role = USERS[u].role;
+                
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('navbar').classList.remove('hidden');
+                
+                // KIỂM TRA ĐÚNG TÊN mrduc THÌ HIỆN NÚT QUẢN LÝ
+                if (u === 'mrduc') {
+                    document.getElementById('adminOnlyBtn').classList.remove('hidden');
+                } else {
+                    document.getElementById('adminOnlyBtn').classList.add('hidden');
+                }
+                
                 showSection('mainMenu');
-            } else { alert("Sai thông tin đăng nhập!"); }
+            } else { 
+                alert("Sai tên hoặc mật khẩu!"); 
+            }
+        }
+
+        function renderAdminExams() {
+            document.getElementById('adminExamListContent').innerHTML = allExams.map(ex => `
+                <div class="p-3 border rounded-xl flex justify-between items-center bg-gray-50">
+                    <span class="font-bold text-gray-700">${ex.title}</span>
+                    <button onclick="deleteExam(${ex.id})" class="text-red-500 text-[10px] font-bold">XÓA</button>
+                </div>`).join('');
+        }
+
+        function saveExamAction() {
+            const title = document.getElementById('examTitle').value.trim();
+            const text = document.getElementById('rawInput').value;
+            if(!title || !text) return;
+            const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
+            const questions = blocks.map(b => {
+                const lines = b.trim().split('\n');
+                return { 
+                    q: lines[0].trim(), 
+                    opts: lines.slice(1).filter(l => l.trim() !== '').map(o => ({ 
+                        text: o.replace('@t','').trim().substring(2).trim(), 
+                        correct: o.includes('@t') 
+                    })) 
+                };
+            });
+            allExams.unshift({ id: Date.now(), title, questions });
+            localStorage.setItem('allExams', JSON.stringify(allExams));
+            alert("Đã lưu đề vào trình duyệt!"); 
+            renderAdminExams();
+        }
+
+        function deleteExam(id) {
+            if(confirm("Xóa đề này?")) {
+                allExams = allExams.filter(e => e.id !== id);
+                localStorage.setItem('allExams', JSON.stringify(allExams));
+                renderAdminExams();
+            }
         }
 
         function renderUserExams() {
-            document.getElementById('userExamList').innerHTML = sampleExams.map(ex => `<button onclick="state.currentExam=sampleExams.find(e=>e.id==${ex.id});startExam()" class="p-8 border-2 border-violet-100 rounded-3xl font-black text-violet-700 uppercase shadow-sm active:scale-95 transition-all bg-white hover:border-violet-400 text-lg">${ex.title}</button>`).join('');
+            document.getElementById('userExamList').innerHTML = allExams.map(ex => `<button onclick="state.currentExam=allExams.find(e=>e.id==${ex.id});startExam()" class="p-6 border-2 border-violet-100 rounded-3xl font-bold text-violet-700 uppercase shadow-sm active:scale-95 transition-all bg-white hover:border-violet-400">${ex.title}</button>`).join('');
         }
 
         function startExam() {
             showSection('examPage');
-            state.idx = 0; state.correctCount = 0; state.userAnswers = []; state.shuffledOptions = []; state.timeLeft = 1200; state.startTime = Date.now();
+            state.idx = 0; state.correctCount = 0; state.userAnswers = []; state.shuffledOptions = []; state.timeLeft = 900; state.startTime = Date.now();
             showQ();
             if(state.timer) clearInterval(state.timer);
             state.timer = setInterval(() => {
@@ -164,7 +223,7 @@
             state.shuffledOptions.push(shuffled);
             shuffled.forEach((o, i) => {
                 const b = document.createElement('button');
-                b.className = "w-full text-left p-5 border-2 border-gray-100 rounded-2xl font-medium transition-all hover:bg-violet-50";
+                b.className = "w-full text-left p-4 border-2 border-gray-100 rounded-2xl transition-all hover:bg-violet-50";
                 b.innerText = o.text;
                 b.onclick = () => {
                     if (!document.getElementById('nextBtn').classList.contains('hidden')) return;
@@ -185,37 +244,30 @@
             const duration = Math.floor((Date.now() - state.startTime) / 1000);
             const ipData = await fetch('https://api.ipify.org?format=json').then(r => r.json()).catch(() => ({ip:'Ẩn'}));
             
-            const resultItem = { examTitle: state.currentExam.title, name: state.user, score, time: `${duration}s`, ip: ipData.ip };
-            history.unshift(resultItem);
+            const res = { examTitle: state.currentExam.title, name: state.user, score, time: `${duration}s`, ip: ipData.ip };
+            history.unshift(res);
             localStorage.setItem('quizHistory', JSON.stringify(history));
-
-            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(resultItem) });
+            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
             
             showSection('resultPage');
             document.getElementById('finalScore').innerText = score;
-            document.getElementById('statCorrect').innerText = `Đúng: ${state.correctCount}/${state.currentExam.questions.length} câu`;
+            document.getElementById('statCorrect').innerText = `Đúng: ${state.correctCount}/${state.currentExam.questions.length}`;
         }
 
         function showResultBoardContent() {
             document.getElementById('resultTableBody').innerHTML = history.map(h => `
                 <tr class="border-b">
-                    <td class="p-4 text-sm font-bold text-gray-800">
-                        ${h.name} <br> <span class="text-[10px] text-gray-400 font-normal">${h.examTitle}</span>
-                    </td>
-                    <td class="p-4 text-xl font-black text-violet-600 text-center">${h.score}</td>
-                    <td class="p-4 text-right">
-                        <span class="text-[10px] text-gray-400 block">${h.time}</span>
-                        <span class="text-[10px] text-blue-400 font-mono">${h.ip || 'K rõ'}</span>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="3" class="p-10 text-center text-gray-300">Chưa có ai tham gia</td></tr>';
+                    <td class="p-3 text-xs font-bold">${h.name}<br><span class="text-[9px] text-gray-400 font-normal uppercase">${h.examTitle}</span></td>
+                    <td class="p-3 text-lg font-black text-violet-600 text-center">${h.score}đ</td>
+                    <td class="p-3 text-right"><span class="text-[9px] text-blue-400 font-mono italic">${h.ip}</span></td>
+                </tr>`).join('') || '<tr><td colspan="3" class="p-10 text-center italic text-gray-300">Chưa có ai thi</td></tr>';
         }
 
         function showReview() {
             showSection('reviewPage');
             document.getElementById('reviewContainer').innerHTML = state.currentExam.questions.map((q, i) => {
                 const userIdx = state.userAnswers[i], opts = state.shuffledOptions[i];
-                return `<div class="p-6 border-2 border-gray-100 rounded-3xl bg-white"><div class="font-bold mb-4 text-gray-800">Câu ${i+1}: ${q.q}</div>
+                return `<div class="p-5 border-2 border-gray-100 rounded-3xl bg-white"><div class="font-bold mb-4">Câu ${i+1}: ${q.q}</div>
                     ${opts.map((o, oi) => `<div class="review-opt ${oi===userIdx?(o.correct?'review-correct':'review-wrong'):(o.correct?'review-correct opacity-60':'')}">${o.text} ${o.correct ? '✓' : ''}</div>`).join('')}</div>`;
             }).join('');
         }
