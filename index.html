@@ -3,117 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAYZOTA BY ME</title>
-    <!-- Thư viện giao diện Tailwind CSS -->
+    <title>GAYZOTA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; }
-        .glass-card { background: white; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; }
+        body { font-family: sans-serif; background-color: #fcfcfc; color: #334155; }
+        .glass-card { background: white; border-radius: 15px; border: 1px solid #f1f5f9; }
         .azota-purple { color: #8b5cf6; }
-        .link-style { color: #8b5cf6; font-weight: bold; text-decoration: underline; cursor: pointer; transition: 0.2s; }
-        .opt-btn { border: 2px solid #f1f5f9; width: 100%; text-align: left; padding: 18px; border-radius: 20px; font-weight: 600; margin-bottom: 12px; cursor: pointer; transition: 0.2s; background: #fff; }
-        .opt-btn:hover { background: #fdfbff; border-color: #ddd6fe; }
+        .link-style { color: #8b5cf6; font-weight: bold; text-decoration: underline; cursor: pointer; }
+        .opt-btn { border: 1.5px solid #f1f5f9; width: 100%; text-align: left; padding: 14px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
         
-        /* HIỆU ỨNG THÔNG BÁO CHỮ TÍM (TOAST) */
+        /* Thông báo chữ tím tối giản */
         #customToast {
-            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: -50px; left: 50%; transform: translateX(-50%);
             background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe;
-            padding: 14px 35px; border-radius: 50px; font-size: 14px; font-weight: bold;
-            box-shadow: 0 15px 30px rgba(124, 58, 237, 0.15);
-            z-index: 10000; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 10px 25px; border-radius: 30px; font-size: 13px; font-weight: bold;
+            z-index: 9999; transition: 0.4s;
         }
-        #customToast.show { bottom: 50px; }
+        #customToast.show { bottom: 30px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <!-- THÔNG BÁO CHỮ TÍM/XANH TỰ CHẾ -->
-    <div id="customToast">Thông báo ở đây!</div>
+    <div id="customToast"></div>
 
-    <!-- THANH ĐIỀU HƯỚNG -->
-    <nav id="navbar" class="hidden w-full max-w-2xl flex justify-between items-center py-6 mb-4 border-b border-dashed border-gray-200">
-        <div class="font-black azota-purple italic uppercase text-2xl tracking-tighter">GAYZOTA</div>
-        <button onclick="location.reload()" class="text-[11px] font-bold text-red-400 uppercase border border-red-100 px-3 py-1 rounded-full hover:bg-red-50">Thoát</button>
+    <nav id="navbar" class="hidden w-full max-w-2xl flex justify-between items-center py-6 mb-4">
+        <div class="font-bold azota-purple uppercase text-xl">GAYZOTA</div>
+        <button onclick="location.reload()" class="text-[10px] text-red-400 border border-red-100 px-2 py-1 rounded">Thoát</button>
     </nav>
 
-    <!-- TRANG 1: ĐĂNG NHẬP -->
+    <!-- ĐĂNG NHẬP -->
     <div id="loginPage" class="glass-card p-10 w-full max-w-sm mt-20 text-center">
-        <h2 class="text-3xl font-black mb-10 azota-purple uppercase italic underline decoration-wavy decoration-purple-200">GAYZOTA</h2>
-        <div class="space-y-4">
-            <input type="text" id="username" placeholder="Họ và tên thí sinh" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-purple-100 transition-all">
-            <input type="password" id="password" placeholder="Mật khẩu (nếu có)" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-purple-100 transition-all">
-            <button onclick="handleLogin()" class="w-full bg-[#8b5cf6] text-white font-bold py-4 rounded-2xl shadow-xl active:scale-95 transition-transform mt-4">VÀO HỆ THỐNG</button>
-        </div>
+        <h2 class="text-2xl font-bold mb-8 azota-purple uppercase underline">GAYZOTA</h2>
+        <input type="text" id="username" placeholder="Tên đăng nhập" class="w-full mb-4 p-3 border rounded-lg outline-none">
+        <input type="password" id="password" placeholder="Mật khẩu" class="w-full mb-6 p-3 border rounded-lg outline-none">
+        <button onclick="handleLogin()" class="w-full bg-[#8b5cf6] text-white font-bold py-3 rounded-lg">ĐĂNG NHẬP</button>
     </div>
 
-    <!-- TRANG 2: MENU CHỮ XANH TỐI GIẢN -->
+    <!-- MENU CHỮ XANH -->
     <div id="mainMenu" class="glass-card p-12 w-full max-w-lg hidden mt-10 text-center">
-        <h3 class="text-gray-300 text-[10px] font-bold uppercase tracking-[0.3em] mb-10">Lựa chọn chức năng</h3>
-        <div class="flex flex-col items-center space-y-10 italic">
-            <div onclick="showSection('adminPage')" class="link-style text-lg text-orange-500 hover:scale-105 transform transition">📝 QUẢN LÝ ĐỀ THI (ADMIN)</div>
-            <div onclick="showSection('selectExamPage')" class="link-style text-2xl hover:scale-105 transform transition">✍️ VÀO THI NGAY (AUTO XÁO)</div>
+        <div class="flex flex-col items-center space-y-8">
+            <div onclick="showSection('adminPage')" class="link-style text-lg text-orange-500 uppercase">📝 QUẢN LÝ ĐỀ THI</div>
+            <div onclick="showSection('selectExamPage')" class="link-style text-xl uppercase">✍️ VÀO THI NGAY</div>
         </div>
     </div>
 
-    <!-- TRANG 3: QUẢN LÝ ĐỀ (ADMIN) -->
+    <!-- QUẢN LÝ ĐỀ -->
     <div id="adminPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
-        <div onclick="showSection('mainMenu')" class="text-[11px] font-black text-gray-400 mb-6 cursor-pointer uppercase tracking-widest hover:text-purple-500">← Quay lại menu</div>
-        <h3 class="font-black mb-6 azota-purple italic underline uppercase text-xl">Soạn thảo đề thi</h3>
-        <input type="text" id="examTitle" placeholder="Tên bài thi (VD: Địa lý 8A7)" class="w-full mb-4 p-4 border rounded-2xl outline-none">
-        <textarea id="rawInput" class="w-full h-56 mb-4 p-4 border rounded-2xl font-mono text-sm outline-none focus:border-purple-400" placeholder="Câu 1: Thủ đô VN là gì?&#10;A. HCM&#10;B. Hà Nội @t&#10;C. Đà Nẵng"></textarea>
-        <button onclick="saveExam()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl mb-8 uppercase text-xs tracking-widest hover:bg-slate-700">LƯU ĐỀ & KÍCH HOẠT XÁO TRỘN</button>
-        
-        <div class="border-t pt-6">
-            <p class="text-[10px] font-bold text-gray-400 uppercase mb-4">Danh sách đề đã lưu:</p>
-            <div id="adminExamList" class="space-y-3"></div>
-        </div>
+        <div onclick="showSection('mainMenu')" class="text-[10px] text-gray-400 mb-6 cursor-pointer uppercase">← Quay lại</div>
+        <input type="text" id="examTitle" placeholder="Tên đề thi" class="w-full mb-4 p-3 border rounded-lg outline-none">
+        <textarea id="rawInput" class="w-full h-48 mb-4 p-3 border rounded-lg font-mono text-sm outline-none" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án 1&#10;B. Đáp án đúng @t"></textarea>
+        <button onclick="saveExam()" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg mb-8 uppercase text-xs">LƯU ĐỀ VÀO MÁY</button>
+        <div id="adminExamList" class="space-y-2"></div>
     </div>
 
-    <!-- TRANG 4: CHỌN ĐỀ THI -->
+    <!-- CHỌN ĐỀ -->
     <div id="selectExamPage" class="glass-card p-10 w-full max-w-lg hidden mt-4 text-center">
-        <div onclick="showSection('mainMenu')" class="text-[11px] font-black text-gray-400 mb-8 cursor-pointer uppercase tracking-widest">← Quay lại</div>
-        <h2 class="text-xl font-bold mb-8 uppercase italic border-b pb-4">Danh sách bài thi</h2>
+        <div onclick="showSection('mainMenu')" class="text-[10px] text-gray-400 mb-8 cursor-pointer uppercase">← Quay lại</div>
         <div id="userExamList" class="flex flex-col space-y-6"></div>
     </div>
 
-    <!-- TRANG 5: GIAO DIỆN LÀM BÀI (XÁO ĐỀ) -->
+    <!-- LÀM BÀI -->
     <div id="examView" class="w-full max-w-2xl hidden mt-4">
-        <div class="glass-card p-6 mb-4 flex justify-between items-center">
-            <span id="qIdx" class="font-black azota-purple text-sm tracking-widest uppercase">CÂU 1</span>
-            <div id="timer" class="text-xl font-mono font-bold text-red-500 bg-red-50 px-5 py-2 rounded-full border border-red-100">15:00</div>
+        <div class="glass-card p-4 mb-4 flex justify-between items-center px-8">
+            <span id="qIdx" class="font-bold azota-purple text-xs uppercase">CÂU 1</span>
+            <div id="timer" class="text-lg font-bold text-red-500">15:00</div>
         </div>
-        <div class="glass-card p-10">
-            <h3 id="qText" class="text-xl font-bold mb-10 leading-relaxed text-slate-700"></h3>
-            <div id="optionsArea" class="space-y-2"></div>
+        <div class="glass-card p-8">
+            <h3 id="qText" class="text-lg font-bold mb-6"></h3>
+            <div id="optionsArea"></div>
         </div>
     </div>
 
     <script>
-        // --- DỮ LIỆU ---
-        const ADMIN_PASS = "admin8a7";
-        let allExams = JSON.parse(localStorage.getItem('g_exams_v3')) || [];
+        let allExams = JSON.parse(localStorage.getItem('g_exams')) || [];
         let state = { user: '', shuffledQs: [], currentIdx: 0, corrects: 0 };
 
-        // --- HÀM THÔNG BÁO CHỮ TÍM ---
         function notify(msg) {
-            const toast = document.getElementById('customToast');
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            const t = document.getElementById('customToast');
+            t.innerText = msg; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
         }
 
-        // --- THUẬT TOÁN XÁO TRỘN (Fisher-Yates) ---
-        function shuffle(array) {
-            let currentIndex = array.length, randomIndex;
-            while (currentIndex != 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-            }
-            return array;
+        function shuffle(arr) {
+            return arr.sort(() => Math.random() - 0.5);
         }
 
-        // --- CHUYỂN TRANG ---
         function showSection(id) {
             document.querySelectorAll('body > div:not(#customToast)').forEach(div => div.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
@@ -121,124 +95,97 @@
             if(id === 'selectExamPage') renderUserExams();
         }
 
-        // --- ĐĂNG NHẬP ---
         function handleLogin() {
             const u = document.getElementById('username').value.trim();
-            const p = document.getElementById('password').value;
             if(!u) return notify("Vui lòng nhập tên!");
-            
             state.user = u;
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('navbar').classList.remove('hidden');
             showSection('mainMenu');
-            notify("Chào " + u + "! Hệ thống đã sẵn sàng.");
+            notify("Chào " + u);
         }
 
-        // --- QUẢN LÝ ĐỀ ---
         function saveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
-            if(!title || !text) return notify("⚠️ Vui lòng nhập đủ tên đề và nội dung!");
+            if(!title || !text) return notify("Chưa nhập đủ đề!");
 
-            try {
-                const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
-                const questions = blocks.map(b => {
-                    const lines = b.trim().split('\n');
-                    return {
-                        qText: lines[0].trim(),
-                        opts: lines.slice(1).map(l => ({
-                            text: l.replace('@t', '').trim().substring(2).trim(),
-                            isCorrect: l.includes('@t')
-                        }))
-                    };
-                });
-                
-                allExams.unshift({ id: Date.now(), title, questions });
-                localStorage.setItem('g_exams_v3', JSON.stringify(allExams));
-                notify("✅ Đã lưu đề thành công!");
-                renderAdmin();
-                document.getElementById('examTitle').value = "";
-                document.getElementById('rawInput').value = "";
-            } catch(e) { notify("❌ Lỗi định dạng đề!"); }
+            const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
+            const questions = blocks.map(b => {
+                const lines = b.trim().split('\n');
+                return {
+                    qText: lines[0].trim(),
+                    opts: lines.slice(1).map(l => ({
+                        text: l.replace('@t', '').trim().substring(2).trim(),
+                        isCorrect: l.includes('@t')
+                    }))
+                };
+            });
+            allExams.unshift({ id: Date.now(), title, questions });
+            localStorage.setItem('g_exams', JSON.stringify(allExams));
+            notify("Đã lưu đề thành công!");
+            renderAdmin();
         }
 
         function renderAdmin() {
             document.getElementById('adminExamList').innerHTML = allExams.map(ex => `
-                <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100 transition hover:bg-white">
-                    <span class="font-bold text-slate-600 text-sm">${ex.title}</span>
-                    <button onclick="deleteExam(${ex.id})" class="text-red-400 font-bold text-[10px] hover:underline uppercase">Xóa</button>
+                <div class="flex justify-between p-3 bg-gray-50 rounded-lg text-xs">
+                    <span>${ex.title}</span>
+                    <button onclick="deleteExam(${ex.id})" class="text-red-400">XÓA</button>
                 </div>
             `).join('');
         }
 
         function deleteExam(id) {
             allExams = allExams.filter(e => e.id !== id);
-            localStorage.setItem('g_exams_v3', JSON.stringify(allExams));
-            notify("Đã gỡ bỏ đề thi.");
+            localStorage.setItem('g_exams', JSON.stringify(allExams));
             renderAdmin();
+            notify("Đã xóa!");
         }
 
-        // --- LÀM BÀI (AUTO SHUFFLE) ---
         function renderUserExams() {
             document.getElementById('userExamList').innerHTML = allExams.map(ex => `
-                <div class="link-style text-lg uppercase tracking-tight" onclick="startExam(${ex.id})">${ex.title}</div>
-            `).join('') || '<p class="text-gray-300 italic">Chưa có đề thi nào được tạo</p>';
+                <div class="link-style text-lg uppercase" onclick="startExam(${ex.id})">${ex.title}</div>
+            `).join('') || 'Chưa có đề';
         }
 
         function startExam(id) {
             const exam = allExams.find(e => e.id === id);
-            state.currentIdx = 0; 
-            state.corrects = 0;
-            // BƯỚC 1: XÁO TRỘN CÂU HỎI
+            state.currentIdx = 0; state.corrects = 0;
             state.shuffledQs = shuffle([...exam.questions]); 
-            
             showSection('examView');
             loadQuestion();
-            notify("⚡ Đề thi đã được xáo trộn ngẫu nhiên!");
         }
 
         function loadQuestion() {
             const q = state.shuffledQs[state.currentIdx];
-            document.getElementById('qIdx').innerText = `CÂU ${state.currentIdx + 1} / ${state.shuffledQs.length}`;
+            document.getElementById('qIdx').innerText = `CÂU ${state.currentIdx + 1}`;
             document.getElementById('qText').innerText = q.qText;
             const area = document.getElementById('optionsArea');
             area.innerHTML = '';
             
-            // BƯỚC 2: XÁO TRỘN ĐÁP ÁN
-            const shuffledOptions = shuffle([...q.opts]);
-            
-            shuffledOptions.forEach(opt => {
+            shuffle([...q.opts]).forEach(opt => {
                 const b = document.createElement('div');
                 b.className = 'opt-btn';
                 b.innerText = opt.text;
                 b.onclick = function() {
                     if(area.style.pointerEvents === 'none') return;
-                    area.style.pointerEvents = 'none'; // Khóa tạm thời để tránh bấm nhanh
-
-                    if(opt.isCorrect) {
-                        this.style.borderColor = '#22c55e';
-                        this.style.background = '#f0fdf4';
-                        state.corrects++;
-                    } else {
-                        this.style.borderColor = '#ef4444';
-                        this.style.background = '#fef2f2';
-                    }
+                    area.style.pointerEvents = 'none';
+                    this.style.borderColor = opt.isCorrect ? '#22c55e' : '#ef4444';
+                    if(opt.isCorrect) state.corrects++;
                     
                     setTimeout(() => {
                         state.currentIdx++;
                         area.style.pointerEvents = 'auto';
                         if(state.currentIdx < state.shuffledQs.length) loadQuestion();
-                        else finish();
+                        else {
+                            notify("Điểm: " + ((state.corrects/state.shuffledQs.length)*10).toFixed(1));
+                            showSection('mainMenu');
+                        }
                     }, 500);
                 };
                 area.appendChild(b);
             });
-        }
-
-        function finish() {
-            const finalScore = ((state.corrects / state.shuffledQs.length) * 10).toFixed(1);
-            notify("HOÀN THÀNH! ĐIỂM CỦA BẠN: " + finalScore);
-            setTimeout(() => showSection('mainMenu'), 2000);
         }
     </script>
 </body>
