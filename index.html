@@ -3,105 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAYZOTA - 8A7 EDITION</title>
+    <title>GAYZOTA - 8A7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: sans-serif; background-color: #fcfcfc; color: #334155; overflow-x: hidden; }
+        body { font-family: sans-serif; background-color: #fcfcfc; }
         .glass-card { background: white; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         .azota-purple { color: #8b5cf6; }
-        .link-style { color: #8b5cf6; font-weight: bold; text-decoration: underline; cursor: pointer; transition: 0.2s; }
-        .link-style:hover { color: #6d28d9; opacity: 0.8; }
-        input, textarea { border-radius: 15px !important; border: 1.5px solid #e2e8f0 !important; padding: 12px 18px !important; outline: none; }
-        .opt-btn { border: 2px solid #f1f5f9; width: 100%; text-align: left; padding: 16px; border-radius: 18px; font-weight: 600; margin-bottom: 12px; cursor: pointer; }
         
-        /* DÒNG THÔNG BÁO THUẦN CHỮ */
-        #msgStatus { font-size: 13px; font-weight: bold; margin-top: 10px; min-height: 20px; transition: 0.3s; }
+        /* GIỮ NGUYÊN STYLE TRONG ẢNH CỦA ÔNG */
+        .link-style { font-weight: bold; text-decoration: underline; cursor: pointer; font-style: italic; text-transform: uppercase; }
+        
+        /* Dòng thông báo nhẹ nhàng, không dùng alert */
+        #statusMsg { font-weight: bold; font-size: 14px; min-height: 24px; transition: 0.3s; }
+
+        input, textarea { border-radius: 12px; border: 1px solid #e2e8f0; padding: 12px; outline: none; width: 100%; }
+        .opt-btn { border: 2px solid #f1f5f9; width: 100%; text-align: left; padding: 16px; border-radius: 18px; font-weight: 600; margin-bottom: 12px; cursor: pointer; font-style: italic; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <nav id="navbar" class="hidden w-full max-w-2xl flex justify-between items-center py-6 mb-4 border-b border-dashed border-gray-200">
-        <div class="font-black azota-purple italic uppercase text-xl">GAYZOTA</div>
-        <button onclick="location.reload()" class="text-[10px] font-black text-red-400 uppercase border border-red-100 px-2 py-1 rounded-lg">Thoát</button>
-    </nav>
-
-    <div id="loginPage" class="glass-card p-10 w-full max-w-sm mt-20 text-center">
-        <h2 class="text-3xl font-black mb-10 azota-purple uppercase italic underline decoration-wavy">GAYZOTA</h2>
-        <div class="space-y-4">
-            <input type="text" id="username" placeholder="Tên đăng nhập" class="w-full">
-            <input type="password" id="password" placeholder="Mật khẩu" class="w-full">
-            <button onclick="handleLogin()" class="w-full bg-[#8b5cf6] text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all mt-4">ĐĂNG NHẬP</button>
-        </div>
-    </div>
-
-    <div id="mainMenu" class="glass-card p-12 w-full max-w-lg hidden mt-10">
+    <!-- 1. MENU CHÍNH (Y HỆT ẢNH ÔNG GỬI) -->
+    <div id="mainMenu" class="glass-card p-12 w-full max-w-lg mt-20 text-center">
+        <p class="text-gray-300 text-[10px] font-bold uppercase tracking-[0.3em] mb-10">Lựa chọn chức năng</p>
         <div class="flex flex-col items-center space-y-8">
-            <div onclick="showSection('adminPage')" class="link-style text-lg text-orange-500 uppercase italic">📝 QUẢN LÝ ĐỀ THI (ADMIN)</div>
-            <div onclick="showSection('selectExamPage')" class="link-style text-xl uppercase italic">✍️ VÀO THI NGAY (AUTO XÁO)</div>
-            <div onclick="showSection('resultBoard')" class="link-style text-lg text-gray-500 uppercase">📊 Kết quả lớp 8A7</div>
+            <div onclick="showSection('adminPage')" class="link-style text-lg text-orange-500">
+                📝 QUẢN LÝ ĐỀ THI (ADMIN)
+            </div>
+            <div onclick="showSection('selectExamPage')" class="link-style text-xl text-[#8b5cf6]">
+                ✍️ VÀO THI NGAY (AUTO XÁO)
+            </div>
         </div>
     </div>
 
-    <div id="adminPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
-        <div onclick="showSection('mainMenu')" class="text-[10px] font-black text-gray-400 mb-8 cursor-pointer uppercase tracking-widest">← Quay lại</div>
-        <h3 class="font-black mb-6 azota-purple italic underline uppercase">Tạo đề thi mới</h3>
-        <input type="text" id="examTitle" placeholder="Tên đề thi" class="w-full mb-4">
-        <textarea id="rawInput" class="w-full h-64 mb-4 font-mono text-sm" placeholder="Câu 1: Câu hỏi...&#10;A. Đáp án 1&#10;B. Đáp án đúng @t"></textarea>
+    <!-- 2. TRANG ADMIN -->
+    <div id="adminPage" class="glass-card p-8 w-full max-w-2xl hidden mt-4 text-center">
+        <div onclick="showSection('mainMenu')" class="text-[10px] font-black text-gray-400 mb-6 cursor-pointer uppercase text-left">← Quay lại</div>
+        <h3 class="font-bold mb-6 text-gray-400 uppercase text-xs tracking-widest italic underline">Tạo đề thi mới</h3>
         
-        <button onclick="saveExam()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl uppercase text-xs">Lưu đề ngay</button>
+        <input type="text" id="examTitle" placeholder="Tên đề thi" class="mb-4">
+        <textarea id="rawInput" class="h-48 mb-4 font-mono text-sm" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án 1&#10;B. Đáp án đúng @t"></textarea>
         
-        <div id="msgStatus" class="text-center"></div>
+        <button onclick="saveExam()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl uppercase text-xs">LƯU ĐỀ VÀO MÁY</button>
+        
+        <!-- Chỗ hiện dòng chữ thông báo -->
+        <div id="statusMsg" class="mt-4"></div>
 
-        <div id="adminExamList" class="space-y-3 mt-8"></div>
+        <div id="adminExamList" class="mt-8 space-y-2 text-left"></div>
     </div>
 
+    <!-- 3. CHỌN ĐỀ THI -->
     <div id="selectExamPage" class="glass-card p-10 w-full max-w-lg hidden mt-4 text-center">
-        <div onclick="showSection('mainMenu')" class="text-[10px] font-black text-gray-400 mb-8 cursor-pointer uppercase tracking-widest">← Quay lại</div>
+        <div onclick="showSection('mainMenu')" class="text-[10px] font-black text-gray-400 mb-8 cursor-pointer uppercase text-left">← Quay lại</div>
         <div id="userExamList" class="flex flex-col space-y-6"></div>
     </div>
 
+    <!-- 4. GIAO DIỆN LÀM BÀI -->
     <div id="examView" class="w-full max-w-2xl hidden mt-4">
-        <div class="glass-card p-8 mb-4 flex justify-between items-center">
-            <span id="qIdx" class="font-black text-purple-600 uppercase text-xs tracking-widest">Câu 1/10</span>
-            <div id="timer" class="text-xl font-mono font-bold text-red-500 bg-red-50 px-4 py-1 rounded-full">15:00</div>
+        <div class="glass-card p-6 mb-4">
+            <h3 id="qText" class="text-lg font-bold italic"></h3>
         </div>
-        <div class="glass-card p-8">
-            <h3 id="qText" class="text-xl font-bold mb-8 leading-relaxed"></h3>
-            <div id="optionsArea"></div>
-        </div>
-    </div>
-
-    <div id="resultView" class="glass-card p-12 w-full max-w-sm hidden mt-20 text-center">
-        <div id="finalScore" class="text-7xl font-black azota-purple mb-6">0.0</div>
-        <div onclick="showSection('mainMenu')" class="link-style uppercase">Xong</div>
-    </div>
-
-    <div id="resultBoard" class="glass-card p-8 w-full max-w-2xl hidden mt-4">
-        <div onclick="showSection('mainMenu')" class="text-[10px] font-black text-gray-400 mb-8 cursor-pointer uppercase tracking-widest">← Quay lại</div>
-        <table class="w-full text-left text-sm"><tbody id="resultTableBody"></tbody></table>
+        <div id="optionsArea"></div>
     </div>
 
     <script>
-        const USERS = { 'mrduc': 'admin8a7' };
         let allExams = JSON.parse(localStorage.getItem('g_exams')) || [];
-        let history = JSON.parse(localStorage.getItem('g_history')) || [];
-        let state = { user: '', currentExam: null, shuffledQs: [], currentIdx: 0, corrects: 0 };
+        let state = { shuffledQs: [], currentIdx: 0 };
 
-        // HÀM HIỆN DÒNG CHỮ THÔNG BÁO THUẦN TÚY
-        function setStatus(text, colorClass = "text-green-500") {
-            const el = document.getElementById('msgStatus');
-            el.innerText = text;
-            el.className = `text-center font-bold mt-4 ${colorClass}`;
-            setTimeout(() => { el.innerText = ""; }, 2000);
-        }
-
-        function shuffle(arr) {
-            let a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
+        // Chỉ hiện dòng chữ, không hiện Alert
+        function showStatus(txt, isError = false) {
+            const el = document.getElementById('statusMsg');
+            el.innerText = txt;
+            el.style.color = isError ? "#ef4444" : "#22c55e";
+            setTimeout(() => { el.innerText = ""; }, 2500);
         }
 
         function showSection(id) {
@@ -109,24 +82,12 @@
             document.getElementById(id).classList.remove('hidden');
             if(id === 'adminPage') renderAdmin();
             if(id === 'selectExamPage') renderUserExams();
-            if(id === 'resultBoard') renderHistory();
-        }
-
-        function handleLogin() {
-            const u = document.getElementById('username').value.trim().toLowerCase();
-            const p = document.getElementById('password').value;
-            if(USERS[u] === p) {
-                state.user = u;
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('navbar').classList.remove('hidden');
-                showSection('mainMenu');
-            }
         }
 
         function saveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
-            if(!title || !text) return setStatus("Thiếu thông tin!", "text-red-500");
+            if(!title || !text) return showStatus("Vui lòng nhập đủ đề!", true);
 
             const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
             const questions = blocks.map(b => {
@@ -142,15 +103,16 @@
 
             allExams.unshift({ id: Date.now(), title, questions });
             localStorage.setItem('g_exams', JSON.stringify(allExams));
-            setStatus("Đã tạo đề xong!"); // HIỆN CHỮ XANH LÁ
+            
+            showStatus("Đã tạo đề xong!"); // Dòng chữ xanh lá
             renderAdmin();
         }
 
         function renderAdmin() {
             document.getElementById('adminExamList').innerHTML = allExams.map(ex => `
-                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-2xl text-sm">
-                    <span class="font-bold text-gray-600 italic uppercase">${ex.title}</span>
-                    <button onclick="deleteExam(${ex.id})" class="text-red-400 font-black text-[10px]">XÓA</button>
+                <div class="flex justify-between p-3 bg-gray-50 rounded-lg text-xs italic">
+                    <span class="font-bold">${ex.title}</span>
+                    <button onclick="deleteExam(${ex.id})" class="text-red-400 font-bold">XÓA</button>
                 </div>
             `).join('');
         }
@@ -158,69 +120,44 @@
         function deleteExam(id) {
             allExams = allExams.filter(e => e.id !== id);
             localStorage.setItem('g_exams', JSON.stringify(allExams));
-            setStatus("Đã xóa xong!", "text-red-500");
             renderAdmin();
+            showStatus("Đã xóa đề!", true);
         }
 
         function renderUserExams() {
             document.getElementById('userExamList').innerHTML = allExams.map(ex => `
-                <div class="link-style text-lg uppercase italic" onclick="startExam(${ex.id})">${ex.title}</div>
+                <div class="link-style text-lg text-[#8b5cf6]" onclick="startExam(${ex.id})">${ex.title}</div>
             `).join('') || 'Chưa có đề';
         }
 
         function startExam(id) {
             const exam = allExams.find(e => e.id === id);
-            state.currentExam = exam;
             state.currentIdx = 0;
-            state.corrects = 0;
-            state.shuffledQs = shuffle(exam.questions);
+            state.shuffledQs = [...exam.questions].sort(() => Math.random() - 0.5);
             showSection('examView');
             loadQuestion();
         }
 
         function loadQuestion() {
             const q = state.shuffledQs[state.currentIdx];
-            document.getElementById('qIdx').innerText = `Câu ${state.currentIdx + 1} / ${state.shuffledQs.length}`;
             document.getElementById('qText').innerText = q.qText;
             const area = document.getElementById('optionsArea');
             area.innerHTML = '';
             
-            shuffle(q.opts).forEach(opt => {
+            q.opts.sort(() => Math.random() - 0.5).forEach(opt => {
                 const b = document.createElement('div');
-                b.className = 'opt-btn italic';
+                b.className = 'opt-btn italic bg-white';
                 b.innerText = opt.text;
                 b.onclick = function() {
-                    if(this.parentElement.style.pointerEvents === 'none') return;
-                    this.parentElement.style.pointerEvents = 'none';
-                    if(opt.isCorrect) { this.style.borderColor = '#22c55e'; state.corrects++; }
-                    else { this.style.borderColor = '#ef4444'; }
-                    
+                    this.style.borderColor = opt.isCorrect ? '#22c55e' : '#ef4444';
                     setTimeout(() => {
                         state.currentIdx++;
-                        area.style.pointerEvents = 'auto';
                         if(state.currentIdx < state.shuffledQs.length) loadQuestion();
-                        else finishExam();
-                    }, 400);
+                        else showSection('mainMenu');
+                    }, 500);
                 };
                 area.appendChild(b);
             });
-        }
-
-        function finishExam() {
-            const score = ((state.corrects / state.shuffledQs.length) * 10).toFixed(1);
-            history.unshift({ name: state.user, title: state.currentExam.title, score, time: new Date().toLocaleTimeString() });
-            localStorage.setItem('g_history', JSON.stringify(history));
-            document.getElementById('finalScore').innerText = score;
-            showSection('resultView');
-        }
-
-        function renderHistory() {
-            document.getElementById('resultTableBody').innerHTML = history.map(h => `
-                <tr class="border-b border-gray-50">
-                    <td class="py-4 font-bold text-gray-700 uppercase text-[10px]">${h.name}</td>
-                    <td class="py-4 text-center font-black text-purple-600">${h.score}đ</td>
-                </tr>
-            `).join('') || 'Chưa có ai thi';
         }
     </script>
 </body>
