@@ -367,9 +367,9 @@
             document.getElementById('statCorrect').innerText = `Đúng: ${corrects}/${totalQ} câu`;
             
             const roast = document.getElementById('roastMessage');
-            if (score === 10) roast.innerText = "CHÙA ĐÂU MÀ SIÊU THẾ? 👺";
-            else if (score >= 5) roast.innerText = "Tạm ổn, nhưng chưa đỉnh đâu! 😁";
-            else roast.innerText = "ĂN CHI NGU RỨA? 🤓👻";
+            if (score === 10) roast.innerText = "CHEATER😡";
+            else if (score >= 5) roast.innerText = "CHƯA TÀI ĐÂU😛";
+            else roast.innerText = "ĂN CHI NGU RỨA🤓";
 
             history.unshift({ name: state.user, exam: state.exam.title, score, date: `${now.getDate()}/${now.getMonth()+1}`, timestamp: now.getTime() });
             localStorage.setItem('myHistory', JSON.stringify(history));
