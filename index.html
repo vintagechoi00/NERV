@@ -23,6 +23,7 @@
         .btn-gradient { background: var(--gradient-primary); color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3); }
         .btn-gradient:hover { opacity: 0.9; transform: translateY(-1px); }
 
+        /* --- SỬA VIỀN CHỌN ĐÁP ÁN THEO ẢNH KHOANH TRÒN --- */
         .opt-btn {
             width: 100%; text-align: left; padding: 12px 20px; border: 2px solid #e2e8f0;
             border-radius: 12px; font-weight: 600; transition: all 0.2s ease;
@@ -62,54 +63,38 @@
         .question-block { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px dashed #e2e8f0; }
         .question-block:last-child { border-bottom: none; }
 
-        #confirmModal, #createConfirmModal, #editModal { transition: opacity 0.3s ease; }
+        /* FIX MODAL TÀNG HÌNH */
+        #confirmModal, #createConfirmModal { transition: opacity 0.3s ease; }
         .opacity-100 { opacity: 1 !important; }
     </style>
 </head>
 <body class="min-h-screen pb-10">
 
-    <!-- MODAL CHỈNH SỬA / KHUNG HÌNH GIỮA MÀN HÌNH (MỚI THÊM) -->
-    <div id="editModal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 hidden opacity-0">
-        <div class="glass-card p-8 max-w-2xl w-full mx-4 shadow-2xl border-t-4 border-violet-500">
-            <h3 class="text-2xl font-black text-slate-800 mb-6 uppercase tracking-tight">Chỉnh sửa nội dung</h3>
-            <div class="space-y-4">
-                <input type="text" id="editTitle" placeholder="Tên đề thi" class="w-full p-4 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-violet-300">
-                <textarea id="editRawInput" class="w-full h-64 p-5 rounded-xl border border-gray-200 font-mono text-sm outline-none focus:ring-2 focus:ring-violet-300" placeholder="Nội dung câu hỏi..."></textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-4 mt-8">
-                <button onclick="closeModal('editModal')" class="py-4 rounded-2xl bg-slate-100 font-bold text-slate-500 hover:bg-slate-200 transition-all uppercase">Hủy bỏ</button>
-                <button id="saveEditBtn" class="py-4 rounded-2xl btn-gradient font-bold text-white uppercase shadow-lg">Tiếp tục</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CÁC MODAL CŨ GIỮ NGUYÊN -->
-    <div id="confirmModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 hidden opacity-0">
-        <div class="glass-card p-8 max-w-sm w-full mx-4 border-2 border-yellow-400 bg-yellow-50 shadow-2xl">
+    <!-- MODAL XÁC NHẬN XÓA -->
+    <div id="confirmModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 hidden opacity-0 p-4">
+        <div class="glass-card p-8 max-w-sm w-full bg-white shadow-2xl scale-95 transition-transform duration-300">
             <div class="text-center">
-                <div class="w-16 h-16 bg-yellow-400 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-bounce">⚠️</div>
-                <h3 class="text-xl font-black text-yellow-800 mb-2 uppercase">Xác nhận xóa đề</h3>
-                <div class="bg-white/50 rounded-xl p-4 mb-6 text-left border border-yellow-200">
-                    <div id="confirmTimeInfo" class="text-sm font-bold text-slate-700 space-y-1"></div>
-                    <hr class="my-2 border-yellow-200">
-                    <p class="text-sm font-extrabold text-red-600">Đề: <span id="confirmExamTitle"></span></p>
-                </div>
+                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 italic font-black">!</div>
+                <h3 class="text-xl font-black text-slate-800 mb-2 uppercase">Xóa đề thi?</h3>
+                <p class="text-sm text-slate-500 mb-6">Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa <span id="confirmExamTitle" class="font-bold text-red-500"></span>?</p>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="closeModal('confirmModal')" class="py-3 rounded-xl bg-slate-200 font-bold text-slate-600 hover:bg-slate-300">HỦY</button>
-                    <button id="confirmDeleteBtn" class="py-3 rounded-xl bg-red-500 font-bold text-white hover:bg-red-600">XÓA LUÔN</button>
+                    <button onclick="closeModal('confirmModal')" class="py-3 rounded-xl bg-slate-100 font-bold text-slate-600 hover:bg-slate-200 transition-colors">HỦY BỎ</button>
+                    <button id="confirmDeleteBtn" class="py-3 rounded-xl bg-red-500 font-bold text-white hover:bg-red-600 transition-colors shadow-lg shadow-red-200">XÓA LUÔN</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="createConfirmModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 hidden opacity-0">
-        <div class="glass-card p-8 max-w-sm w-full mx-4 border-2 border-blue-400 bg-blue-50 shadow-2xl">
+    <!-- MODAL XÁC NHẬN TẠO -->
+    <div id="createConfirmModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 hidden opacity-0 p-4">
+        <div class="glass-card p-8 max-w-sm w-full bg-white shadow-2xl scale-95 transition-transform duration-300">
             <div class="text-center">
-                <div class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-pulse">🚀</div>
-                <h3 class="text-xl font-black text-blue-800 mb-4">MÀY CÓ CHẮC MUỐN TẠO ĐỀ NÀY KHÔNG?</h3>
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">✨</div>
+                <h3 class="text-xl font-black text-slate-800 mb-2 uppercase">Lưu đề thi?</h3>
+                <p class="text-sm text-slate-500 mb-6">Đề thi sẽ được tải lên hệ thống và mọi người có thể vào thi ngay.</p>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="closeModal('createConfirmModal')" class="py-3 rounded-xl bg-slate-200 font-bold text-slate-600 hover:bg-slate-300">SUY NGHĨ LẠI</button>
-                    <button id="confirmCreateBtn" class="py-3 rounded-xl bg-blue-600 font-bold text-white hover:bg-blue-700">TẠO LUÔN</button>
+                    <button onclick="closeModal('createConfirmModal')" class="py-3 rounded-xl bg-slate-100 font-bold text-slate-600 hover:bg-slate-200 transition-colors">HỦY BỎ</button>
+                    <button id="confirmCreateBtn" class="py-3 rounded-xl btn-gradient font-bold text-white transition-colors">TIẾP TỤC</button>
                 </div>
             </div>
         </div>
@@ -279,11 +264,17 @@
         function openModal(id) {
             const m = document.getElementById(id);
             m.classList.remove('hidden');
-            setTimeout(() => m.classList.add('opacity-100'), 10);
+            setTimeout(() => {
+                m.classList.add('opacity-100');
+                m.querySelector('.glass-card').classList.remove('scale-95');
+                m.querySelector('.glass-card').classList.add('scale-100');
+            }, 10);
         }
+        
         function closeModal(id) {
             const m = document.getElementById(id);
             m.classList.remove('opacity-100');
+            m.querySelector('.glass-card').classList.add('scale-95');
             setTimeout(() => m.classList.add('hidden'), 300);
         }
 
@@ -312,12 +303,6 @@
         }
 
         function confirmDelete(id, title) {
-            const now = new Date();
-            document.getElementById('confirmTimeInfo').innerHTML = `
-                <div class="grid grid-cols-2 gap-y-1">
-                    <span class="text-slate-400">Thời gian:</span><span class="text-right">${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}</span>
-                    <span class="text-slate-400">Ngày:</span><span class="text-right">${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}</span>
-                </div>`;
             document.getElementById('confirmExamTitle').innerText = title;
             openModal('confirmModal');
             document.getElementById('confirmDeleteBtn').onclick = async () => {
@@ -334,38 +319,15 @@
                 </div>`).join('');
         }
 
-        // --- CẬP NHẬT HÀM EDIT ĐỂ MỞ MODAL MỚI ---
         function editExam(id) {
             const ex = exams.find(e => e.id === id);
             if(!ex) return;
-            
-            // Đưa dữ liệu vào Modal mới
-            document.getElementById('editTitle').value = ex.title;
+            document.getElementById('examTitle').value = ex.title;
             let raw = ex.questions.map((q, i) => {
                 let opts = q.opts.map((o, j) => `${String.fromCharCode(65+j)}. ${o.t}${o.c ? ' @t' : ''}`).join('\n');
                 return `Câu ${i+1}: ${q.q}\n${opts}`;
             }).join('\n\n');
-            document.getElementById('editRawInput').value = raw;
-
-            // Mở Modal
-            openModal('editModal');
-
-            // Xử lý khi bấm Tiếp tục trong Modal
-            document.getElementById('saveEditBtn').onclick = async () => {
-                const newTitle = document.getElementById('editTitle').value;
-                const newText = document.getElementById('editRawInput').value;
-                
-                const blocks = newText.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
-                const questions = blocks.map(b => {
-                    const lines = b.trim().split('\n');
-                    return { q: lines[0].trim(), opts: lines.slice(1).map(l => ({ t: l.replace('@t','').substring(2).trim(), c: l.includes('@t') })) };
-                });
-
-                await _supabase.from('exams').update({ title: newTitle, questions }).eq('id', id);
-                await syncDB(); 
-                renderAdminExams(); 
-                closeModal('editModal');
-            };
+            document.getElementById('rawInput').value = raw;
         }
 
         function renderUserExams() {
