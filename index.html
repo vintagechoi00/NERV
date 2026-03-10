@@ -60,22 +60,21 @@
         </div>
         <div class="flex items-center gap-4">
             <span id="userDisplay" class="hidden md:block text-sm font-bold text-white bg-white/20 px-4 py-2 rounded-full"></span>
-            <button onclick="location.reload()" class="text-white/80 hover:text-white p-2">Đăng xuất</button>
+            <button onclick="location.reload()" class="text-white/80 hover:text-white p-2">Thoát</button>
         </div>
     </nav>
 
     <div class="max-w-7xl mx-auto p-4 md:p-6">
-        <!-- LOGIN -->
+        <!-- FAST LOGIN (NAME & CLASS) -->
         <div id="loginPage" class="mt-24 max-w-md mx-auto glass-card p-10">
             <div class="text-center mb-10">
                 <h1 class="text-4xl font-black tracking-tighter uppercase italic text-gradient">GAYZOTA <span class="text-gray-300 font-light">v3.0</span></h1>
-                <p class="text-gray-500 text-sm mt-3 font-semibold">Hệ thống thi nội bộ lớp 8A7</p>
+                <p class="text-gray-500 text-sm mt-3 font-semibold">Nhập thông tin để vào thi</p>
             </div>
             <div class="space-y-5">
-                <input type="text" id="username" placeholder="Tên đăng nhập" class="w-full p-4 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-violet-300">
-                <input type="password" id="password" placeholder="Mật khẩu" class="w-full p-4 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-violet-300">
-                <button onclick="handleLogin()" class="w-full btn-gradient text-white font-bold py-4 rounded-2xl text-lg mt-2">ĐĂNG NHẬP</button>
-                <div id="loginError" class="text-red-500 text-xs font-bold text-center hidden">Sai tài khoản hoặc mật khẩu!</div>
+                <input type="text" id="username" placeholder="Họ và tên" class="w-full p-4 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-violet-300">
+                <input type="text" id="userClass" placeholder="Lớp (VD: 8A7)" class="w-full p-4 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-violet-300">
+                <button onclick="handleFastLogin()" class="w-full btn-gradient text-white font-bold py-4 rounded-2xl text-lg mt-2">VÀO MENU</button>
             </div>
         </div>
 
@@ -160,7 +159,10 @@
             <div class="space-y-5">
                 <input type="text" id="examTitle" placeholder="Tên đề thi" class="w-full p-4 rounded-xl border">
                 <textarea id="rawInput" class="w-full h-80 p-5 rounded-xl border font-mono text-sm" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án 1 @t&#10;B. Đáp án 2"></textarea>
-                <button onclick="handleSaveExam()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-xl">LƯU LÊN MÂY</button>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="handleSaveExam()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-xl">LƯU LÊN MÂY</button>
+                    <button onclick="confirmReset()" class="w-full bg-red-100 text-red-600 font-bold py-4 rounded-xl">XÓA TRẮNG NHẬP LIỆU</button>
+                </div>
             </div>
             <div id="adminExamListContent" class="mt-12 space-y-4"></div>
         </div>
@@ -173,7 +175,7 @@
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-gray-400 text-xs uppercase border-b pb-4">
-                            <th>Hạng</th><th>Thành viên</th><th class="text-center">Điểm</th><th class="text-right">Thời gian</th>
+                            <th>Hạng</th><th>Thành viên</th><th class="text-center">Điểm</th><th class="text-right">Ngày thi</th>
                         </tr>
                     </thead>
                     <tbody id="resultTableBody"></tbody>
@@ -187,26 +189,35 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93ZnVkbHFvbGliZ2lwc2J0ZWptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTU2NzMsImV4cCI6MjA4ODYzMTY3M30.3gBJy-umboXye70MKe7rqTOtseW0Ay1kBfBI_FPrZoE';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const USERS = { 'mrduc': 'admin8a7', 'hoanggay': 'missgay', 'hocsinh': '123456' };
-        let exams = [], state = { user: '', exam: null, timer: null, time: 900, userAnswers: [] };
+        // Đã sửa tên Admin theo yêu cầu
+        const ADMIN_NAMES = ['mrduc', 'hoanggay', 'kimngocngu'];
+        let exams = [], state = { user: '', userClass: '', exam: null, timer: null, time: 900, userAnswers: [], startTime: null };
 
         async function syncDB() {
             const { data: ex } = await _supabase.from('exams').select('*').order('id', { ascending: false });
             if(ex) exams = ex;
         }
 
-        async function handleLogin() {
-            const u = document.getElementById('username').value.trim().toLowerCase();
-            const p = document.getElementById('password').value;
-            if(USERS[u] === p) {
-                state.user = u;
-                document.getElementById('userDisplay').innerText = `Chào, ${u.toUpperCase()}`;
-                document.getElementById('welcomeUser').innerText = u.toUpperCase();
-                document.getElementById('navbar').classList.remove('hidden');
-                if(u === 'mrduc' || u === 'hoanggay') document.getElementById('adminBtn').classList.remove('hidden');
-                await syncDB();
-                showSection('mainMenu');
-            } else document.getElementById('loginError').classList.remove('hidden');
+        async function handleFastLogin() {
+            const name = document.getElementById('username').value.trim();
+            const uClass = document.getElementById('userClass').value.trim();
+            
+            if(!name || !uClass) return alert("Nhập tên và lớp đi bạn ơi!");
+
+            state.user = name;
+            state.userClass = uClass;
+
+            document.getElementById('userDisplay').innerText = `${name.toUpperCase()} - ${uClass}`;
+            document.getElementById('welcomeUser').innerText = name.toUpperCase();
+            document.getElementById('navbar').classList.remove('hidden');
+
+            // Hiển thị nút admin nếu tên nằm trong danh sách admin
+            if(ADMIN_NAMES.includes(name.toLowerCase())) {
+                document.getElementById('adminBtn').classList.remove('hidden');
+            }
+
+            await syncDB();
+            showSection('mainMenu');
         }
 
         function showSection(id) {
@@ -219,10 +230,17 @@
         }
 
         async function deleteExam(id, title) {
-            if (confirm(`Mày có chắc chắn muốn XÓA đề: "${title}" không?`)) {
+            if (confirm(`Bạn có chắc chắn muốn XÓA đề: "${title}" không?`)) {
                 await _supabase.from('exams').delete().eq('id', id);
                 await syncDB();
                 renderAdminExams();
+            }
+        }
+
+        function confirmReset() {
+            if(confirm("Bạn có chắc chắn muốn xóa trắng nội dung đang nhập không?")) {
+                document.getElementById('examTitle').value = '';
+                document.getElementById('rawInput').value = '';
             }
         }
 
@@ -231,7 +249,7 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return alert("Nhập đủ thông tin đề!");
 
-            if (confirm("Xác nhận TẠO đề thi này?")) {
+            if (confirm("Bạn có chắc chắn muốn TẠO đề thi này không?")) {
                 const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
                 const questions = blocks.map(b => {
                     const lines = b.trim().split('\n');
@@ -242,7 +260,7 @@
                 document.getElementById('rawInput').value = '';
                 await syncDB(); 
                 renderAdminExams();
-                alert("Đã lưu!");
+                alert("Đã lưu thành công!");
             }
         }
 
@@ -276,6 +294,7 @@
         function startExam(id) {
             state.exam = exams.find(e => e.id === id);
             state.time = 900; 
+            state.startTime = new Date();
             state.userAnswers = new Array(state.exam.questions.length).fill(null);
             showSection('examPage');
             renderAllQuestions();
@@ -335,6 +354,12 @@
             const corrects = state.userAnswers.filter(a => a?.isRight).length;
             const score = Math.round((corrects / totalQ) * 10 * 10) / 10;
             const now = new Date();
+            
+            // Tính thời gian làm bài thực tế
+            const timeUsed = Math.floor((now.getTime() - state.startTime.getTime()) / 1000);
+            const mUsed = Math.floor(timeUsed/60), sUsed = timeUsed%60;
+            const timeStr = `${mUsed}phút ${sUsed}giây`;
+
             showSection('resultPage');
             document.getElementById('finalScore').innerText = score;
             document.getElementById('statCorrect').innerText = `Đúng: ${corrects}/${totalQ} câu`;
@@ -342,7 +367,16 @@
             if (score === 10) roast.innerText = "CHEATER😡";
             else if (score >= 5) roast.innerText = "CHƯA TÀI ĐÂU😛";
             else roast.innerText = "ĂN CHI NGU RỨA🤓";
-            await _supabase.from('history').insert([{ name: state.user, exam: state.exam.title, score, date: `${now.getDate()}/${now.getMonth()+1}`, timestamp: now.getTime() }]);
+
+            // Lưu lịch sử chi tiết hơn
+            await _supabase.from('history').insert([{ 
+                name: `${state.user} (${state.userClass})`, 
+                exam: state.exam.title, 
+                score, 
+                date: `Thứ ${now.getDay()+1}, ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`,
+                timestamp: now.getTime(),
+                extra_info: `Bắt đầu: ${state.startTime.getHours()}:${state.startTime.getMinutes()} | Dùng: ${timeStr}`
+            }]);
         }
 
         function showReview() {
@@ -359,11 +393,14 @@
             const { data } = await _supabase.from('history').select('*').order('score', { ascending: false });
             if(!data) return;
             document.getElementById('resultTableBody').innerHTML = data.map((h, i) => `
-                <tr class="border-b h-16">
+                <tr class="border-b h-20 hover:bg-gray-50 cursor-pointer" onclick="alert('Chi tiết: \\n- Điểm: ${h.score}\\n- Thời gian làm: ${h.extra_info}\\n- Ngày: ${h.date}')">
                     <td class="font-black text-xl pl-2 ${i<3?'text-gradient':''}">${i+1}</td>
-                    <td class="font-bold uppercase text-sm">${h.name} <br> <span class="text-[10px] text-gray-400">${h.exam}</span></td>
+                    <td class="font-bold uppercase text-sm">
+                        ${h.name} <br> 
+                        <span class="text-[10px] text-gray-400">${h.exam}</span>
+                    </td>
                     <td class="text-center font-black text-2xl text-gradient">${h.score}</td>
-                    <td class="text-right text-xs pr-2">${h.date}</td>
+                    <td class="text-right text-[10px] text-gray-500 pr-2">${h.date}</td>
                 </tr>`).join('');
         }
     </script>
