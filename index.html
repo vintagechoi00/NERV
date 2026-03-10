@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GAYZOTA PREMIUM - 8A7 EDITION</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Thêm thư viện Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -56,9 +55,36 @@
         html { scroll-behavior: smooth; }
         .question-block { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px dashed #e2e8f0; }
         .question-block:last-child { border-bottom: none; }
+
+        /* Style cho cái bảng xác nhận xóa */
+        #confirmModal { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="min-h-screen pb-10">
+
+    <!-- MODAL XÁC NHẬN XÓA (BẢNG VÀNG) -->
+    <div id="confirmModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 hidden opacity-0">
+        <div class="glass-card p-8 max-w-sm w-full mx-4 border-2 border-yellow-400 bg-yellow-50 shadow-2xl">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-yellow-400 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-bounce">⚠️</div>
+                <h3 class="text-xl font-black text-yellow-800 mb-2">XÁC NHẬN XÓA ĐỀ</h3>
+                
+                <div class="bg-white/50 rounded-xl p-4 mb-6 text-left border border-yellow-200">
+                    <p class="text-xs font-bold text-yellow-600 uppercase mb-2">Thông tin hệ thống:</p>
+                    <div id="confirmTimeInfo" class="text-sm font-bold text-slate-700 space-y-1"></div>
+                    <hr class="my-2 border-yellow-200">
+                    <p class="text-sm font-extrabold text-red-600">Đề: <span id="confirmExamTitle"></span></p>
+                </div>
+
+                <p class="font-bold text-slate-600 mb-6">Mày có chắc chắn muốn xóa đề này không? Hành động này không thể hoàn tác!</p>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="closeDeleteModal()" class="py-3 rounded-xl bg-slate-200 font-bold text-slate-600 hover:bg-slate-300 transition-all">HỦY</button>
+                    <button id="confirmDeleteBtn" class="py-3 rounded-xl bg-red-500 font-bold text-white shadow-lg shadow-red-200 hover:bg-red-600 transition-all">XÓA LUÔN</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <nav id="navbar" class="hidden sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-lg" style="background: var(--gradient-primary);">
         <div class="flex items-center gap-3">
@@ -167,13 +193,9 @@
             <button onclick="showSection('mainMenu')" class="text-gray-500 font-semibold mb-6">← Quay lại Menu</button>
             <h2 class="text-3xl font-black mb-8 text-slate-800">QUẢN LÝ ĐỀ THI</h2>
             <div class="space-y-5">
-                <input type="hidden" id="editingId">
                 <input type="text" id="examTitle" placeholder="Tên đề thi" class="w-full p-4 rounded-xl border">
                 <textarea id="rawInput" class="w-full h-80 p-5 rounded-xl border font-mono text-sm" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án 1 @t&#10;B. Đáp án 2"></textarea>
-                <div class="flex items-center gap-4">
-                    <button onclick="saveExamAction()" class="flex-1 bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg">LƯU LÊN MÂY</button>
-                    <span id="saveStatus" class="hidden text-green-600 font-bold italic animate-pulse">Đã lưu xong! ✓</span>
-                </div>
+                <button onclick="saveExamAction()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-xl">LƯU LÊN MÂY</button>
             </div>
             <div id="adminExamListContent" class="mt-12 space-y-4"></div>
         </div>
@@ -206,7 +228,7 @@
         async function syncDB() {
             const { data: ex } = await _supabase.from('exams').select('*').order('id', { ascending: false });
             if(ex) exams = ex;
-            const { data: hi } = await _supabase.from('history').select('*').order('score', { ascending: false });
+            const { data: hi } = await _supabase.from('history').select('*').order('score', { ascending: false }, { timestamp: false });
             if(hi) history = hi;
         }
 
@@ -235,7 +257,6 @@
 
         // --- ADMIN LOGIC ---
         async function saveExamAction() {
-            const id = document.getElementById('editingId').value;
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return;
@@ -244,50 +265,54 @@
                 const lines = b.trim().split('\n');
                 return { q: lines[0].trim(), opts: lines.slice(1).map(l => ({ t: l.replace('@t','').substring(2).trim(), c: l.includes('@t') })) };
             });
-
-            if(id) {
-                await _supabase.from('exams').update({ title, questions }).eq('id', id);
-            } else {
-                await _supabase.from('exams').insert([{ title, questions }]);
-            }
-            
-            // Hiện trạng thái đã lưu
-            const status = document.getElementById('saveStatus');
-            status.classList.remove('hidden');
-            setTimeout(() => status.classList.add('hidden'), 2500);
-
-            document.getElementById('examTitle').value = ''; 
-            document.getElementById('rawInput').value = '';
-            document.getElementById('editingId').value = '';
+            await _supabase.from('exams').insert([{ title, questions }]);
+            alert("Đã lưu đề thi lên mây!");
+            document.getElementById('examTitle').value = ''; document.getElementById('rawInput').value = '';
             await syncDB(); renderAdminExams();
         }
 
         function renderAdminExams() {
             document.getElementById('adminExamListContent').innerHTML = exams.map(ex => `
-                <div class="flex justify-between items-center p-4 bg-white border rounded-xl hover:border-violet-400 transition-all cursor-pointer">
-                    <span class="font-bold flex-1" onclick="editExam(${ex.id})">${ex.title}</span>
-                    <button onclick="deleteExam(${ex.id})" class="text-red-500 font-bold ml-4 p-2 hover:bg-red-50 rounded-lg">XÓA</button>
+                <div class="flex justify-between items-center p-4 bg-white border rounded-xl">
+                    <span class="font-bold">${ex.title}</span>
+                    <button onclick="confirmDelete(${ex.id}, '${ex.title}')" class="text-red-500 font-bold">XÓA</button>
                 </div>
             `).join('');
         }
 
-        function editExam(id) {
-            const ex = exams.find(e => e.id === id);
-            document.getElementById('editingId').value = ex.id;
-            document.getElementById('examTitle').value = ex.title;
-            let rawText = ex.questions.map((q, i) => {
-                let opts = q.opts.map((o, j) => `${String.fromCharCode(65+j)}. ${o.t} ${o.c ? '@t' : ''}`).join('\n');
-                return `Câu ${i+1}: ${q.q}\n${opts}`;
-            }).join('\n\n');
-            document.getElementById('rawInput').value = rawText;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // --- HÀM XỬ LÝ XÓA MỚI (KHÔNG DÙNG HỘP TB) ---
+        function confirmDelete(id, title) {
+            const modal = document.getElementById('confirmModal');
+            const timeInfo = document.getElementById('confirmTimeInfo');
+            const examTitleDisplay = document.getElementById('confirmExamTitle');
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+            // Lấy thời gian hiện tại
+            const now = new Date();
+            const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+            const timeStr = `🕒 Giờ: ${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}<br>
+                             📅 ${days[now.getDay()]}, Ngày ${now.getDate()} Tháng ${now.getMonth()+1} Năm ${now.getFullYear()}`;
+            
+            timeInfo.innerHTML = timeStr;
+            examTitleDisplay.innerText = title;
+
+            // Mở modal
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+
+            // Gán sự kiện thực hiện xóa
+            confirmBtn.onclick = async () => {
+                await _supabase.from('exams').delete().eq('id', id);
+                await syncDB();
+                renderAdminExams();
+                closeDeleteModal();
+            };
         }
 
-        async function deleteExam(id) {
-            if(confirm("Xóa đề này trên mây luôn?")) {
-                await _supabase.from('exams').delete().eq('id', id);
-                await syncDB(); renderAdminExams();
-            }
+        function closeDeleteModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
         // --- EXAM LOGIC ---
