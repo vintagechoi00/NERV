@@ -246,18 +246,31 @@
             if(ex) exams = ex;
         }
 
+        // --- ĐÃ CẬP NHẬT LOGIC XÁC NHẬN TẠI ĐÂY ---
         async function handleFastLogin() {
             const name = document.getElementById('username').value.trim();
             const uClass = document.getElementById('userClass').value.trim();
-            if(!name || !uClass) return;
-            state.user = name;
-            state.userClass = uClass;
-            document.getElementById('userDisplay').innerText = `${name.toUpperCase()} - ${uClass}`;
-            document.getElementById('welcomeUser').innerText = name.toUpperCase();
-            document.getElementById('navbar').classList.remove('hidden');
-            if(ADMIN_NAMES.includes(name.toLowerCase())) document.getElementById('adminBtn').classList.remove('hidden');
-            await syncDB();
-            showSection('mainMenu');
+            
+            if(!name || !uClass) {
+                openModal("vui lòng nhập đầy đủ họ tên và lớp!", () => {});
+                return;
+            }
+
+            // Gọi Modal xác nhận trước khi cho vào
+            openModal(`xác nhận vào thi với tên: ${name.toUpperCase()} - lớp: ${uClass}?`, async () => {
+                state.user = name;
+                state.userClass = uClass;
+                document.getElementById('userDisplay').innerText = `${name.toUpperCase()} - ${uClass}`;
+                document.getElementById('welcomeUser').innerText = name.toUpperCase();
+                document.getElementById('navbar').classList.remove('hidden');
+                
+                if(ADMIN_NAMES.includes(name.toLowerCase())) {
+                    document.getElementById('adminBtn').classList.remove('hidden');
+                }
+                
+                await syncDB();
+                showSection('mainMenu');
+            });
         }
 
         function showSection(id) {
