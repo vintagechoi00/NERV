@@ -49,39 +49,9 @@
         .opt-wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
         
         .question-block { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px dashed #e2e8f0; }
-
-        /* --- MODAL STYLE ĐÚNG THEO HÌNH VẼ --- */
-        #customModal { transition: all 0.2s ease; }
-        .modal-box { 
-            width: 380px; background: white; border: 3px solid #000; 
-            border-radius: 25px; overflow: hidden; box-shadow: 10px 10px 0px rgba(0,0,0,0.05);
-        }
-        .modal-content { 
-            padding: 40px 25px; text-align: center; font-weight: 700; 
-            font-size: 1.1rem; color: #000; line-height: 1.5;
-        }
-        .modal-footer { display: flex; border-top: 3px solid #000; }
-        .modal-btn { 
-            flex: 1; padding: 18px; font-weight: 700; font-size: 1.2rem;
-            background: white; transition: background 0.2s; color: #000;
-            text-transform: lowercase; /* Chữ thường như hình vẽ */
-        }
-        .modal-btn:hover { background: #f0f0f0; }
-        .modal-btn-primary { border-left: 3px solid #000; }
     </style>
 </head>
 <body class="min-h-screen pb-10">
-
-    <!-- Custom Modal Theo Hình Vẽ -->
-    <div id="customModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm hidden">
-        <div class="modal-box scale-95 transition-transform duration-200">
-            <div id="modalText" class="modal-content">Nội dung thông báo?</div>
-            <div class="modal-footer">
-                <button id="modalCancel" class="modal-btn">hủy bỏ</button>
-                <button id="modalConfirm" class="modal-btn modal-btn-primary">tiếp tục</button>
-            </div>
-        </div>
-    </div>
 
     <nav id="navbar" class="hidden sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-lg" style="background: var(--gradient-primary);">
         <div class="flex items-center gap-3">
@@ -222,55 +192,23 @@
         const ADMIN_NAMES = ['mrduc', 'hoanggay', 'kimngocngu'];
         let exams = [], state = { user: '', userClass: '', exam: null, timer: null, time: 900, userAnswers: [], startTime: null };
 
-        // --- CUSTOM MODAL ENGINE ---
-        function openModal(text, onConfirm) {
-            const modal = document.getElementById('customModal');
-            const modalBox = modal.querySelector('.modal-box');
-            document.getElementById('modalText').innerText = text;
-            modal.classList.remove('hidden');
-            setTimeout(() => modalBox.classList.remove('scale-95'), 10);
-
-            document.getElementById('modalConfirm').onclick = () => {
-                modal.classList.add('hidden');
-                modalBox.classList.add('scale-95');
-                onConfirm();
-            };
-            document.getElementById('modalCancel').onclick = () => {
-                modal.classList.add('hidden');
-                modalBox.classList.add('scale-95');
-            };
-        }
-
         async function syncDB() {
             const { data: ex } = await _supabase.from('exams').select('*').order('id', { ascending: false });
             if(ex) exams = ex;
         }
 
-        // --- ĐÃ CẬP NHẬT LOGIC XÁC NHẬN TẠI ĐÂY ---
         async function handleFastLogin() {
             const name = document.getElementById('username').value.trim();
             const uClass = document.getElementById('userClass').value.trim();
-            
-            if(!name || !uClass) {
-                openModal("vui lòng nhập đầy đủ họ tên và lớp!", () => {});
-                return;
-            }
-
-            // Gọi Modal xác nhận trước khi cho vào
-            openModal(`xác nhận vào thi với tên: ${name.toUpperCase()} - lớp: ${uClass}?`, async () => {
-                state.user = name;
-                state.userClass = uClass;
-                document.getElementById('userDisplay').innerText = `${name.toUpperCase()} - ${uClass}`;
-                document.getElementById('welcomeUser').innerText = name.toUpperCase();
-                document.getElementById('navbar').classList.remove('hidden');
-                
-                if(ADMIN_NAMES.includes(name.toLowerCase())) {
-                    document.getElementById('adminBtn').classList.remove('hidden');
-                }
-                
-                await syncDB();
-                showSection('mainMenu');
-            });
+            if(!name || !uClass) return;
+            state.user = name;
+            state.userClass = uClass;
+            document.getElementById('userDisplay').innerText = `${name.toUpperCase()} - ${uClass}`;
+            document.getElementById('welcomeUser').innerText = name.toUpperCase();
+            document.getElementById('navbar').classList.remove('hidden');
+            if(ADMIN_NAMES.includes(name.toLowerCase())) document.getElementById('adminBtn').classList.remove('hidden');
+            await syncDB();
+            showSection('mainMenu');
         }
 
         function showSection(id) {
@@ -283,36 +221,30 @@
         }
 
         async function deleteExam(id, title) {
-            openModal(`bạn có chắc muốn xóa đề thi "${title}" không?`, async () => {
-                await _supabase.from('exams').delete().eq('id', id);
-                await syncDB();
-                renderAdminExams();
-            });
+            await _supabase.from('exams').delete().eq('id', id);
+            await syncDB();
+            renderAdminExams();
         }
 
         function confirmReset() {
-            openModal("bạn muốn xóa trắng nội dung đang nhập không?", () => {
-                document.getElementById('examTitle').value = '';
-                document.getElementById('rawInput').value = '';
-            });
+            document.getElementById('examTitle').value = '';
+            document.getElementById('rawInput').value = '';
         }
 
         async function handleSaveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return;
-            openModal("bạn muốn lưu đề thi này lên hệ thống chứ?", async () => {
-                const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
-                const questions = blocks.map(b => {
-                    const lines = b.trim().split('\n');
-                    return { q: lines[0].trim(), opts: lines.slice(1).map(l => ({ t: l.replace('@t','').substring(2).trim(), c: l.includes('@t') })) };
-                });
-                await _supabase.from('exams').insert([{ title, questions }]);
-                document.getElementById('examTitle').value = ''; 
-                document.getElementById('rawInput').value = '';
-                await syncDB(); 
-                renderAdminExams();
+            const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
+            const questions = blocks.map(b => {
+                const lines = b.trim().split('\n');
+                return { q: lines[0].trim(), opts: lines.slice(1).map(l => ({ t: l.replace('@t','').substring(2).trim(), c: l.includes('@t') })) };
             });
+            await _supabase.from('exams').insert([{ title, questions }]);
+            document.getElementById('examTitle').value = ''; 
+            document.getElementById('rawInput').value = '';
+            await syncDB(); 
+            renderAdminExams();
         }
 
         function renderAdminExams() {
@@ -444,7 +376,7 @@
                 return;
             }
             tbody.innerHTML = data.map((h, i) => `
-                <tr class="border-b h-20 hover:bg-gray-50 cursor-pointer" onclick="openModal('thông tin: ${h.name} ghi được ${h.score} điểm tại đề ${h.exam}', ()=>{})">
+                <tr class="border-b h-20 hover:bg-gray-50 cursor-pointer">
                     <td class="font-black text-xl pl-2 ${i<3?'text-gradient':''}">${i+1}</td>
                     <td class="font-bold uppercase text-sm">${h.name}<br><span class="text-[10px] text-gray-400">${h.exam}</span></td>
                     <td class="text-center font-black text-2xl text-gradient">${h.score}</td>
