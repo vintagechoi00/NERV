@@ -175,7 +175,7 @@
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-gray-400 text-xs uppercase border-b pb-4">
-                            <th>Hạng</th><th>Thành viên</th><th class="text-center">Điểm</th><th class="text-right">Ngày thi</th>
+                            <th>Hạng</th><th>Thành viên</th><th class="text-center">Điểm</th><th class="text-right">Ngày & Thời gian</th>
                         </tr>
                     </thead>
                     <tbody id="resultTableBody"></tbody>
@@ -337,6 +337,19 @@
             const corrects = state.userAnswers.filter(a => a?.isRight).length;
             const score = Math.round((corrects / totalQ) * 10 * 10) / 10;
             const now = new Date();
+            
+            // Tính toán thời gian
+            const timeUsedSeconds = Math.floor((now.getTime() - state.startTime.getTime()) / 1000);
+            const mUsed = Math.floor(timeUsedSeconds/60);
+            const sUsed = timeUsedSeconds%60;
+            const timeStr = `${mUsed}p ${sUsed}s`;
+
+            // Định dạng ngày và thứ
+            const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+            const dayOfWeek = days[now.getDay()];
+            const fullDate = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+            const startTimeStr = state.startTime.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+            const endTimeStr = now.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
 
             showSection('resultPage');
             document.getElementById('finalScore').innerText = score;
@@ -346,13 +359,19 @@
             else if (score >= 5) roast.innerText = "CHƯA TÀI ĐÂU😛";
             else roast.innerText = "ĂN CHI NGU RỨA🤓";
 
-            // CHỖ SỬA QUAN TRỌNG: Đã xóa extra_info để khớp với bảng Supabase của bạn
+            // Lưu dữ liệu vào Supabase
             await _supabase.from('history').insert([{ 
                 name: `${state.user} (${state.userClass})`, 
                 exam: state.exam.title, 
-                score: score, 
-                date: `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`,
-                timestamp: now.getTime()
+                score, 
+                date: fullDate,
+                timestamp: now.getTime(),
+                extra_info: JSON.stringify({
+                    timeUsed: timeStr,
+                    start: startTimeStr,
+                    end: endTimeStr,
+                    day: dayOfWeek
+                })
             }]);
         }
 
@@ -373,13 +392,28 @@
                 tbody.innerHTML = '<tr><td colspan="4" class="text-center py-10 font-bold text-gray-400">Chưa có ai thi đề này...</td></tr>';
                 return;
             }
-            tbody.innerHTML = data.map((h, i) => `
-                <tr class="border-b h-20 hover:bg-gray-50 cursor-pointer">
+            tbody.innerHTML = data.map((h, i) => {
+                let info = { timeUsed: 'N/A', start: '--', end: '--', day: '' };
+                try { info = JSON.parse(h.extra_info); } catch(e) {}
+                
+                return `
+                <tr class="border-b h-20 hover:bg-gray-50 cursor-pointer transition-colors" onclick="showDetail('${h.name}', '${h.score}', '${info.start}', '${info.end}', '${info.timeUsed}', '${info.day}', '${h.date}')">
                     <td class="font-black text-xl pl-2 ${i<3?'text-gradient':''}">${i+1}</td>
-                    <td class="font-bold uppercase text-sm">${h.name}<br><span class="text-[10px] text-gray-400">${h.exam}</span></td>
+                    <td class="font-bold uppercase text-sm">
+                        ${h.name}<br>
+                        <span class="text-[10px] text-gray-400">Đề: ${h.exam}</span>
+                    </td>
                     <td class="text-center font-black text-2xl text-gradient">${h.score}</td>
-                    <td class="text-right text-[10px] text-gray-500 pr-2">${h.date}</td>
-                </tr>`).join('');
+                    <td class="text-right pr-2">
+                        <div class="text-[11px] font-bold text-slate-700">${h.date}</div>
+                        <div class="text-[10px] text-violet-500 font-semibold italic">${info.timeUsed || ''}</div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function showDetail(name, score, start, end, duration, day, date) {
+            alert(`--- CHI TIẾT KẾT QUẢ ---\n\nThí sinh: ${name}\nĐiểm số: ${score}\n\nThời gian bắt đầu: ${start}\nThời gian nộp bài: ${end}\nTổng thời gian làm: ${duration}\n\nNgày thi: ${day}, ${date}`);
         }
     </script>
 </body>
