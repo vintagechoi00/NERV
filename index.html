@@ -189,7 +189,8 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93ZnVkbHFvbGliZ2lwc2J0ZWptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTU2NzMsImV4cCI6MjA4ODYzMTY3M30.3gBJy-umboXye70MKe7rqTOtseW0Ay1kBfBI_FPrZoE';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const ADMIN_NAMES = ['mrduc', 'hoanggay', 'kimngocngu'];
+        // ĐÃ XÓA kimngocngu KHỎI ADMIN_NAMES
+        const ADMIN_NAMES = ['mrduc', 'hoanggay']; 
         let exams = [], state = { user: '', userClass: '', exam: null, timer: null, time: 900, userAnswers: [], startTime: null };
 
         function shuffleArray(array) {
