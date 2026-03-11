@@ -192,6 +192,15 @@
         const ADMIN_NAMES = ['mrduc', 'hoanggay', 'kimngocngu'];
         let exams = [], state = { user: '', userClass: '', exam: null, timer: null, time: 900, userAnswers: [], startTime: null };
 
+        // Hàm bổ trợ để xáo trộn mảng
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
         async function syncDB() {
             const { data: ex } = await _supabase.from('exams').select('*').order('id', { ascending: false });
             if(ex) exams = ex;
@@ -275,7 +284,13 @@
         }
 
         function startExam(id) {
-            state.exam = exams.find(e => e.id === id);
+            const originalExam = exams.find(e => e.id === id);
+            // Sao chép và xáo trộn câu hỏi
+            state.exam = {
+                ...originalExam,
+                questions: shuffleArray([...originalExam.questions])
+            };
+            
             state.time = 900; 
             state.startTime = new Date();
             state.userAnswers = new Array(state.exam.questions.length).fill(null);
