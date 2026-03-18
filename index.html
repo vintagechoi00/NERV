@@ -112,6 +112,9 @@
             <div class="space-y-6">
                 <input type="text" id="examTitle" placeholder="Tiêu đề đề thi..." class="w-full p-5 rounded-2xl outline-none">
                 <textarea id="rawInput" rows="10" class="w-full p-5 rounded-2xl font-mono text-sm outline-none" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án sai&#10;B. Đáp án đúng @t"></textarea>
+                
+                <div id="statusMsg" class="hidden text-center font-black text-sm py-4 rounded-xl transition-all duration-500"></div>
+                
                 <button onclick="handleSaveExam()" class="w-full btn-premium py-5 rounded-2xl">XUẤT BẢN ĐỀ THI</button>
                 <div id="adminExamList" class="pt-10 space-y-3"></div>
             </div>
@@ -228,15 +231,28 @@
                 date: new Date().toLocaleDateString('vi-VN')
             }]);
 
-            // Chuyển sang section kết quả thay vì ghi đè innerHTML của app
             showSection('resultPage');
             gsap.fromTo("#finalScoreDisplay", { innerText: 0 }, { innerText: finalScore, duration: 2, snap: { innerText: 0.1 } });
+        }
+
+        // Hàm thông báo kiểu mới
+        function showStatus(text, isError = false) {
+            const msg = document.getElementById('statusMsg');
+            msg.innerText = text;
+            msg.classList.remove('hidden', 'text-red-400', 'btn-premium', 'text-white');
+            
+            if(isError) {
+                msg.classList.add('text-red-400');
+            } else {
+                msg.classList.add('btn-premium', 'text-white');
+            }
+            setTimeout(() => msg.classList.add('hidden'), 3000);
         }
 
         async function handleSaveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
-            if(!title || !text) return alert("Nhập đủ đi sếp!");
+            if(!title || !text) return showStatus("Nhập đủ đi sếp!", true);
 
             const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
             const questions = blocks.map(b => {
@@ -251,11 +267,11 @@
             });
 
             const { error } = await _sb.from('exams').insert([{ title, questions }]);
-            if(error) alert("Lỗi: " + error.message);
+            if(error) showStatus("Lỗi: " + error.message, true);
             else { 
-                alert("Đã lên sóng!"); 
+                showStatus("Đã lên sóng!"); 
                 await fetchExams(); 
-                showSection('mainMenu'); // Quay về menu mượt mà
+                setTimeout(() => showSection('mainMenu'), 1000);
             }
         }
 
