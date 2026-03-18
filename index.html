@@ -235,18 +235,13 @@
             gsap.fromTo("#finalScoreDisplay", { innerText: 0 }, { innerText: finalScore, duration: 2, snap: { innerText: 0.1 } });
         }
 
-        // Hàm thông báo kiểu mới
+        // Hàm thông báo kiểu mới: hiện text ngay trong trang Admin
         function showStatus(text, isError = false) {
             const msg = document.getElementById('statusMsg');
             msg.innerText = text;
-            msg.classList.remove('hidden', 'text-red-400', 'btn-premium', 'text-white');
-            
-            if(isError) {
-                msg.classList.add('text-red-400');
-            } else {
-                msg.classList.add('btn-premium', 'text-white');
-            }
-            setTimeout(() => msg.classList.add('hidden'), 3000);
+            msg.classList.remove('hidden', 'text-red-400', 'text-cyan-400');
+            msg.classList.add(isError ? 'text-red-400' : 'text-cyan-400');
+            setTimeout(() => msg.classList.add('hidden'), 2500);
         }
 
         async function handleSaveExam() {
@@ -270,8 +265,10 @@
             if(error) showStatus("Lỗi: " + error.message, true);
             else { 
                 showStatus("Đã lên sóng!"); 
+                document.getElementById('examTitle').value = "";
+                document.getElementById('rawInput').value = "";
                 await fetchExams(); 
-                setTimeout(() => showSection('mainMenu'), 1000);
+                renderAdminExams();
             }
         }
 
@@ -298,12 +295,13 @@
         }
 
         async function deleteEx(id) {
-            if(confirm("Xóa thật hả?")) {
-                const { error } = await _sb.from('exams').delete().eq('id', id);
-                if(!error) {
-                    await fetchExams();
-                    renderAdminExams();
-                }
+            const { error } = await _sb.from('exams').delete().eq('id', id);
+            if(!error) {
+                showStatus("Đã xóa xong!");
+                await fetchExams();
+                renderAdminExams();
+            } else {
+                showStatus("Lỗi xóa đề!", true);
             }
         }
     </script>
