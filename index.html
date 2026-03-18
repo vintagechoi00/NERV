@@ -41,9 +41,26 @@
         }
         .nav-dot.active { background: var(--primary); color: #0a0a0a; box-shadow: 0 0 15px var(--primary); }
         input, textarea { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(249,115,22,0.2) !important; color: white !important; }
+        
+        /* New Confirmation Overlay Style */
+        .confirm-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100;
+            display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
+
+    <div id="confirmModal" class="hidden confirm-overlay">
+        <div class="glass p-10 max-w-sm w-full text-center border-2 border-red-600">
+            <h3 class="text-2xl font-black text-red-500 mb-4 italic">CRITICAL WARNING</h3>
+            <p id="confirmText" class="text-sm mb-8 tracking-widest opacity-80 uppercase"></p>
+            <div class="flex gap-4">
+                <button id="confirmYes" class="flex-1 bg-red-600 py-3 rounded-xl font-black text-white hover:bg-red-700">EXECUTE</button>
+                <button id="confirmNo" class="flex-1 glass py-3 rounded-xl font-bold">ABORT</button>
+            </div>
+        </div>
+    </div>
 
     <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
         <header id="header" class="hidden flex justify-between items-center mb-12">
@@ -95,7 +112,7 @@
                 <div class="w-full lg:w-80 space-y-6">
                     <div class="glass p-8 text-center">
                         <div id="timer" class="text-5xl font-black text-orange-500 tracking-tighter">15:00</div>
-                        <button onclick="submitExam()" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white">TERMINATE</button>
+                        <button onclick="customConfirm('ABORT MISSION AND TERMINATE DATA?', submitExam)" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white">TERMINATE</button>
                     </div>
                     <div class="glass p-6"><div id="questionMap" class="flex flex-wrap gap-2"></div></div>
                 </div>
@@ -131,7 +148,6 @@
     </div>
 
     <script>
-        // GIỮ NGUYÊN TOÀN BỘ LOGIC CODE CỦA SẾP
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
@@ -139,10 +155,38 @@
         const ADMINS = ['mrduc', 'hoanggay'];
         let state = { user: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null };
 
+        // --- NEW CUSTOM NOTIFICATION LOGIC ---
+        function showStatus(text, isError = false) {
+            const msg = document.getElementById('statusMsg');
+            msg.innerText = text;
+            msg.className = `text-center font-black text-lg py-2 uppercase tracking-widest transition-all duration-300 ${isError ? 'text-red-500' : 'text-orange-500'}`;
+            msg.classList.remove('hidden');
+            gsap.from(msg, { y: 10, opacity: 0, duration: 0.3 });
+            setTimeout(() => {
+                gsap.to(msg, { opacity: 0, duration: 0.3, onComplete: () => msg.classList.add('hidden') });
+            }, 2500);
+        }
+
+        function customConfirm(text, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('confirmText').innerText = text;
+            modal.classList.remove('hidden');
+            gsap.from(modal.querySelector('.glass'), { scale: 0.9, opacity: 0, duration: 0.2 });
+            
+            document.getElementById('confirmYes').onclick = () => {
+                modal.classList.add('hidden');
+                onConfirm();
+            };
+            document.getElementById('confirmNo').onclick = () => {
+                modal.classList.add('hidden');
+            };
+        }
+
+        // --- REST OF THE ORIGINAL LOGIC ---
         async function handleLogin() {
             const n = document.getElementById('username').value.trim();
             const c = document.getElementById('userClass').value.trim();
-            if(!n || !c) return;
+            if(!n || !c) return showStatus("CREDENTIALS REQUIRED!", true);
             state.user = n; state.class = c;
             document.getElementById('userTag').innerText = `${n} // ${c}`;
             if(ADMINS.includes(n.toLowerCase())) document.getElementById('adminBtn').classList.remove('hidden');
@@ -230,14 +274,6 @@
             gsap.fromTo("#finalScoreDisplay", { innerText: 0 }, { innerText: finalScore, duration: 2, snap: { innerText: 0.1 } });
         }
 
-        function showStatus(text, isError = false) {
-            const msg = document.getElementById('statusMsg');
-            msg.innerText = text;
-            msg.className = `text-center font-black text-lg py-2 uppercase tracking-widest transition-all duration-300 ${isError ? 'text-red-500' : 'text-orange-500'}`;
-            msg.classList.remove('hidden');
-            setTimeout(() => msg.classList.add('hidden'), 2000);
-        }
-
         async function handleSaveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
@@ -279,13 +315,12 @@
             document.getElementById('adminExamList').innerHTML = state.exams.map(ex => `
                 <div class="flex justify-between items-center p-4 glass text-sm group">
                     <span onclick="editEx(${ex.id})" class="cursor-pointer hover:text-orange-500 transition font-bold">${ex.title}</span>
-                    <button onclick="deleteEx(${ex.id})" class="text-red-500 font-bold hover:scale-110 transition opacity-50 group-hover:opacity-100 italic">PURGE</button>
+                    <button onclick="customConfirm('PURGE THIS MISSION DATA?', () => deleteEx(${ex.id}))" class="text-red-500 font-bold hover:scale-110 transition opacity-50 group-hover:opacity-100 italic">PURGE</button>
                 </div>
             `).join('');
         }
 
         async function deleteEx(id) {
-            if(!confirm("PURGE THIS MISSION DATA?")) return;
             const ex = state.exams.find(e => e.id === id);
             await _sb.from('history').delete().eq('exam', ex.title);
             const { error } = await _sb.from('exams').delete().eq('id', id);
