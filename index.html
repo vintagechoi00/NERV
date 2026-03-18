@@ -47,13 +47,16 @@
     <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
         <header id="header" class="hidden flex justify-between items-center mb-12">
             <div class="flex items-center gap-4">
-                <div class="h-12 w-12 bg-gradient-to-tr from-purple-500 to-cyan-400 rounded-2xl rotate-12 flex items-center justify-center font-black text-white text-2xl">G</div>
+                <div onclick="showSection('mainMenu')" class="h-12 w-12 bg-gradient-to-tr from-purple-500 to-cyan-400 rounded-2xl rotate-12 flex items-center justify-center font-black text-white text-2xl cursor-pointer">G</div>
                 <div>
                     <h1 class="text-2xl font-extrabold tracking-tight">GAYZOTA <span class="text-cyan-400">SUPREME</span></h1>
                     <p id="userTag" class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]"></p>
                 </div>
             </div>
-            <button onclick="location.reload()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
+            <div class="flex gap-2">
+                <button onclick="showSection('mainMenu')" class="glass px-6 py-2 text-xs font-bold hover:bg-white/10 transition">MENU</button>
+                <button onclick="location.reload()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
+            </div>
         </header>
 
         <div id="loginPage" class="max-w-md mx-auto mt-20 glass p-10 shadow-2xl">
@@ -115,7 +118,6 @@
     </div>
 
     <script>
-        // --- KẾT NỐI SUPABASE (ĐÃ FIX) ---
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
@@ -142,7 +144,10 @@
         }
 
         function showSection(id) {
-            ['loginPage', 'mainMenu', 'selectExamPage', 'examPage', 'adminPage', 'leaderboard'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            ['loginPage', 'mainMenu', 'selectExamPage', 'examPage', 'adminPage', 'leaderboard'].forEach(s => {
+                const el = document.getElementById(s);
+                if(el) el.classList.add('hidden');
+            });
             document.getElementById(id).classList.remove('hidden');
             if(id === 'selectExamPage') renderExamList();
             if(id === 'adminPage') renderAdminExams();
@@ -217,7 +222,9 @@
                 date: new Date().toLocaleDateString('vi-VN')
             }]);
 
-            document.getElementById('app').innerHTML = `
+            const appEl = document.getElementById('app');
+            const oldContent = appEl.innerHTML;
+            appEl.innerHTML = `
                 <div class="h-screen flex flex-col items-center justify-center text-center">
                     <h2 class="text-cyan-400 font-black tracking-[0.5em] mb-4">COMPLETED</h2>
                     <div class="text-[150px] font-black italic text-white" id="finalScoreDisplay">0</div>
@@ -227,7 +234,6 @@
             gsap.to("#finalScoreDisplay", { innerText: finalScore, duration: 2, snap: { innerText: 0.1 } });
         }
 
-        // --- ADMIN LOGIC (FIXED REGEX) ---
         async function handleSaveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
@@ -239,7 +245,6 @@
                 return {
                     q: lines[0].trim(),
                     opts: lines.slice(1).map(l => ({
-                        // Tự động xóa "A. ", "1. " ở đầu dòng
                         t: l.replace('@t','').replace(/^[A-Z0-9][.:]\s*/i, '').trim(),
                         c: l.includes('@t')
                     }))
@@ -248,7 +253,11 @@
 
             const { error } = await _sb.from('exams').insert([{ title, questions }]);
             if(error) alert("Lỗi: " + error.message);
-            else { alert("Đã lên sóng!"); location.reload(); }
+            else { 
+                alert("Đã lên sóng!"); 
+                await fetchExams(); // Cập nhật lại danh sách đề
+                showSection('mainMenu'); // Quay về menu thay vì load lại trang
+            }
         }
 
         async function renderLeaderboard() {
@@ -275,8 +284,11 @@
 
         async function deleteEx(id) {
             if(confirm("Xóa thật hả?")) {
-                await _sb.from('exams').delete().eq('id', id);
-                location.reload();
+                const { error } = await _sb.from('exams').delete().eq('id', id);
+                if(!error) {
+                    await fetchExams();
+                    renderAdminExams();
+                }
             }
         }
     </script>
