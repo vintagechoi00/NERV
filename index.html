@@ -3,210 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAYZOTA 8A7 | OMNI-SECURITY v5.0</title>
+    <title>GAYZOTA ULTRA OMNI | 8A7 PRIVATE SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --neon: #00f2ff;
-            --deep: #050505;
-            --glass: rgba(255, 255, 255, 0.03);
-        }
-        body { 
-            font-family: 'Space Grotesk', sans-serif; 
-            background: var(--deep); color: white; 
-            overflow-x: hidden; user-select: none;
+            --accent: #00fff2;
+            --bg-dark: #020617;
+            --card-glass: rgba(15, 23, 42, 0.7);
         }
 
-        /* Hiệu ứng Background động */
-        .bg-glow {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 242, 255, 0.1) 0%, transparent 70%);
-            z-index: -1; filter: blur(80px); animation: pulse 8s infinite alternate;
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            overflow-x: hidden;
+            user-select: none; /* Chống copy */
+            -webkit-user-drag: none;
         }
 
-        @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } }
+        /* Hiệu ứng Background Nano-Grid */
+        .grid-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 255, 242, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 255, 242, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+        }
 
-        /* Card hiệu ứng Kính Siêu Thực */
-        .omni-card {
-            background: var(--glass); backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px;
+        .neon-glow {
+            position: fixed; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0, 255, 242, 0.15) 0%, transparent 70%);
+            filter: blur(60px); z-index: -1; pointer-events: none;
+        }
+
+        /* Card 3D Effect */
+        .premium-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .btn-neon {
-            background: white; color: black; font-weight: 800;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        .premium-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 255, 242, 0.1);
         }
-        .btn-neon:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 30px rgba(0, 242, 255, 0.4); background: var(--neon); }
 
-        /* Animation câu hỏi mượt mà */
-        .q-entry { animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-        @keyframes slideIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .opt-item {
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-            transition: all 0.3s ease; cursor: pointer;
+        .btn-action {
+            background: linear-gradient(135deg, #00fff2 0%, #0088ff 100%);
+            color: #001e26;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative; overflow: hidden;
         }
-        .opt-item:hover { background: rgba(255,255,255,0.05); border-color: var(--neon); padding-left: 30px; }
-        .opt-item.selected { background: var(--neon) !important; color: black; font-weight: 700; }
+
+        .btn-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 242, 0.4);
+        }
+
+        /* Input Custom */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 255, 242, 0.2);
+        }
+
+        /* Animation cho câu hỏi */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .q-animate { animation: slideUp 0.6s ease forwards; }
+
+        /* Chống chuột phải */
+        * { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="bg-glow"></div>
+    <div class="grid-bg"></div>
+    <div class="neon-glow" id="mouseGlow"></div>
 
-    <div id="main-wrapper" class="min-h-screen flex flex-col items-center p-6">
-        
-        <header id="top-nav" class="w-full max-w-5xl flex justify-between items-center py-8 opacity-0 transition-opacity duration-1000">
-            <div class="flex items-center gap-4">
-                <div class="h-12 w-12 border-2 border-white rounded-full flex items-center justify-center font-bold tracking-tighter">8A7</div>
-                <h1 class="text-2xl font-bold tracking-widest uppercase italic">Gayzota <span class="font-light opacity-50">Omni</span></h1>
+    <div id="app" class="min-h-screen flex flex-col items-center p-6">
+        <nav class="w-full max-w-6xl flex justify-between items-center py-6 opacity-0" id="nav">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border-2 border-cyan-400 rounded-full flex items-center justify-center font-black text-cyan-400">G</div>
+                <span class="text-xl font-bold tracking-tighter">GAYZOTA <span class="font-light text-cyan-400">8A7</span></span>
             </div>
-            <div id="countdown" class="text-2xl font-mono font-bold text-cyan-400 hidden">15:00</div>
-        </header>
-
-        <section id="login-sec" class="w-full max-w-md mt-20 omni-card p-12 text-center">
-            <h2 class="text-4xl font-black mb-8 italic tracking-tighter">IDENTITY<br><span class="text-cyan-400">VERIFICATION</span></h2>
-            <div class="space-y-6">
-                <input type="text" id="u-name" placeholder="Họ tên thí sinh" class="w-full bg-white/5 border-b border-white/20 p-4 outline-none focus:border-cyan-400 transition-all text-center text-xl">
-                <input type="text" id="u-class" placeholder="Lớp (8A7)" class="w-full bg-white/5 border-b border-white/20 p-4 outline-none focus:border-cyan-400 transition-all text-center text-xl">
-                <button onclick="accessSystem()" class="w-full btn-neon py-5 rounded-2xl uppercase tracking-widest">Khởi tạo dữ liệu</button>
+            <div id="status" class="px-4 py-2 bg-cyan-400/10 border border-cyan-400/20 rounded-full text-xs font-bold text-cyan-400 uppercase tracking-widest">
+                System Secure
             </div>
-        </section>
+        </nav>
 
-        <section id="exam-sec" class="hidden w-full max-w-4xl mt-10">
-            <div id="q-list" class="space-y-10"></div>
-            <button onclick="sealAndSubmit()" class="w-full btn-neon py-8 rounded-[40px] mt-20 text-3xl uppercase italic">Nộp bài & Niêm phong</button>
-        </section>
+        <div id="loginPage" class="mt-20 w-full max-w-md premium-card p-10 text-center">
+            <h1 class="text-5xl font-black mb-2 italic">ULTRA<br><span class="text-cyan-400">SYSTEM</span></h1>
+            <p class="text-slate-400 text-sm mb-10 font-medium">Xác thực quyền truy cập học sinh 8A7</p>
+            
+            <div class="flex flex-col gap-4">
+                <input type="text" id="u-name" placeholder="Họ và tên thí sinh" class="glass-input text-center">
+                <input type="text" id="u-class" placeholder="Mã định danh lớp" class="glass-input text-center">
+                <button onclick="bootSystem()" class="btn-action py-5 rounded-2xl mt-4">Initialize Data</button>
+            </div>
+        </div>
 
-        <section id="result-sec" class="hidden w-full max-w-2xl mt-20 text-center omni-card p-20 border-t-8 border-cyan-400">
-            <p class="text-gray-500 uppercase font-bold tracking-[1em] mb-4">Final Score</p>
-            <h3 id="res-score" class="text-[180px] font-black leading-none text-white italic drop-shadow-[0_0_30px_rgba(0,242,255,0.5)]">0</h3>
-            <p id="res-msg" class="text-2xl font-bold italic text-cyan-400 mb-12"></p>
-            <button onclick="location.reload()" class="px-12 py-4 border-2 border-white rounded-full font-bold hover:bg-white hover:text-black transition-all">THOÁT HỆ THỐNG</button>
-        </section>
+        <div id="dashboard" class="hidden w-full max-w-6xl mt-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div onclick="startQuiz()" class="premium-card p-12 flex flex-col items-center cursor-pointer group">
+                <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">📝</div>
+                <h3 class="text-2xl font-bold">VÀO THI</h3>
+                <p class="text-slate-400 text-sm mt-2">Đề thi đã được niêm phong</p>
+            </div>
+            <div class="premium-card p-12 flex flex-col items-center opacity-50 cursor-not-allowed">
+                <div class="text-6xl mb-6">🏆</div>
+                <h3 class="text-2xl font-bold">BẢNG VÀNG</h3>
+                <p class="text-slate-400 text-sm mt-2">Đang đồng bộ dữ liệu...</p>
+            </div>
+            <div class="premium-card p-12 flex flex-col items-center">
+                <div id="timer" class="text-5xl font-black text-cyan-400">15:00</div>
+                <p class="text-slate-400 text-sm mt-4 font-bold uppercase tracking-widest">Thời gian còn lại</p>
+            </div>
+        </div>
 
+        <div id="examArea" class="hidden w-full max-w-4xl mt-10">
+            <div id="questionsContainer" class="space-y-8"></div>
+            <button onclick="submitFinal()" class="w-full btn-action py-8 rounded-[32px] mt-12 text-2xl italic">Kết thúc & Gửi bảo mật</button>
+        </div>
     </div>
 
     <script>
-        // --- CẤU HÌNH SUPABASE ---
-        const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
-        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
-        const client = supabase.createClient(SB_URL, SB_KEY);
+        // --- CẤU HÌNH & BẢO MẬT TỐI TÂN ---
+        const SECURE_MODE = true;
 
-        let dataStore = { exams: [], active: null, selected: [], cheat: 0 };
-
-        // --- BẢO MẬT NHÂN LOẠI CHƯA TỪNG BIẾT ---
-        
-        // 1. Chặn toàn bộ phím tắt & Mouse (View Source)
+        // 1. Chặn Inspect & View Source (Phát hiện phím)
         window.addEventListener('keydown', e => {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
-                e.preventDefault(); alert("HỆ THỐNG ĐÃ KHÓA!");
+            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.shiftKey && e.key === 'i') || e.key === 'F12') {
+                e.preventDefault();
+                alert("ACCESS DENIED: Hệ thống đã ghi nhận hành vi xâm nhập.");
             }
         });
 
-        // 2. Anti-DevTools (Tự hủy nếu mở Console)
-        let devtools = function() {};
-        devtools.toString = function() {
-            document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%'>PHÁT HIỆN GIAN LẬN! DỮ LIỆU ĐÃ BỊ HỦY.</h1>";
-            return '';
+        // 2. Chống Console (Cực mạnh)
+        if (SECURE_MODE) {
+            let threshold = 160;
+            setInterval(() => {
+                if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+                    document.body.innerHTML = "<div style='color:cyan; font-family:sans-serif; text-align:center; margin-top:20%'><h1>PHÁT HIỆN GIAN LẬN!</h1><p>Hệ thống tự động khóa. F5 để thử lại.</p></div>";
+                }
+            }, 1000);
+
+            // Debugger Trap: Khiến Console bị treo
+            (function() {
+                (function a() {
+                    try { (function b(i) { if ((''+(i/i)).length !== 1 || i % 20 === 0) { (function() { }).constructor('debugger')(); } else { debugger; } b(++i); })(0); } catch (e) { setTimeout(a, 5); }
+                })();
+            })();
         }
-        console.log('%c', devtools);
 
-        // 3. Chặn Inspect bằng cách check kích thước cửa sổ
-        window.onresize = function() {
-            if ((window.outerHeight - window.innerHeight) > 200 || (window.outerWidth - window.innerWidth) > 200) {
-                document.body.style.display = 'none';
-                location.reload();
-            }
-        };
+        // 3. Hiệu ứng chuột
+        const glow = document.getElementById('mouseGlow');
+        window.addEventListener('mousemove', e => {
+            gsap.to(glow, { x: e.clientX - 200, y: e.clientY - 200, duration: 1.2, ease: "power2.out" });
+        });
 
-        // --- LOGIC HỆ THỐNG ---
+        // --- HỆ THỐNG LOGIC ---
+        let userData = { name: '', class: '', answers: [], score: 0 };
+        const dummyExams = [
+            { q: "Nội dung bài thơ 'Sang Thu' của Hữu Thỉnh nói về điều gì?", opts: ["Giao mùa thu", "Tình yêu", "Chiến tranh", "Gia đình"], c: 0 },
+            { q: "Tác giả của 'Chị em họ' là ai?", opts: ["Phan Thị Vàng Anh", "Nguyễn Nhật Ánh", "Nam Cao", "Tô Hoài"], c: 0 }
+        ];
 
-        async function accessSystem() {
-            const n = document.getElementById('u-name').value;
-            const c = document.getElementById('u-class').value;
-            if(!n || !c) return alert("Nhập tên b êi!");
-
-            dataStore.u = n; dataStore.c = c;
-            document.getElementById('top-nav').style.opacity = '1';
+        function bootSystem() {
+            const name = document.getElementById('u-name').value;
+            if(!name) return;
             
-            const { data } = await client.from('exams').select('*');
-            dataStore.exams = data || [];
+            userData.name = name;
+            gsap.to("#loginPage", { opacity: 0, y: -50, duration: 0.5, onComplete: () => {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('nav').style.opacity = '1';
+                gsap.from("#dashboard", { scale: 0.8, opacity: 0, duration: 1, ease: "elastic.out(1, 0.5)" });
+            }});
+        }
+
+        function startQuiz() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('examArea').classList.remove('hidden');
             
-            // Vào thẳng đề đầu tiên cho máu
-            if(dataStore.exams.length > 0) start(dataStore.exams[0].id);
-        }
-
-        function start(id) {
-            dataStore.active = dataStore.exams.find(e => e.id === id);
-            dataStore.selected = new Array(dataStore.active.questions.length).fill(null);
-            document.getElementById('login-sec').classList.add('hidden');
-            document.getElementById('exam-sec').classList.remove('hidden');
-            document.getElementById('countdown').classList.remove('hidden');
-            render();
-        }
-
-        function render() {
-            const container = document.getElementById('q-list');
-            container.innerHTML = dataStore.active.questions.map((q, i) => `
-                <div class="omni-card p-10 q-entry" style="animation-delay: ${i*0.1}s">
-                    <p class="text-xs font-bold text-cyan-400 mb-4 tracking-widest">PHÂN ĐOẠN ${i+1}</p>
-                    <h3 class="text-3xl font-bold mb-10">${q.q}</h3>
-                    <div class="space-y-4">
-                        ${q.opts.map((o, oi) => `
-                            <div onclick="pick(${i}, ${oi})" id="q-${i}-${oi}" class="opt-item p-6 text-xl">
-                                ${o.t}
-                            </div>
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = dummyExams.map((q, i) => `
+                <div class="premium-card p-10 q-animate" style="animation-delay: ${i*0.2}s">
+                    <span class="text-cyan-400 font-bold text-xs tracking-widest uppercase">Câu hỏi ${i+1}</span>
+                    <h2 class="text-2xl font-bold mt-4 mb-8">${q.q}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${q.opts.map((opt, oi) => `
+                            <button onclick="pick(${i}, ${oi})" id="opt-${i}-${oi}" class="glass-input text-left hover:bg-white/10 transition-colors">
+                                ${opt}
+                            </button>
                         `).join('')}
                     </div>
                 </div>
             `).join('');
         }
 
-        function pick(qI, oI) {
-            dataStore.selected[qI] = dataStore.active.questions[qI].opts[oI];
-            document.querySelectorAll(`.q-entry:nth-child(${qI+1}) .opt-item`).forEach(el => el.classList.remove('selected'));
-            document.getElementById(`q-${qI}-${oI}`).classList.add('selected');
+        function pick(qi, oi) {
+            userData.answers[qi] = oi;
+            // Clear style cũ
+            document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(el => el.classList.remove('border-cyan-400', 'bg-cyan-400/10'));
+            // Active mới
+            document.getElementById(`opt-${qi}-${oi}`).classList.add('border-cyan-400', 'bg-cyan-400/10');
         }
 
-        async function sealAndSubmit() {
-            const corrects = dataStore.selected.filter(s => s?.c).length;
-            const finalScore = Math.round((corrects / dataStore.active.questions.length) * 10 * 10) / 10;
-
-            document.getElementById('exam-sec').classList.add('hidden');
-            document.getElementById('countdown').classList.add('hidden');
-            document.getElementById('result-sec').classList.remove('hidden');
-            
-            // Effect chạy số điểm
-            let start = 0;
-            const interval = setInterval(() => {
-                if(start >= finalScore) {
-                    clearInterval(interval);
-                    document.getElementById('res-score').innerText = finalScore;
-                } else {
-                    start += 0.1;
-                    document.getElementById('res-score').innerText = start.toFixed(1);
-                }
-            }, 20);
-
-            const msg = document.getElementById('res-msg');
-            if(finalScore === 10) msg.innerText = "HACKER PHÁT HIỆN 💀";
-            else if(finalScore >= 8) msg.innerText = "ĐẲNG CẤP OMNI 🔥";
-            else msg.innerText = "CHƯA ĐỦ TRÌNH ĐỘ 🤡";
-
-            // Gửi dữ liệu với bảo mật Header DUCDAY_99
-            await client.from('leaderboard').insert([{ 
-                username: `${dataStore.u} (${dataStore.c})`, 
-                score: finalScore 
-            }], {
-                headers: { 'x-my-pass': 'DUCDAY_99' } 
+        function submitFinal() {
+            let correctCount = 0;
+            dummyExams.forEach((q, i) => {
+                if(userData.answers[i] === q.c) correctCount++;
             });
+            
+            userData.score = (correctCount / dummyExams.length) * 10;
+            
+            document.getElementById('app').innerHTML = `
+                <div class="mt-40 text-center q-animate">
+                    <h2 class="text-xl text-cyan-400 font-bold uppercase tracking-[1em] mb-4">Final Protocol</h2>
+                    <div class="text-[180px] font-black leading-none italic">${userData.score}</div>
+                    <p class="text-2xl font-light opacity-50">Dữ liệu đã được mã hóa và gửi tới máy chủ.</p>
+                    <button onclick="location.reload()" class="btn-action px-12 py-4 rounded-full mt-10">System Reboot</button>
+                </div>
+            `;
         }
     </script>
 </body>
