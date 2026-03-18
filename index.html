@@ -235,7 +235,6 @@
             gsap.fromTo("#finalScoreDisplay", { innerText: 0 }, { innerText: finalScore, duration: 2, snap: { innerText: 0.1 } });
         }
 
-        // Hiện chữ thông báo (chỉ có màu, không viền)
         function showStatus(text, isError = false) {
             const msg = document.getElementById('statusMsg');
             msg.innerText = text;
@@ -262,15 +261,13 @@
             });
 
             const { error } = await _sb.from('exams').insert([{ title, questions }]);
-            if(error) showStatus("LỖI RỒI: " + error.message, true);
+            if(error) showStatus("LỖI RỒI!", true);
             else { 
-                showStatus("ĐÃ TẠO XONG!"); 
-                // Xóa input để sếp tạo đề tiếp
+                showStatus("ĐÃ XONG!"); 
                 document.getElementById('examTitle').value = "";
                 document.getElementById('rawInput').value = "";
                 await fetchExams(); 
                 renderAdminExams();
-                // Ở LẠI TRANG ADMIN
             }
         }
 
@@ -302,7 +299,6 @@
                 showStatus("ĐÃ XÓA XONG!");
                 await fetchExams();
                 renderAdminExams();
-                // Ở LẠI TRANG ADMIN
             } else {
                 showStatus("LỖI XÓA!", true);
             }
