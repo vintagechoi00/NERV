@@ -3,60 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NERV SYSTEM - UNIT 01</title>
+    <title>NERD SYSTEM - 8A7 PRIVATE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* EVA UNIT-01 THEME: PURPLE, NEON GREEN, ORANGE */
-        :root { 
-            --primary: #7e22ce; /* Purple */
-            --secondary: #4ade80; /* Neon Green */
-            --accent: #f97316; /* Orange */
-            --bg: #05020a; 
-        }
+        /* NERV EVA THEME: ORANGE & BLACK */
+        :root { --primary: #f97316; --secondary: #fbbf24; --bg: #0a0a0a; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at top right, #1e0b36, #05020a);
+            background: radial-gradient(circle at top right, #261205, #0a0a0a);
             color: #f1f5f9; min-height: 100vh; user-select: none;
         }
         .glass {
-            background: rgba(126, 34, 206, 0.05); backdrop-filter: blur(15px);
-            border: 1px solid rgba(74, 222, 128, 0.2); border-radius: 28px;
+            background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px);
+            border: 1px solid rgba(249, 115, 22, 0.2); border-radius: 28px;
         }
         .btn-premium {
-            background: linear-gradient(135deg, var(--primary), #a855f7);
-            color: white; font-weight: 800; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 25px -5px rgba(126, 34, 206, 0.4);
-            border: 1px solid var(--secondary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: black; font-weight: 800; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
         }
-        .btn-premium:hover { 
-            transform: translateY(-3px) scale(1.02); 
-            box-shadow: 0 20px 35px -10px rgba(74, 222, 128, 0.3);
-            filter: brightness(1.2);
+        .btn-premium:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 35px -10px rgba(251, 191, 36, 0.5); }
+        
+        /* LOGO NERV SVG - TỰ ĐỔI MÀU Ở ĐÂY */
+        .nerv-logo-svg {
+            fill: var(--primary); /* Đổi màu lá ở đây */
+            width: 48px; height: 48px;
+            filter: drop-shadow(0 0 5px rgba(249, 115, 22, 0.3));
+            cursor: pointer;
         }
+        
         .opt-card {
-            background: rgba(255, 255, 255, 0.03); border: 2px solid rgba(126, 34, 206, 0.2);
+            background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.05);
             padding: 18px 24px; border-radius: 18px; cursor: pointer; transition: 0.2s;
         }
-        .opt-card:hover { background: rgba(74, 222, 128, 0.05); border-color: var(--secondary); }
+        .opt-card:hover { background: rgba(249, 115, 22, 0.1); border-color: var(--primary); }
         .opt-card.selected {
-            background: rgba(74, 222, 128, 0.1);
-            border-color: var(--secondary); box-shadow: inset 0 0 15px rgba(74, 222, 128, 0.1);
+            background: linear-gradient(90deg, rgba(249, 115, 22, 0.2), rgba(251, 191, 36, 0.2));
+            border-color: var(--primary); box-shadow: inset 0 0 15px rgba(249, 115, 22, 0.1);
         }
         .nav-dot {
             width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-            border-radius: 14px; background: rgba(126, 34, 206, 0.1); font-weight: 800; transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px; background: rgba(255, 255, 255, 0.05); font-weight: 800; transition: 0.3s;
         }
-        .nav-dot.active { background: var(--secondary); color: #05020a; box-shadow: 0 0 15px var(--secondary); }
-        input, textarea { background: rgba(0, 0, 0, 0.5) !important; border: 1px solid rgba(126,34,206,0.3) !important; color: white !important; }
-        
-        .nerv-logo { width: 50px; height: 50px; fill: #ef4444; filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5)); }
+        .nav-dot.active { background: var(--primary); color: #0a0a0a; box-shadow: 0 0 15px var(--primary); }
+        input, textarea { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(249,115,22,0.2) !important; color: white !important; }
         
         .confirm-overlay {
-            position: fixed; inset: 0; background: rgba(5,2,10,0.95); z-index: 100;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100;
             display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
     </style>
@@ -65,11 +61,11 @@
 
     <div id="confirmModal" class="hidden confirm-overlay">
         <div class="glass p-10 max-w-sm w-full text-center border-2 border-red-600">
-            <h3 class="text-2xl font-black text-red-500 mb-4 italic">SIGNAL TERMINATED</h3>
-            <p id="confirmText" class="text-sm mb-8 tracking-widest opacity-80 uppercase font-bold"></p>
+            <h3 class="text-2xl font-black text-red-500 mb-4 italic">CRITICAL WARNING</h3>
+            <p id="confirmText" class="text-sm mb-8 tracking-widest opacity-80 uppercase"></p>
             <div class="flex gap-4">
-                <button id="confirmYes" class="flex-1 bg-red-600 py-3 rounded-xl font-black text-white hover:bg-red-700">CONFIRM</button>
-                <button id="confirmNo" class="flex-1 glass py-3 rounded-xl font-bold">CANCEL</button>
+                <button id="confirmYes" class="flex-1 bg-red-600 py-3 rounded-xl font-black text-white hover:bg-red-700">EXECUTE</button>
+                <button id="confirmNo" class="flex-1 glass py-3 rounded-xl font-bold">ABORT</button>
             </div>
         </div>
     </div>
@@ -77,58 +73,57 @@
     <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
         <header id="header" class="hidden flex justify-between items-center mb-12">
             <div class="flex items-center gap-4">
-                <svg class="nerv-logo cursor-pointer" onclick="showSection('mainMenu')" viewBox="0 0 100 100">
-                    <path d="M50 5 C20 5 5 40 50 95 C95 40 80 5 50 5 Z" fill="#ef4444"/>
-                    <rect x="20" y="45" width="60" height="5" fill="black"/>
-                    <text x="50" y="40" font-family="Arial" font-size="10" font-weight="bold" fill="white" text-anchor="middle">NERV</text>
+                <svg class="nerv-logo-svg" onclick="showSection('mainMenu')" viewBox="0 0 100 100">
+                    <path d="M50 5 C20 5 5 40 50 95 C95 40 80 5 50 5 Z M30 45 L70 45 L70 50 L30 50 Z" />
+                    <text x="50" y="42" font-family="Serif" font-size="7" font-weight="bold" fill="black" text-anchor="middle">NERV</text>
                 </svg>
                 <div>
-                    <h1 class="text-2xl font-extrabold tracking-tight">NERV <span class="text-purple-500">SYSTEM</span></h1>
-                    <p id="userTag" class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em] text-green-400"></p>
+                    <h1 class="text-2xl font-extrabold tracking-tight">NERD <span class="text-orange-500">SYSTEM</span></h1>
+                    <p id="userTag" class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]"></p>
                 </div>
             </div>
             <div class="flex gap-2">
-                <button onclick="showSection('mainMenu')" class="glass px-6 py-2 text-xs font-bold hover:bg-purple-500/10 transition text-green-400">MENU</button>
-                <button onclick="location.reload()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">EXIT</button>
+                <button onclick="showSection('mainMenu')" class="glass px-6 py-2 text-xs font-bold hover:bg-white/10 transition text-orange-500">MENU</button>
+                <button onclick="location.reload()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">DISCONNECT</button>
             </div>
         </header>
 
-        <div id="loginPage" class="max-w-md mx-auto mt-20 glass p-10 shadow-2xl border-t-4 border-purple-600">
+        <div id="loginPage" class="max-w-md mx-auto mt-20 glass p-10 shadow-2xl">
             <div class="text-center mb-10">
-                <h2 class="text-4xl font-black mb-2 tracking-tighter italic text-white">UNIT <span class="text-green-400">01</span></h2>
-                <p class="text-purple-300 text-sm font-bold uppercase tracking-widest">Pilot Synchronization</p>
+                <h2 class="text-4xl font-black mb-2 tracking-tighter italic">NERD <span class="text-orange-500">V3.5</span></h2>
+                <p class="text-slate-400 text-sm">Synchronizing for Class 8A7</p>
             </div>
             <div class="space-y-5">
-                <input type="text" id="username" placeholder="PILOT NAME..." class="w-full p-4 rounded-2xl outline-none focus:border-green-400 transition-all">
-                <input type="text" id="userClass" placeholder="UNIT CODE (8A7)..." class="w-full p-4 rounded-2xl outline-none focus:border-green-400 transition-all">
-                <button onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">Connect to Magi</button>
+                <input type="text" id="username" placeholder="Pilot Name..." class="w-full p-4 rounded-2xl outline-none">
+                <input type="text" id="userClass" placeholder="Unit (VD: 8A7)..." class="w-full p-4 rounded-2xl outline-none">
+                <button onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">Initial Contact</button>
             </div>
         </div>
 
         <div id="mainMenu" class="hidden grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div onclick="showSection('selectExamPage')" class="glass p-12 flex flex-col items-center group cursor-pointer border-b-4 border-green-500 hover:bg-green-500/5 transition">
-                <div class="text-6xl mb-6">🧬</div><h3 class="text-2xl font-black text-white">LAUNCH EVA</h3>
+            <div onclick="showSection('selectExamPage')" class="glass p-12 flex flex-col items-center group cursor-pointer border-b-4 border-orange-500">
+                <div class="text-6xl mb-6">⚠️</div><h3 class="text-2xl font-black">START MISSION</h3>
             </div>
-            <div onclick="showSection('leaderboard')" class="glass p-12 flex flex-col items-center group cursor-pointer border-b-4 border-purple-500 hover:bg-purple-500/5 transition">
-                <div class="text-6xl mb-6">📉</div><h3 class="text-2xl font-black text-white">SYNC RATE</h3>
+            <div onclick="showSection('leaderboard')" class="glass p-12 flex flex-col items-center group cursor-pointer border-b-4 border-yellow-500">
+                <div class="text-6xl mb-6">📊</div><h3 class="text-2xl font-black">SYNC RATE</h3>
             </div>
-            <div id="adminBtn" onclick="showSection('adminPage')" class="hidden glass p-12 flex flex-col items-center group cursor-pointer border-b-4 border-dashed border-orange-500">
-                <div class="text-6xl mb-6">⚙️</div><h3 class="text-2xl font-black text-white">COMMAND</h3>
+            <div id="adminBtn" onclick="showSection('adminPage')" class="hidden glass p-12 flex flex-col items-center group cursor-pointer border-b-4 border-dashed border-slate-600">
+                <div class="text-6xl mb-6">🛠️</div><h3 class="text-2xl font-black">COMMAND</h3>
             </div>
         </div>
 
         <div id="selectExamPage" class="hidden">
-            <h2 class="text-4xl font-black mb-10 uppercase italic">Select <span class="text-green-400">Mission</span></h2>
+            <h2 class="text-4xl font-black mb-10 uppercase italic">Select <span class="text-orange-500">Mission</span></h2>
             <div id="examList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </div>
 
         <div id="examPage" class="hidden">
             <div class="flex flex-col lg:flex-row gap-8">
-                <div class="flex-1 glass p-8 md:p-12 border-l-4 border-green-500"><div id="questionArea"></div></div>
+                <div class="flex-1 glass p-8 md:p-12"><div id="questionArea"></div></div>
                 <div class="w-full lg:w-80 space-y-6">
-                    <div class="glass p-8 text-center border-t-4 border-red-600">
-                        <div id="timer" class="text-5xl font-black text-green-400 tracking-tighter">15:00</div>
-                        <button onclick="customConfirm('ABORT MISSION AND EJECT PILOT?', submitExam)" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white hover:bg-red-700 transition">TERMINATE</button>
+                    <div class="glass p-8 text-center">
+                        <div id="timer" class="text-5xl font-black text-orange-500 tracking-tighter">15:00</div>
+                        <button onclick="customConfirm('ABORT MISSION AND TERMINATE DATA?', submitExam)" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white">TERMINATE</button>
                     </div>
                     <div class="glass p-6"><div id="questionMap" class="flex flex-wrap gap-2"></div></div>
                 </div>
@@ -136,33 +131,32 @@
         </div>
 
         <div id="resultPage" class="hidden h-[60vh] flex flex-col items-center justify-center text-center">
-            <h2 class="text-green-400 font-black tracking-[0.5em] mb-4 uppercase">Mission Accomplished</h2>
-            <div class="text-[150px] font-black italic text-white drop-shadow-[0_0_30px_rgba(74,222,128,0.3)]" id="finalScoreDisplay">0</div>
-            <button onclick="showSection('mainMenu')" class="btn-premium px-12 py-5 rounded-full mt-10 uppercase">Return to Terminal</button>
+            <h2 class="text-orange-500 font-black tracking-[0.5em] mb-4 uppercase">Mission Complete</h2>
+            <div class="text-[150px] font-black italic text-white" id="finalScoreDisplay">0</div>
+            <button onclick="showSection('mainMenu')" class="btn-premium px-12 py-5 rounded-full mt-10">RETURN TO BASE</button>
         </div>
 
-        <div id="adminPage" class="hidden max-w-4xl mx-auto glass p-10 border-t-4 border-orange-500">
-            <h2 class="text-3xl font-black mb-8 italic text-orange-500 uppercase" id="adminTitle">Magi Command</h2>
+        <div id="adminPage" class="hidden max-w-4xl mx-auto glass p-10">
+            <h2 class="text-3xl font-black mb-8 italic text-orange-500" id="adminTitle">COMMAND CENTER</h2>
             <div class="space-y-6">
-                <input type="text" id="examTitle" placeholder="MISSION DATA NAME..." class="w-full p-5 rounded-2xl outline-none">
+                <input type="text" id="examTitle" placeholder="Mission Name..." class="w-full p-5 rounded-2xl outline-none">
                 <textarea id="rawInput" rows="10" class="w-full p-5 rounded-2xl font-mono text-sm outline-none" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án sai&#10;B. Đáp án đúng @t"></textarea>
                 <div id="statusMsg" class="hidden text-center font-black text-lg py-2 uppercase tracking-widest transition-all duration-300"></div>
                 <div class="flex gap-4">
-                    <button id="saveBtn" onclick="handleSaveExam()" class="flex-1 btn-premium py-5 rounded-2xl uppercase">Inject Data</button>
-                    <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden glass px-8 py-5 rounded-2xl font-bold text-xs uppercase">Abort</button>
+                    <button id="saveBtn" onclick="handleSaveExam()" class="flex-1 btn-premium py-5 rounded-2xl">DEPLOY DATA</button>
+                    <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden glass px-8 py-5 rounded-2xl font-bold text-xs">ABORT</button>
                 </div>
                 <div id="adminExamList" class="pt-10 space-y-3"></div>
             </div>
         </div>
 
-        <div id="leaderboard" class="hidden max-w-4xl mx-auto glass p-10 border-t-4 border-green-500">
-            <h2 class="text-4xl font-black mb-10 text-center italic uppercase">Top <span class="text-green-400">Sync Rates</span></h2>
+        <div id="leaderboard" class="hidden max-w-4xl mx-auto glass p-10">
+            <h2 class="text-4xl font-black mb-10 text-center italic uppercase">Top <span class="text-orange-500">Sync Rates</span></h2>
             <div id="leaderboardContent" class="space-y-4"></div>
         </div>
     </div>
 
     <script>
-        // LOGIC GIỮ NGUYÊN NHƯ BẢN CŨ CỦA SẾP
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
@@ -173,7 +167,7 @@
         function showStatus(text, isError = false) {
             const msg = document.getElementById('statusMsg');
             msg.innerText = text;
-            msg.className = `text-center font-black text-lg py-2 uppercase tracking-widest transition-all duration-300 ${isError ? 'text-red-500' : 'text-green-400'}`;
+            msg.className = `text-center font-black text-lg py-2 uppercase tracking-widest transition-all duration-300 ${isError ? 'text-red-500' : 'text-orange-500'}`;
             msg.classList.remove('hidden');
             gsap.from(msg, { y: 10, opacity: 0, duration: 0.3 });
             setTimeout(() => {
@@ -187,15 +181,15 @@
             modal.classList.remove('hidden');
             gsap.from(modal.querySelector('.glass'), { scale: 0.9, opacity: 0, duration: 0.2 });
             document.getElementById('confirmYes').onclick = () => { modal.classList.add('hidden'); onConfirm(); };
-            document.getElementById('confirmNo').onclick = () => { modal.classList.add('hidden'); };
+            document.getElementById('confirmNo').onclick = () => modal.classList.add('hidden');
         }
 
         async function handleLogin() {
             const n = document.getElementById('username').value.trim();
             const c = document.getElementById('userClass').value.trim();
-            if(!n || !c) return showStatus("ID REQUIRED!", true);
+            if(!n || !c) return showStatus("CREDENTIALS REQUIRED!", true);
             state.user = n; state.class = c;
-            document.getElementById('userTag').innerText = `PILOT: ${n} // UNIT: ${c}`;
+            document.getElementById('userTag').innerText = `${n} // ${c}`;
             if(ADMINS.includes(n.toLowerCase())) document.getElementById('adminBtn').classList.remove('hidden');
             await fetchExams();
             showSection('mainMenu');
@@ -220,9 +214,9 @@
 
         function renderExamList() {
             document.getElementById('examList').innerHTML = state.exams.map(ex => `
-                <div onclick="startExam(${ex.id})" class="glass p-8 cursor-pointer border-l-4 border-green-500 hover:bg-green-500/10 transition">
-                    <h3 class="text-xl font-bold uppercase text-white">${ex.title}</h3>
-                    <p class="text-[10px] text-green-400 font-bold mt-2 uppercase tracking-widest">${ex.questions.length} DATA BLOCKS | SYNCHRONIZING...</p>
+                <div onclick="startExam(${ex.id})" class="glass p-8 cursor-pointer border-l-4 border-orange-500 hover:bg-orange-500/10 transition">
+                    <h3 class="text-xl font-bold">${ex.title}</h3>
+                    <p class="text-xs opacity-50 mt-2 uppercase tracking-widest">${ex.questions.length} DATA BLOCKS | 15:00</p>
                 </div>
             `).join('');
         }
@@ -231,20 +225,18 @@
             const ex = state.exams.find(e => e.id === id);
             state.currentExam = { ...ex, questions: [...ex.questions].sort(() => Math.random() - 0.5) };
             state.userAns = new Array(ex.questions.length).fill(null);
-            showSection('examPage');
-            renderQuestion(0);
-            startTimer();
+            showSection('examPage'); renderQuestion(0); startTimer();
         }
 
         function renderQuestion(idx) {
             const q = state.currentExam.questions[idx];
             document.getElementById('questionArea').innerHTML = `
-                <span class="text-green-400 font-black text-xs tracking-widest uppercase">Target Area ${idx + 1}</span>
-                <h2 class="text-2xl font-bold mt-6 mb-12 text-white">${q.q}</h2>
+                <span class="text-orange-500 font-black text-xs tracking-widest uppercase">Target Area ${idx + 1} / ${state.currentExam.questions.length}</span>
+                <h2 class="text-3xl font-bold mt-6 mb-12">${q.q}</h2>
                 <div class="grid grid-cols-1 gap-4">
                     ${q.opts.map((o, oi) => `
                         <div onclick="pick(${idx}, ${oi})" class="opt-card ${state.userAns[idx] === oi ? 'selected' : ''}">
-                            <span class="font-bold mr-4 text-green-400">${String.fromCharCode(65+oi)}.</span> ${o.t}
+                            <span class="font-bold mr-4 text-orange-500">${String.fromCharCode(65+oi)}.</span> ${o.t}
                         </div>
                     `).join('')}
                 </div>
@@ -256,13 +248,12 @@
 
         function renderMap(current) {
             document.getElementById('questionMap').innerHTML = state.userAns.map((a, i) => `
-                <div onclick="renderQuestion(${i})" class="nav-dot cursor-pointer ${current === i ? 'active' : (a !== null ? 'bg-green-500/20' : '')}">${i+1}</div>
+                <div onclick="renderQuestion(${i})" class="nav-dot cursor-pointer ${current === i ? 'active' : (a !== null ? 'bg-orange-500/20' : '')}">${i+1}</div>
             `).join('');
         }
 
         function startTimer() {
-            state.time = 900;
-            if(state.timer) clearInterval(state.timer);
+            state.time = 900; if(state.timer) clearInterval(state.timer);
             state.timer = setInterval(() => {
                 state.time--;
                 let m = Math.floor(state.time/60), s = state.time%60;
@@ -284,7 +275,7 @@
         async function handleSaveExam() {
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
-            if(!title || !text) return showStatus("DATA MISSING!", true);
+            if(!title || !text) return showStatus("DATA INCOMPLETE!", true);
             const blocks = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5);
             const questions = blocks.map(b => {
                 const lines = b.trim().split('\n');
@@ -292,7 +283,7 @@
             });
             if(state.editingId) await _sb.from('exams').update({ title, questions }).eq('id', state.editingId);
             else await _sb.from('exams').insert([{ title, questions }]);
-            showStatus("INJECTION SUCCESS!"); cancelEdit(); await fetchExams(); renderAdminExams();
+            showStatus("UPLOAD COMPLETE!"); cancelEdit(); await fetchExams(); renderAdminExams();
         }
 
         function editEx(id) {
@@ -306,17 +297,15 @@
         }
 
         function cancelEdit() {
-            state.editingId = null;
-            document.getElementById('examTitle').value = ""; document.getElementById('rawInput').value = "";
-            document.getElementById('saveBtn').innerText = "Inject Data";
-            document.getElementById('cancelEditBtn').classList.add('hidden');
+            state.editingId = null; document.getElementById('examTitle').value = ""; document.getElementById('rawInput').value = "";
+            document.getElementById('saveBtn').innerText = "DEPLOY DATA"; document.getElementById('cancelEditBtn').classList.add('hidden');
         }
 
         async function renderAdminExams() {
             document.getElementById('adminExamList').innerHTML = state.exams.map(ex => `
                 <div class="flex justify-between items-center p-4 glass text-sm group">
-                    <span onclick="editEx(${ex.id})" class="cursor-pointer hover:text-green-400 transition font-bold uppercase">${ex.title}</span>
-                    <button onclick="customConfirm('PURGE MISSION DATA?', () => deleteEx(${ex.id}))" class="text-red-500 font-bold hover:scale-110 transition opacity-50 group-hover:opacity-100 italic">PURGE</button>
+                    <span onclick="editEx(${ex.id})" class="cursor-pointer hover:text-orange-500 transition font-bold uppercase">${ex.title}</span>
+                    <button onclick="customConfirm('PURGE THIS MISSION DATA?', () => deleteEx(${ex.id}))" class="text-red-500 font-bold hover:scale-110 transition opacity-50 group-hover:opacity-100 italic">PURGE</button>
                 </div>
             `).join('');
         }
@@ -325,18 +314,19 @@
             const ex = state.exams.find(e => e.id === id);
             await _sb.from('history').delete().eq('exam', ex.title);
             const { error } = await _sb.from('exams').delete().eq('id', id);
-            if(!error) { showStatus("PURGE COMPLETE!"); await fetchExams(); renderAdminExams(); }
+            if(!error) { showStatus("DATA PURGED!"); await fetchExams(); renderAdminExams(); }
+            else showStatus("SYSTEM ERROR!", true);
         }
 
         async function renderLeaderboard() {
             const { data } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(20);
             document.getElementById('leaderboardContent').innerHTML = (data || []).map((h, i) => `
-                <div class="glass p-5 flex justify-between items-center border-l-4 ${i<3?'border-green-500':'border-purple-500'}">
+                <div class="glass p-5 flex justify-between items-center">
                     <div class="flex items-center gap-5">
-                        <span class="text-2xl font-black ${i<3?'text-green-400':'opacity-20'}">#${i+1}</span>
-                        <div><p class="font-bold uppercase text-sm text-white">${h.name}</p><p class="text-[10px] text-purple-400 uppercase font-bold">${h.exam}</p></div>
+                        <span class="text-2xl font-black ${i<3?'text-orange-500':'opacity-20'}">#${i+1}</span>
+                        <div><p class="font-bold uppercase text-sm">${h.name}</p><p class="text-[10px] opacity-40 uppercase">${h.exam}</p></div>
                     </div>
-                    <div class="text-3xl font-black text-green-400">${h.score}</div>
+                    <div class="text-3xl font-black text-orange-500">${h.score}</div>
                 </div>
             `).join('');
         }
