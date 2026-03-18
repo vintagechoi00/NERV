@@ -27,13 +27,15 @@
         }
         .btn-premium:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 35px -10px rgba(251, 191, 36, 0.5); }
         
-        /* LOGO NERV SVG - CẬP NHẬT THEO LOGO MỚI */
+        /* LOGO NERV SVG - TRẮNG NGUYÊN BẢN */
         .nerv-logo-svg {
-            fill: var(--primary);
-            width: 48px; height: 48px;
-            filter: drop-shadow(0 0 5px rgba(249, 115, 22, 0.3));
+            fill: #ffffff;
+            width: 52px; height: 52px;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
             cursor: pointer;
+            transition: transform 0.3s ease;
         }
+        .nerv-logo-svg:hover { transform: scale(1.05); }
         
         .opt-card {
             background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.05);
@@ -74,11 +76,9 @@
         <header id="header" class="hidden flex justify-between items-center mb-12">
             <div class="flex items-center gap-4">
                 <svg class="nerv-logo-svg" onclick="showSection('mainMenu')" viewBox="0 0 100 100">
-                    <path d="M10,90 Q10,10 90,10 L90,90 L50,50 Z" fill-rule="evenodd" />
-                    <text x="35" y="85" font-family="Arial" font-size="18" font-weight="900" fill="currentColor">N</text>
-                    <text x="35" y="65" font-family="Arial" font-size="18" font-weight="900" fill="currentColor">E</text>
-                    <text x="55" y="85" font-family="Arial" font-size="18" font-weight="900" fill="currentColor">R</text>
-                    <text x="75" y="85" font-family="Arial" font-size="18" font-weight="900" fill="currentColor">V</text>
+                    <path d="M50,5 L50,50 L95,95 L5,95 L5,35 Z" />
+                    <text x="15" y="85" font-family="Serif" font-size="22" font-weight="900" fill="#000">NE</text>
+                    <text x="15" y="60" font-family="Serif" font-size="22" font-weight="900" fill="#000">RV</text>
                 </svg>
                 <div>
                     <h1 class="text-2xl font-extrabold tracking-tight">NERD <span class="text-orange-500">SYSTEM</span></h1>
