@@ -75,7 +75,7 @@
     <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
         <header id="header" class="hidden flex justify-between items-center mb-12">
             <div class="flex items-center gap-4">
-                <img src="https://raw.githubusercontent.com/wattmancuibap/image/main/logo_nerv.png" class="nerv-logo-img" onclick="showSection('mainMenu')" alt="NERD">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/NERV_Logo.svg/1200px-NERV_Logo.svg.png" class="nerv-logo-img" onclick="showSection('mainMenu')" alt="NERD">
                 <div>
                     <h1 class="text-2xl font-extrabold tracking-tight">NERD <span class="text-orange-500">SYSTEM</span></h1>
                     <p id="userTag" class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]"></p>
@@ -158,13 +158,11 @@
     <script>
         // --- SECURITY LAYER ---
         const _protector = () => {
-            // Chặn F12, Ctrl+Shift+I, Ctrl+U
             document.onkeydown = (e) => {
                 if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
                     return false;
                 }
             };
-            // Anti-debugger
             setInterval(() => { (function(){}).constructor("debugger")() }, 100);
         };
         _protector();
@@ -173,7 +171,7 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        const ADMINS = ['wattman', 'nikagay']; // Đã cập nhật Admin
+        const ADMINS = ['wattman', 'nikagay'];
         let state = { user: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null };
 
         function showStatus(text, isError = false) {
