@@ -38,20 +38,26 @@
         }
         .btn-review-gradient:hover { transform: scale(1.05); opacity: 1; }
 
-        /* Sửa đổi style logo từ image sang text-based */
+        /* LOGO FIXED - GIỮ NGUYÊN PHONG CÁCH BẢN CŨ */
         .nerv-logo-img {
-            width: 52px; height: 52px;
+            width: 48px; height: 48px;
             display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: black; font-size: 32px; font-weight: 900;
-            border-radius: 12px;
-            transform: rotate(-45deg); /* Nghiêng 45 độ ngược lại để chữ N trông đứng hoặc nghiêng tùy ý */
-            filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4));
+            color: black; font-size: 28px; font-weight: 900;
+            border-radius: 14px;
+            transform: rotate(-10deg); /* Độ nghiêng đặc trưng của bản cũ */
+            filter: drop-shadow(0 4px 12px rgba(249, 115, 22, 0.5));
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        /* Giữ nguyên hiệu ứng hover cũ */
-        .nerv-logo-img:hover { transform: scale(1.1) rotate(0deg); }
+        .nerv-logo-img span {
+            transform: rotate(10deg); /* Đảo ngược độ nghiêng để chữ N đứng thẳng */
+            display: inline-block;
+        }
+        .nerv-logo-img:hover { 
+            transform: scale(1.1) rotate(0deg); 
+            filter: drop-shadow(0 0 20px var(--primary));
+        }
         
         .opt-card {
             background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.05);
@@ -90,9 +96,11 @@
     <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
         <header id="header" class="hidden flex justify-between items-center mb-12">
             <div class="flex items-center gap-4">
-                <div class="nerv-logo-img" onclick="showSection('mainMenu')" style="transform: rotate(45deg);">N</div>
+                <div class="nerv-logo-img" onclick="showSection('mainMenu')">
+                    <span>N</span>
+                </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold tracking-tight">NERD <span class="text-orange-500">SYSTEM</span></h1>
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase">NERD <span class="text-orange-500">SYSTEM</span></h1>
                     <p id="userTag" class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]"></p>
                 </div>
             </div>
