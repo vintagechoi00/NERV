@@ -244,7 +244,7 @@
 
         function startExam(id) {
             const ex = state.exams.find(e => e.id === id);
-            // SỬA: Xáo trộn câu hỏi nhưng vẫn giữ nguyên dữ liệu đáp án bên trong từng câu
+            // LOGIC: Xáo trộn câu hỏi ngẫu nhiên khi bắt đầu làm bài
             const shuffled = [...ex.questions].sort(() => Math.random() - 0.5);
             state.currentExam = { ...ex, questions: shuffled };
             state.userAns = new Array(shuffled.length).fill(null);
@@ -334,13 +334,13 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
             
-            // SỬA: Cải tiến Regex cắt câu và dọn dẹp ký tự A. B. sạch hơn
-            const questions = text.split(/Câu\s*\d+[:.]/g).filter(b => b.trim().length > 5).map(b => {
+            // LOGIC: Làm sạch các ký tự rác như A. B. C. hoặc 1. 2. 3. khi dán đề bài vào hệ thống
+            const questions = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5).map(b => {
                 const lines = b.trim().split('\n').filter(l => l.trim() !== "");
                 return { 
-                    q: lines[0].trim(), 
+                    q: lines[0].replace(/^[0-9\s.:]+/, '').trim(), // Xóa số câu ở đầu đề bài
                     opts: lines.slice(1).map(l => ({ 
-                        t: l.replace('@t','').replace(/^[A-Z0-9][.:\s]+/i, '').trim(), 
+                        t: l.replace('@t','').replace(/^[A-Z0-9][.:\s]+/i, '').trim(), // Xóa A. B. C. ở đáp án
                         c: l.includes('@t') 
                     })) 
                 };
