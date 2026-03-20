@@ -9,16 +9,36 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f97316; --secondary: #fbbf24; --bg: #0a0a0a; }
+        /* CSS Variables để đổi hệ màu nhanh */
+        :root { 
+            --primary: #f97316; 
+            --secondary: #fbbf24; 
+            --bg-gradient: radial-gradient(circle at top right, #261205, #0a0a0a);
+            --text-main: #f1f5f9;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(249, 115, 22, 0.2);
+            --input-bg: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Hệ Trắng Cam */
+        [data-theme="light"] {
+            --bg-gradient: radial-gradient(circle at top right, #fff7ed, #f1f5f9);
+            --text-main: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(249, 115, 22, 0.3);
+            --input-bg: rgba(255, 255, 255, 0.9);
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at top right, #261205, #0a0a0a);
-            color: #f1f5f9; min-height: 100vh; user-select: none;
+            background: var(--bg-gradient);
+            color: var(--text-main); min-height: 100vh; user-select: none;
             -webkit-user-select: none;
+            transition: background 0.5s ease, color 0.3s ease;
         }
         .glass {
-            background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px);
-            border: 1px solid rgba(249, 115, 22, 0.2); border-radius: 28px;
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 28px;
         }
         .btn-premium {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -32,7 +52,8 @@
             color: var(--primary); font-weight: 800; transition: all 0.3s;
             border: 1px solid rgba(249, 115, 22, 0.3);
         }
-        .btn-review-custom:hover { background: var(--primary); color: black; transform: scale(1.05); }
+        [data-theme="light"] .btn-review-custom { background: white; }
+        .btn-review-custom:hover { background: var(--primary); color: white; transform: scale(1.05); }
 
         .nerv-logo-img {
             width: 48px; height: 48px;
@@ -52,6 +73,7 @@
             background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.05);
             padding: 18px 24px; border-radius: 18px; cursor: pointer; transition: 0.2s;
         }
+        [data-theme="light"] .opt-card { background: rgba(0,0,0,0.03); }
         .opt-card:hover { background: rgba(249, 115, 22, 0.1); border-color: var(--primary); }
         .opt-card.selected {
             background: linear-gradient(90deg, rgba(249, 115, 22, 0.2), rgba(251, 191, 36, 0.2));
@@ -59,30 +81,38 @@
         }
 
         .opt-review { padding: 14px 20px; border-radius: 14px; margin-bottom: 8px; font-weight: 600; border: 1px solid rgba(255,255,255,0.05); }
-        .opt-correct { background: rgba(34, 197, 94, 0.2) !important; border-color: #22c55e !important; color: #4ade80; }
-        .opt-wrong { background: rgba(239, 68, 68, 0.2) !important; border-color: #ef4444 !important; color: #f87171; }
+        .opt-correct { background: rgba(34, 197, 94, 0.2) !important; border-color: #22c55e !important; color: #16a34a; }
+        .opt-wrong { background: rgba(239, 68, 68, 0.2) !important; border-color: #ef4444 !important; color: #dc2626; }
 
         .nav-dot {
             width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
             border-radius: 14px; background: rgba(255, 255, 255, 0.05); font-weight: 800; transition: 0.3s;
         }
-        input, textarea { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(249,115,22,0.2) !important; color: white !important; }
-        .confirm-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100;
-            display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+        [data-theme="light"] .nav-dot { background: rgba(0,0,0,0.05); }
+        
+        input, textarea { background: var(--input-bg) !important; border: 1px solid rgba(249,115,22,0.2) !important; color: var(--text-main) !important; }
+        
+        .theme-toggle {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+            width: 50px; height: 50px; border-radius: 15px;
+            background: var(--primary); color: black;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.3s;
         }
+        .theme-toggle:hover { transform: scale(1.1); }
 
         .timer-progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--primary); width: 100%; z-index: 1000; transition: width 1s linear; }
-        .timer-critical { background: #ef4444; animation: timer-blink 0.5s infinite; }
-        @keyframes timer-blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         #cheatGuard { position: fixed; inset: 0; background: rgba(220, 38, 38, 0.95); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); text-align: center; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
+    <div class="theme-toggle" onclick="toggleTheme()" title="Đổi giao diện">🌓</div>
+
     <div id="timerBar" class="timer-progress hidden"></div>
     <div id="cheatGuard">
-        <div class="p-10">
+        <div class="p-10 text-white">
             <h1 class="text-6xl font-black italic mb-4">GIAO DIỆN BỊ KHÓA</h1>
             <p class="text-xl tracking-widest opacity-80 uppercase">ĐANG LÀM BÀI MÀ ĐI ĐÂU VẬY Ẻ?</p>
             <button onclick="document.getElementById('cheatGuard').style.display='none'" class="mt-10 px-10 py-4 bg-white text-black font-black rounded-full italic">TÔI ĐÃ HIỂU</button>
@@ -118,7 +148,7 @@
         <div id="loginPage" class="max-w-md mx-auto mt-20 glass p-10 shadow-2xl">
             <div class="text-center mb-10">
                 <h2 class="text-4xl font-black mb-2 tracking-tighter italic">NERD <span class="text-orange-500">V3.5</span></h2>
-                <p class="text-slate-400 text-sm">Hệ thống học tập Lớp 8A7</p>
+                <p class="opacity-60 text-sm">Hệ thống học tập Lớp 8A7</p>
             </div>
             <div class="space-y-5">
                 <input type="text" id="username" placeholder="Tên của bạn..." class="w-full p-4 rounded-2xl outline-none">
@@ -159,7 +189,7 @@
 
         <div id="resultPage" class="hidden flex flex-col items-center justify-center text-center py-20">
             <h2 class="text-orange-500 font-black tracking-[0.5em] mb-4 uppercase">Hoàn Thành</h2>
-            <div class="text-[150px] font-black italic text-white leading-none" id="finalScoreDisplay">0</div>
+            <div class="text-[150px] font-black italic leading-none" id="finalScoreDisplay">0</div>
             <p id="timeFinish" class="text-orange-500/60 font-bold uppercase tracking-widest mb-6"></p>
             <div class="flex flex-col gap-4 mt-10">
                 <button onclick="showSection('mainMenu')" class="btn-premium px-12 py-5 rounded-full">QUAY VỀ MENU</button>
@@ -196,6 +226,16 @@
     </div>
 
     <script>
+        // Hàm đổi giao diện
+        function toggleTheme() {
+            const current = document.body.getAttribute('data-theme');
+            if(current === 'light') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+            }
+        }
+
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
