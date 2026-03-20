@@ -91,24 +91,32 @@
         [data-theme="light"] .nav-dot { background: rgba(0,0,0,0.05); }
         
         input, textarea { background: var(--input-bg) !important; border: 1px solid rgba(249,115,22,0.2) !important; color: var(--text-main) !important; }
-        
-        .theme-toggle {
-            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
-            width: 50px; height: 50px; border-radius: 15px;
-            background: var(--primary); color: black;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            transition: 0.3s;
+
+        /* Custom Switch Glassmorphism */
+        .switch-container { display: flex; align-items: center; gap: 8px; margin-right: 15px; }
+        .theme-switch { position: relative; width: 44px; height: 22px; cursor: pointer; }
+        .theme-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; inset: 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 34px; transition: 0.4s;
         }
-        .theme-toggle:hover { transform: scale(1.1); }
+        .slider:before {
+            position: absolute; content: "";
+            height: 14px; width: 14px; left: 3px; bottom: 3px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            border-radius: 50%; transition: 0.4s;
+        }
+        input:checked + .slider:before { transform: translateX(22px); }
+        [data-theme="light"] .slider { background: rgba(0, 0, 0, 0.05); }
 
         .timer-progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--primary); width: 100%; z-index: 1000; transition: width 1s linear; }
         #cheatGuard { position: fixed; inset: 0; background: rgba(220, 38, 38, 0.95); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); text-align: center; }
     </style>
 </head>
 <body oncontextmenu="return false;">
-
-    <div class="theme-toggle" onclick="toggleTheme()" title="Đổi giao diện">🌓</div>
 
     <div id="timerBar" class="timer-progress hidden"></div>
     <div id="cheatGuard">
@@ -139,9 +147,19 @@
                     <p id="userTag" class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]"></p>
                 </div>
             </div>
-            <div class="flex gap-2">
-                <button onclick="showSection('mainMenu')" class="glass px-6 py-2 text-xs font-bold hover:bg-white/10 transition text-orange-500">TRANG CHỦ</button>
-                <button onclick="location.reload()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
+            
+            <div class="flex items-center">
+                <div class="switch-container">
+                    <label class="theme-switch">
+                        <input type="checkbox" onchange="toggleTheme()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="showSection('mainMenu')" class="glass px-6 py-2 text-xs font-bold hover:bg-white/10 transition text-orange-500">TRANG CHỦ</button>
+                    <button onclick="location.reload()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
+                </div>
             </div>
         </header>
 
@@ -226,7 +244,6 @@
     </div>
 
     <script>
-        // Hàm đổi giao diện
         function toggleTheme() {
             const current = document.body.getAttribute('data-theme');
             if(current === 'light') {
