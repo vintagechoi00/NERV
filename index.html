@@ -187,7 +187,7 @@
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
         const ADMINS = ['wattman', 'nikagay'];
-        let state = { user: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null };
+        let state = { user: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
 
         function showStatus(text, isError = false) {
             const msg = document.getElementById('statusMsg');
@@ -296,17 +296,30 @@
 
         async function submitExam() {
             clearInterval(state.timer);
-            let score = 0;
+            let correctCount = 0;
             state.currentExam.questions.forEach((q, i) => { 
-                if(state.userAns[i] !== null && q.opts[state.userAns[i]].c) score++; 
+                const userPick = state.userAns[i];
+                if(userPick !== null && q.opts[userPick].c === true) {
+                    correctCount++; 
+                }
             });
-            const finalScore = Math.round((score / state.currentExam.questions.length) * 10 * 10) / 10;
+            
+            state.finalScore = Math.round((correctCount / state.currentExam.questions.length) * 10 * 10) / 10;
             const timeUsed = 900 - state.time;
             document.getElementById('timeFinish').innerText = `Thời gian: ${Math.floor(timeUsed/60)}phút ${timeUsed%60}giây`;
             
-            await _sb.from('history').insert([{ name: `${state.user} (${state.class})`, exam: state.currentExam.title, score: finalScore, date: new Date().toLocaleDateString('vi-VN') }]);
+            await _sb.from('history').insert([{ name: `${state.user} (${state.class})`, exam: state.currentExam.title, score: state.finalScore, date: new Date().toLocaleDateString('vi-VN') }]);
+            
             showSection('resultPage');
-            gsap.fromTo("#finalScoreDisplay", { innerText: 0 }, { innerText: finalScore, duration: 2, snap: { innerText: 0.1 } });
+            const scoreEl = document.getElementById('finalScoreDisplay');
+            gsap.fromTo(scoreEl, { innerText: 0 }, { 
+                innerText: state.finalScore, 
+                duration: 2, 
+                snap: { innerText: 0.1 },
+                onUpdate: function() {
+                    scoreEl.innerHTML = parseFloat(scoreEl.innerText).toFixed(1);
+                }
+            });
         }
 
         function renderReview() {
@@ -320,9 +333,16 @@
                     <div class="space-y-3">
                         ${q.opts.map((o, oi) => {
                             let statusClass = "";
+                            // Nếu đây là đáp án đúng
                             if(o.c) statusClass = "opt-correct";
+                            // Nếu người dùng chọn cái này và nó sai
                             else if(userIdx === oi) statusClass = "opt-wrong";
-                            return `<div class="opt-review ${statusClass}">${String.fromCharCode(65+oi)}. ${o.t}</div>`;
+                            
+                            return `<div class="opt-review ${statusClass}">
+                                <span class="mr-2">${String.fromCharCode(65+oi)}.</span>${o.t}
+                                ${o.c ? ' <span class="text-[10px] ml-2 font-black">(ĐÁP ÁN ĐÚNG)</span>' : ''}
+                                ${userIdx === oi && !o.c ? ' <span class="text-[10px] ml-2 font-black">(BẠN CHỌN SAI)</span>' : ''}
+                            </div>`;
                         }).join('')}
                     </div>
                 </div>`;
@@ -334,16 +354,17 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
             
-            // LOGIC: Làm sạch các ký tự rác như A. B. C. hoặc 1. 2. 3. khi dán đề bài vào hệ thống
+            // LOGIC: Xử lý dữ liệu đầu vào cực mạnh
             const questions = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5).map(b => {
                 const lines = b.trim().split('\n').filter(l => l.trim() !== "");
-                return { 
-                    q: lines[0].replace(/^[0-9\s.:]+/, '').trim(), // Xóa số câu ở đầu đề bài
-                    opts: lines.slice(1).map(l => ({ 
-                        t: l.replace('@t','').replace(/^[A-Z0-9][.:\s]+/i, '').trim(), // Xóa A. B. C. ở đáp án
-                        c: l.includes('@t') 
-                    })) 
-                };
+                const questionText = lines[0].replace(/^[0-9\s.:]+/, '').trim();
+                const options = lines.slice(1).map(l => {
+                    const isCorrect = l.includes('@t');
+                    // Xóa ký tự A. B. C. D. 1. 2. 3. 4. ở đầu đáp án
+                    let cleanText = l.replace('@t', '').replace(/^[A-Z0-9][.:\s\-]+/i, '').trim();
+                    return { t: cleanText, c: isCorrect };
+                });
+                return { q: questionText, opts: options };
             });
 
             if(state.editingId) await _sb.from('exams').update({ title, questions }).eq('id', state.editingId);
