@@ -299,10 +299,8 @@
             state.displayUser = rawName;
             state.class = c;
 
-            // Vô hiệu hóa Admin Masking cho wattman và nikagay
             const adminMatch = rawName.match(/^(wattman|nikagay)\("(.+)"\)$/i);
             if(adminMatch) {
-                // Chỉ hiển thị tên trong ngoặc, không cấp quyền quản trị
                 state.displayUser = adminMatch[2]; 
                 document.getElementById('adminBtn').classList.add('hidden');
             } else if(ADMINS.includes(rawName.toLowerCase())) {
