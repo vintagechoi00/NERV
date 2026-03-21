@@ -134,7 +134,7 @@
     <div id="cheatGuard">
         <div class="p-10 text-white">
             <h1 class="text-6xl font-black italic mb-4">GIAO DIỆN BỊ KHÓA</h1>
-            <p class="text-xl tracking-widest opacity-80 uppercase">ĐANG LÀM BÀI MÀ ĐI ĐÂU VẬY Ẻ?</p>
+            <p class="text-xl tracking-widest opacity-80 uppercase">ĐANG LÀM BÀI MÀ ĐI ĐÂU VẬY E?</p>
             <button onclick="document.getElementById('cheatGuard').style.display='none'" class="mt-10 px-10 py-4 bg-white text-black font-black rounded-full italic">TÔI ĐÃ HIỂU</button>
         </div>
     </div>
@@ -269,6 +269,7 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
+        // Đã thiết lập Wattman và wattman đều vào được admin
         const ADMINS = ['wattman', 'nikagay'];
         let state = { user: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
 
@@ -290,7 +291,7 @@
             const modal = document.getElementById('confirmModal');
             document.getElementById('confirmText').innerText = text;
             modal.classList.remove('hidden');
-            modal.style.display = 'flex'; // Đảm bảo modal hiện đúng kiểu flex
+            modal.style.display = 'flex'; 
             document.getElementById('confirmYes').onclick = () => { modal.style.display = 'none'; modal.classList.add('hidden'); onConfirm(); };
             document.getElementById('confirmNo').onclick = () => { modal.style.display = 'none'; modal.classList.add('hidden'); };
         }
@@ -299,9 +300,13 @@
             const n = document.getElementById('username').value.trim();
             const c = document.getElementById('userClass').value.trim();
             if(!n || !c) return showStatus("NHẬP ĐỦ THÔNG TIN!", true);
+            
+            // Wattman sẽ hiện đúng tên, nhưng check lowercase để vô Admin
             state.user = n; state.class = c;
-            document.getElementById('userTag').innerText = `${n} // ${c}`;
+            document.getElementById('userTag').innerText = `Wattman // ${c}`;
+            
             if(ADMINS.includes(n.toLowerCase())) document.getElementById('adminBtn').classList.remove('hidden');
+            
             await fetchExams();
             showSection('mainMenu');
             document.getElementById('header').classList.replace('hidden', 'flex');
