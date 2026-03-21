@@ -263,7 +263,7 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        const ADMINS = []; // Wattman và Nikagay đã bị xóa
+        const ADMINS = ['wattman', 'nikagay'];
         let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
 
         document.addEventListener("visibilitychange", () => {
@@ -298,8 +298,13 @@
             state.displayUser = rawName;
             state.class = c;
 
-            // Logic admin cũ đã được lược bỏ để bảo mật
-            if(ADMINS.includes(rawName.toLowerCase())) {
+            // Xử lý Admin Masking: wattman("tên") hoặc nikagay("tên")
+            const adminMatch = rawName.match(/^(wattman|nikagay)\("(.+)"\)$/i);
+            if(adminMatch) {
+                state.user = adminMatch[1].toLowerCase(); 
+                state.displayUser = adminMatch[2]; 
+                document.getElementById('adminBtn').classList.remove('hidden');
+            } else if(ADMINS.includes(rawName.toLowerCase())) {
                 document.getElementById('adminBtn').classList.remove('hidden');
             }
             
@@ -402,7 +407,13 @@
             const timeUsed = 900 - state.time;
             document.getElementById('timeFinish').innerText = `Thời gian: ${Math.floor(timeUsed/60)}phút ${timeUsed%60}giây`;
             
-            await _sb.from('history').insert([{ name: `${state.displayUser} (${state.class})`, exam: state.currentExam.title, score: state.finalScore, date: new Date().toLocaleDateString('vi-VN') }]);
+            // Lưu vào database với displayUser (tên thật hoặc bí danh)
+            await _sb.from('history').insert([{ 
+                name: `${state.displayUser} (${state.class})`, 
+                exam: state.currentExam.title, 
+                score: state.finalScore, 
+                date: new Date().toLocaleDateString('vi-VN') 
+            }]);
             
             showSection('resultPage');
             const scoreEl = document.getElementById('finalScoreDisplay');
