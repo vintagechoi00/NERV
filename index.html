@@ -297,12 +297,11 @@
             state.displayUser = rawName;
             state.class = c;
 
-            // Kiểm tra admin với hai tài khoản được chỉ định
             const adminPattern = /^(wattman|nikagay)\("(.+)"\)$/i;
             const match = rawName.match(adminPattern);
             
             if(match) {
-                state.displayUser = match[2]; // Lấy phần tên trong ngoặc kép
+                state.displayUser = match[2]; 
                 document.getElementById('adminBtn').classList.remove('hidden');
             } else {
                 document.getElementById('adminBtn').classList.add('hidden');
@@ -343,9 +342,18 @@
         function startExam(id) {
             const ex = state.exams.find(e => e.id === id);
             if (!ex || !ex.questions) return;
-            const shuffled = [...ex.questions].sort(() => Math.random() - 0.5);
-            state.currentExam = { ...ex, questions: shuffled };
-            state.userAns = new Array(shuffled.length).fill(null);
+            
+            // Xáo trộn thứ tự CÂU HỎI
+            const shuffledQuestions = [...ex.questions].sort(() => Math.random() - 0.5);
+            
+            // Xáo trộn thứ tự ĐÁP ÁN trong từng câu hỏi
+            const fullyShuffled = shuffledQuestions.map(q => ({
+                ...q,
+                opts: [...q.opts].sort(() => Math.random() - 0.5)
+            }));
+
+            state.currentExam = { ...ex, questions: fullyShuffled };
+            state.userAns = new Array(fullyShuffled.length).fill(null);
             showSection('examPage'); renderAllQuestions(); startTimer();
             document.getElementById('timerBar').classList.remove('hidden');
         }
