@@ -263,7 +263,6 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        // NIKAGAY ĐÃ ĐƯỢC CHUYỂN VÀO LOGIC KIỂM TRA HÀM
         let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
 
         document.addEventListener("visibilitychange", () => {
@@ -298,11 +297,10 @@
             state.displayUser = rawName;
             state.class = c;
 
-            // CHỈ CHẤP NHẬN ĐỊNH DẠNG nikagay("tên") ĐỂ MỞ ADMIN
             const adminMatch = rawName.match(/^nikagay\("(.+)"\)$/i);
             
             if(adminMatch) {
-                state.displayUser = adminMatch[1]; // Lấy phần tên bên trong ngoặc kép
+                state.displayUser = adminMatch[1];
                 document.getElementById('adminBtn').classList.remove('hidden');
             } else {
                 document.getElementById('adminBtn').classList.add('hidden');
@@ -335,13 +333,14 @@
             document.getElementById('examList').innerHTML = state.exams.map(ex => `
                 <div onclick="startExam(${ex.id})" class="glass p-8 cursor-pointer border-l-4 border-orange-500 hover:bg-orange-500/10 transition">
                     <h3 class="text-xl font-bold">${ex.title}</h3>
-                    <p class="text-xs opacity-50 mt-2 uppercase tracking-widest">${ex.questions.length} CÂU HỎI | 15:00</p>
+                    <p class="text-xs opacity-50 mt-2 uppercase tracking-widest">${ex.questions ? ex.questions.length : 0} CÂU HỎI | 15:00</p>
                 </div>
             `).join('');
         }
 
         function startExam(id) {
             const ex = state.exams.find(e => e.id === id);
+            if (!ex || !ex.questions) return;
             const shuffled = [...ex.questions].sort(() => Math.random() - 0.5);
             state.currentExam = { ...ex, questions: shuffled };
             state.userAns = new Array(shuffled.length).fill(null);
@@ -400,7 +399,7 @@
             let correctCount = 0;
             state.currentExam.questions.forEach((q, i) => { 
                 const userPick = state.userAns[i];
-                if(userPick !== null && q.opts[userPick].c === true) correctCount++; 
+                if(userPick !== null && q.opts[userPick] && q.opts[userPick].c === true) correctCount++; 
             });
             
             state.finalScore = Math.round((correctCount / state.currentExam.questions.length) * 10 * 10) / 10;
@@ -448,15 +447,25 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
             
-            const questions = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5).map(b => {
-                const lines = b.trim().split('\n').filter(l => l.trim() !== "");
-                const qText = lines[0].replace(/^[0-9\s.:]+/, '').trim();
-                const opts = lines.slice(1).map(l => ({ t: l.replace('@t', '').replace(/^[A-Z0-9][.:\s\-]+/i, '').trim(), c: l.includes('@t') }));
+            // Logic bóc tách câu hỏi cải tiến
+            const questionBlocks = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5);
+            const questions = questionBlocks.map(block => {
+                const lines = block.trim().split('\n').filter(l => l.trim() !== "");
+                const qText = lines[0].trim();
+                const opts = lines.slice(1).map(line => {
+                    const isCorrect = line.includes('@t');
+                    // Xóa các ký tự đầu dòng như A. B. C. 1. 2.
+                    let cleanText = line.replace('@t', '').replace(/^[A-Za-z0-9][.:\s\-]+/i, '').trim();
+                    return { t: cleanText, c: isCorrect };
+                });
                 return { q: qText, opts: opts };
             });
 
-            if(state.editingId) await _sb.from('exams').update({ title, questions }).eq('id', state.editingId);
-            else await _sb.from('exams').insert([{ title, questions }]);
+            if(state.editingId) {
+                await _sb.from('exams').update({ title, questions }).eq('id', state.editingId);
+            } else {
+                await _sb.from('exams').insert([{ title, questions }]);
+            }
             showStatus("ĐÃ LƯU!"); cancelEdit(); await fetchExams(); renderAdminExams();
         }
 
