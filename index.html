@@ -297,10 +297,12 @@
             state.displayUser = rawName;
             state.class = c;
 
-            const adminMatch = rawName.match(/^nikagay\("(.+)"\)$/i);
+            // Kiểm tra admin với hai tài khoản được chỉ định
+            const adminPattern = /^(wattman|nikagay)\("(.+)"\)$/i;
+            const match = rawName.match(adminPattern);
             
-            if(adminMatch) {
-                state.displayUser = adminMatch[1];
+            if(match) {
+                state.displayUser = match[2]; // Lấy phần tên trong ngoặc kép
                 document.getElementById('adminBtn').classList.remove('hidden');
             } else {
                 document.getElementById('adminBtn').classList.add('hidden');
@@ -447,7 +449,6 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
             
-            // LOGIC BÓC TÁCH CẢI TIẾN: Chia theo "Câu [số]:" hoặc "Câu [số]."
             const questionBlocks = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5);
             
             const questions = questionBlocks.map(block => {
@@ -455,7 +456,6 @@
                 const qText = lines[0].trim();
                 const opts = lines.slice(1).map(line => {
                     const isCorrect = line.includes('@t');
-                    // Regex mới: Chỉ xóa nhãn A. B. C. hoặc A: B: ở ĐẦU dòng, giữ lại nội dung phía sau
                     let cleanText = line.replace('@t', '').replace(/^\s*[A-Za-z0-9][.:\s\-]+/, '').trim();
                     return { t: cleanText, c: isCorrect };
                 });
