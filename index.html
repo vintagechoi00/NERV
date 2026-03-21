@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* CSS Variables để đổi hệ màu nhanh */
         :root { 
             --primary: #f97316; 
             --secondary: #fbbf24; 
@@ -20,7 +19,6 @@
             --input-bg: rgba(0, 0, 0, 0.4);
         }
 
-        /* Hệ Trắng Cam */
         [data-theme="light"] {
             --bg-gradient: radial-gradient(circle at top right, #fff7ed, #f1f5f9);
             --text-main: #0f172a;
@@ -114,7 +112,6 @@
         .timer-progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--primary); width: 100%; z-index: 1000; transition: width 1s linear; }
         #cheatGuard { position: fixed; inset: 0; background: rgba(220, 38, 38, 0.95); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); text-align: center; }
 
-        /* FIX CHO BẢNG XÁC NHẬN */
         .confirm-overlay {
             position: fixed;
             inset: 0;
@@ -258,20 +255,16 @@
     <script>
         function toggleTheme() {
             const current = document.body.getAttribute('data-theme');
-            if(current === 'light') {
-                document.body.removeAttribute('data-theme');
-            } else {
-                document.body.setAttribute('data-theme', 'light');
-            }
+            if(current === 'light') { document.body.removeAttribute('data-theme'); } 
+            else { document.body.setAttribute('data-theme', 'light'); }
         }
 
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        // Đã thiết lập Wattman và wattman đều vào được admin
         const ADMINS = ['wattman', 'nikagay'];
-        let state = { user: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
+        let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
 
         document.addEventListener("visibilitychange", () => {
             if (document.hidden && state.currentExam) {
@@ -297,16 +290,25 @@
         }
 
         async function handleLogin() {
-            const n = document.getElementById('username').value.trim();
+            const rawName = document.getElementById('username').value.trim();
             const c = document.getElementById('userClass').value.trim();
-            if(!n || !c) return showStatus("NHẬP ĐỦ THÔNG TIN!", true);
+            if(!rawName || !c) return showStatus("NHẬP ĐỦ THÔNG TIN!", true);
             
-            // Wattman sẽ hiện đúng tên, nhưng check lowercase để vô Admin
-            state.user = n; state.class = c;
-            document.getElementById('userTag').innerText = `Wattman // ${c}`;
+            state.user = rawName;
+            state.displayUser = rawName;
+            state.class = c;
+
+            // Xử lý logic Admin Masking: wattman("tên")
+            const adminMatch = rawName.match(/^(wattman|nikagay)\("(.+)"\)$/i);
+            if(adminMatch) {
+                state.user = adminMatch[1].toLowerCase(); // 'wattman' hoặc 'nikagay'
+                state.displayUser = adminMatch[2]; // Tên trong ngoặc
+                document.getElementById('adminBtn').classList.remove('hidden');
+            } else if(ADMINS.includes(rawName.toLowerCase())) {
+                document.getElementById('adminBtn').classList.remove('hidden');
+            }
             
-            if(ADMINS.includes(n.toLowerCase())) document.getElementById('adminBtn').classList.remove('hidden');
-            
+            document.getElementById('userTag').innerText = `${state.displayUser} // ${c}`;
             await fetchExams();
             showSection('mainMenu');
             document.getElementById('header').classList.replace('hidden', 'flex');
@@ -383,15 +385,11 @@
         function startTimer() {
             state.time = 900; if(state.timer) clearInterval(state.timer);
             const bar = document.getElementById('timerBar');
-            bar.classList.remove('timer-critical');
-            
             state.timer = setInterval(() => {
                 state.time--;
                 let m = Math.floor(state.time/60), s = state.time%60;
                 document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
-                const percent = (state.time / 900) * 100;
-                bar.style.width = percent + '%';
-                if(state.time <= 60) bar.classList.add('timer-critical');
+                bar.style.width = (state.time / 900) * 100 + '%';
                 if(state.time <= 0) submitExam();
             }, 1000);
         }
@@ -409,17 +407,14 @@
             const timeUsed = 900 - state.time;
             document.getElementById('timeFinish').innerText = `Thời gian: ${Math.floor(timeUsed/60)}phút ${timeUsed%60}giây`;
             
-            await _sb.from('history').insert([{ name: `${state.user} (${state.class})`, exam: state.currentExam.title, score: state.finalScore, date: new Date().toLocaleDateString('vi-VN') }]);
+            // Dùng displayUser để lưu vào database (đối với admin sẽ là bí danh)
+            await _sb.from('history').insert([{ name: `${state.displayUser} (${state.class})`, exam: state.currentExam.title, score: state.finalScore, date: new Date().toLocaleDateString('vi-VN') }]);
             
             showSection('resultPage');
             const scoreEl = document.getElementById('finalScoreDisplay');
             gsap.fromTo(scoreEl, { innerText: 0 }, { 
-                innerText: state.finalScore, 
-                duration: 2, 
-                snap: { innerText: 0.1 },
-                onUpdate: function() {
-                    scoreEl.innerHTML = parseFloat(scoreEl.innerText).toFixed(1);
-                }
+                innerText: state.finalScore, duration: 2, snap: { innerText: 0.1 },
+                onUpdate: function() { scoreEl.innerHTML = parseFloat(scoreEl.innerText).toFixed(1); }
             });
         }
 
@@ -427,16 +422,13 @@
             const content = document.getElementById('reviewContent');
             content.innerHTML = state.currentExam.questions.map((q, i) => {
                 const userIdx = state.userAns[i];
-                return `
-                <div class="glass p-8">
+                return `<div class="glass p-8">
                     <p class="text-orange-500 font-black text-xs mb-2 uppercase">Câu hỏi ${i+1}</p>
                     <h3 class="text-xl font-bold mb-6">${q.q}</h3>
                     <div class="space-y-3">
                         ${q.opts.map((o, oi) => {
-                            let statusClass = "";
-                            if(o.c) statusClass = "opt-correct";
-                            else if(userIdx === oi) statusClass = "opt-wrong";
-                            return `<div class="opt-review ${statusClass}">
+                            let s = o.c ? "opt-correct" : (userIdx === oi ? "opt-wrong" : "");
+                            return `<div class="opt-review ${s}">
                                 <span class="mr-2">${String.fromCharCode(65+oi)}.</span>${o.t}
                                 ${o.c ? ' <span class="text-[10px] ml-2 font-black">(ĐÁP ÁN ĐÚNG)</span>' : ''}
                                 ${userIdx === oi && !o.c ? ' <span class="text-[10px] ml-2 font-black">(BẠN CHỌN SAI)</span>' : ''}
@@ -454,13 +446,9 @@
             
             const questions = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5).map(b => {
                 const lines = b.trim().split('\n').filter(l => l.trim() !== "");
-                const questionText = lines[0].replace(/^[0-9\s.:]+/, '').trim();
-                const options = lines.slice(1).map(l => {
-                    const isCorrect = l.includes('@t');
-                    let cleanText = l.replace('@t', '').replace(/^[A-Z0-9][.:\s\-]+/i, '').trim();
-                    return { t: cleanText, c: isCorrect };
-                });
-                return { q: questionText, opts: options };
+                const qText = lines[0].replace(/^[0-9\s.:]+/, '').trim();
+                const opts = lines.slice(1).map(l => ({ t: l.replace('@t', '').replace(/^[A-Z0-9][.:\s\-]+/i, '').trim(), c: l.includes('@t') }));
+                return { q: qText, opts: opts };
             });
 
             if(state.editingId) await _sb.from('exams').update({ title, questions }).eq('id', state.editingId);
