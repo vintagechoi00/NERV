@@ -447,15 +447,16 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
             
-            // Logic bóc tách câu hỏi cải tiến
+            // LOGIC BÓC TÁCH CẢI TIẾN: Chia theo "Câu [số]:" hoặc "Câu [số]."
             const questionBlocks = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5);
+            
             const questions = questionBlocks.map(block => {
                 const lines = block.trim().split('\n').filter(l => l.trim() !== "");
                 const qText = lines[0].trim();
                 const opts = lines.slice(1).map(line => {
                     const isCorrect = line.includes('@t');
-                    // Xóa các ký tự đầu dòng như A. B. C. 1. 2.
-                    let cleanText = line.replace('@t', '').replace(/^[A-Za-z0-9][.:\s\-]+/i, '').trim();
+                    // Regex mới: Chỉ xóa nhãn A. B. C. hoặc A: B: ở ĐẦU dòng, giữ lại nội dung phía sau
+                    let cleanText = line.replace('@t', '').replace(/^\s*[A-Za-z0-9][.:\s\-]+/, '').trim();
                     return { t: cleanText, c: isCorrect };
                 });
                 return { q: qText, opts: opts };
@@ -473,7 +474,7 @@
             const ex = state.exams.find(e => e.id === id);
             state.editingId = id;
             document.getElementById('examTitle').value = ex.title;
-            document.getElementById('rawInput').value = ex.questions.map((q, i) => `Câu ${i+1}: ${q.q}\n${q.opts.map(o => `${o.t}${o.c?' @t':''}`).join('\n')}`).join('\n\n');
+            document.getElementById('rawInput').value = ex.questions.map((q, i) => `Câu ${i+1}: ${q.q}\n${q.opts.map((o, oi) => `${String.fromCharCode(65+oi)}. ${o.t}${o.c?' @t':''}`).join('\n')}`).join('\n\n');
             document.getElementById('saveBtn').innerText = "CẬP NHẬT";
             document.getElementById('cancelEditBtn').classList.remove('hidden');
         }
