@@ -343,17 +343,19 @@
             const ex = state.exams.find(e => e.id === id);
             if (!ex || !ex.questions) return;
             
-            // Xáo trộn thứ tự CÂU HỎI
-            const shuffledQuestions = [...ex.questions].sort(() => Math.random() - 0.5);
+            // XÁO TRỘN CÂU HỎI
+            let shuffledQuestions = [...ex.questions].sort(() => Math.random() - 0.5);
             
-            // Xáo trộn thứ tự ĐÁP ÁN trong từng câu hỏi
-            const fullyShuffled = shuffledQuestions.map(q => ({
-                ...q,
-                opts: [...q.opts].sort(() => Math.random() - 0.5)
-            }));
+            // XÁO TRỘN TẤT CẢ ĐÁP ÁN TRONG TỪNG CÂU
+            shuffledQuestions = shuffledQuestions.map(q => {
+                return {
+                    ...q,
+                    opts: [...q.opts].sort(() => Math.random() - 0.5)
+                };
+            });
 
-            state.currentExam = { ...ex, questions: fullyShuffled };
-            state.userAns = new Array(fullyShuffled.length).fill(null);
+            state.currentExam = { ...ex, questions: shuffledQuestions };
+            state.userAns = new Array(shuffledQuestions.length).fill(null);
             showSection('examPage'); renderAllQuestions(); startTimer();
             document.getElementById('timerBar').classList.remove('hidden');
         }
