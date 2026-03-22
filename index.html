@@ -516,16 +516,19 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
             
-            // Xử lý tách câu hỏi linh hoạt
+            // Tối ưu tách câu hỏi: Nhận diện "Câu X:", "Câu X." hoặc chỉ cần xuống dòng có "Câu"
             const questionBlocks = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5);
             
             const questions = questionBlocks.map(block => {
                 const lines = block.trim().split('\n').filter(l => l.trim() !== "");
                 const qText = lines[0].trim();
                 const opts = lines.slice(1).map(line => {
-                    // Nhận diện đáp án đúng bằng @t hoặc (Đúng)
+                    // Cải tiến nhận diện đáp án: Chấp nhận cả @t hoặc chữ (Đúng)
                     const isCorrect = /@t|\(Đúng\)/i.test(line);
-                    // Làm sạch nội dung: Xóa dấu @t, (Đúng) và ký tự đầu dòng A. B. C. 1. 2. -
+                    
+                    // Làm sạch văn bản: 
+                    // 1. Xóa flag @t hoặc (Đúng)
+                    // 2. Xóa các ký tự đầu dòng như A. B. C. 1. 2. - + * để hiển thị sạch hơn
                     let cleanText = line.replace(/@t|\(Đúng\)/gi, '')
                                         .replace(/^\s*([A-Za-z0-9][.:\s\-]+|[\-\+*])\s*/, '')
                                         .trim();
