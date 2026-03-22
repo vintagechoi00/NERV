@@ -124,7 +124,6 @@
             padding: 20px;
         }
 
-        /* Thêm style cho nút Google */
         .btn-google {
             background: white;
             color: #334155;
@@ -289,7 +288,6 @@
 
         let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
 
-        // Kiểm tra phiên đăng nhập khi tải trang
         window.onload = async () => {
             const { data: { session } } = await _sb.auth.getSession();
             if (session) {
@@ -313,9 +311,8 @@
         function setupUserFromAuth(user) {
             state.user = user.email;
             state.displayUser = user.user_metadata.full_name || user.email.split('@')[0];
-            state.class = "GG-USER"; // Mặc định lớp cho User Google
+            state.class = "GG-USER"; 
             
-            // Kiểm tra quyền Admin (Nếu email thuộc danh sách của bạn)
             const adminEmails = ['wattman', 'nikagay']; 
             if(adminEmails.some(e => user.email.includes(e))) {
                 document.getElementById('adminBtn').classList.remove('hidden');
