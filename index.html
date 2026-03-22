@@ -123,6 +123,21 @@
             justify-content: center;
             padding: 20px;
         }
+
+        /* Thêm style cho nút Google */
+        .btn-google {
+            background: white;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .btn-google:hover {
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -167,7 +182,7 @@
 
                 <div class="flex gap-2">
                     <button onclick="showSection('mainMenu')" class="glass px-6 py-2 text-xs font-bold hover:bg-white/10 transition text-orange-500">TRANG CHỦ</button>
-                    <button onclick="location.reload()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
+                    <button onclick="handleLogout()" class="glass px-6 py-2 text-xs font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
                 </div>
             </div>
         </header>
@@ -181,6 +196,15 @@
                 <input type="text" id="username" placeholder="Tên của bạn..." class="w-full p-4 rounded-2xl outline-none">
                 <input type="text" id="userClass" placeholder="Lớp (VD: 8A7)..." class="w-full p-4 rounded-2xl outline-none">
                 <button onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">ĐĂNG NHẬP</button>
+                
+                <div class="flex items-center gap-4 my-6 opacity-30">
+                    <hr class="flex-1 border-white"> <span class="text-xs font-bold">HOẶC</span> <hr class="flex-1 border-white">
+                </div>
+
+                <button onclick="signInWithGoogle()" class="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition btn-google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+                    <span>TIẾP TỤC VỚI GOOGLE</span>
+                </button>
             </div>
         </div>
 
@@ -265,6 +289,45 @@
 
         let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
 
+        // Kiểm tra phiên đăng nhập khi tải trang
+        window.onload = async () => {
+            const { data: { session } } = await _sb.auth.getSession();
+            if (session) {
+                setupUserFromAuth(session.user);
+            }
+        };
+
+        async function signInWithGoogle() {
+            const { error } = await _sb.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.href }
+            });
+            if (error) showStatus("LỖI KẾT NỐI GOOGLE!", true);
+        }
+
+        async function handleLogout() {
+            await _sb.auth.signOut();
+            location.reload();
+        }
+
+        function setupUserFromAuth(user) {
+            state.user = user.email;
+            state.displayUser = user.user_metadata.full_name || user.email.split('@')[0];
+            state.class = "GG-USER"; // Mặc định lớp cho User Google
+            
+            // Kiểm tra quyền Admin (Nếu email thuộc danh sách của bạn)
+            const adminEmails = ['wattman', 'nikagay']; 
+            if(adminEmails.some(e => user.email.includes(e))) {
+                document.getElementById('adminBtn').classList.remove('hidden');
+            }
+
+            document.getElementById('userTag').innerText = `${state.displayUser} // ${state.class}`;
+            fetchExams().then(() => {
+                showSection('mainMenu');
+                document.getElementById('header').classList.replace('hidden', 'flex');
+            });
+        }
+
         document.addEventListener("visibilitychange", () => {
             if (document.hidden && state.currentExam) {
                 document.getElementById('cheatGuard').style.display = 'flex';
@@ -343,10 +406,7 @@
             const ex = state.exams.find(e => e.id === id);
             if (!ex || !ex.questions) return;
             
-            // XÁO TRỘN CÂU HỎI
             let shuffledQuestions = [...ex.questions].sort(() => Math.random() - 0.5);
-            
-            // XÁO TRỘN TẤT CẢ ĐÁP ÁN TRONG TỪNG CÂU
             shuffledQuestions = shuffledQuestions.map(q => {
                 return {
                     ...q,
