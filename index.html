@@ -113,30 +113,20 @@
         #cheatGuard { position: fixed; inset: 0; background: rgba(220, 38, 38, 0.95); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); text-align: center; }
 
         .confirm-overlay {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: none; align-items: center; justify-content: center;
             padding: 20px;
         }
 
         .btn-google {
-            background: white;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            border: 1px solid rgba(0,0,0,0.1);
+            background: white; color: #334155;
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px; border: 1px solid rgba(0,0,0,0.1);
         }
-        .btn-google:hover {
-            background: #f8fafc;
-            transform: translateY(-2px);
-        }
+        .btn-google:hover { background: #f8fafc; transform: translateY(-2px); }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -150,7 +140,7 @@
         </div>
     </div>
 
-    <div id="confirmModal" class="hidden confirm-overlay">
+    <div id="confirmModal" class="confirm-overlay">
         <div class="glass p-10 max-w-sm w-full text-center border-2 border-orange-500/50">
             <h3 class="text-2xl font-black text-orange-500 mb-4 italic uppercase">Xác nhận</h3>
             <p id="confirmText" class="text-xs mb-8 tracking-widest opacity-80 uppercase leading-relaxed"></p>
@@ -290,9 +280,7 @@
 
         window.onload = async () => {
             const { data: { session } } = await _sb.auth.getSession();
-            if (session) {
-                setupUserFromAuth(session.user);
-            }
+            if (session) { setupUserFromAuth(session.user); }
         };
 
         async function signInWithGoogle() {
@@ -342,10 +330,9 @@
         function customConfirm(text, onConfirm) {
             const modal = document.getElementById('confirmModal');
             document.getElementById('confirmText').innerText = text;
-            modal.classList.remove('hidden');
             modal.style.display = 'flex'; 
-            document.getElementById('confirmYes').onclick = () => { modal.style.display = 'none'; modal.classList.add('hidden'); onConfirm(); };
-            document.getElementById('confirmNo').onclick = () => { modal.style.display = 'none'; modal.classList.add('hidden'); };
+            document.getElementById('confirmYes').onclick = () => { modal.style.display = 'none'; onConfirm(); };
+            document.getElementById('confirmNo').onclick = () => { modal.style.display = 'none'; };
         }
 
         async function handleLogin() {
@@ -404,12 +391,10 @@
             if (!ex || !ex.questions) return;
             
             let shuffledQuestions = [...ex.questions].sort(() => Math.random() - 0.5);
-            shuffledQuestions = shuffledQuestions.map(q => {
-                return {
-                    ...q,
-                    opts: [...q.opts].sort(() => Math.random() - 0.5)
-                };
-            });
+            shuffledQuestions = shuffledQuestions.map(q => ({
+                ...q,
+                opts: [...q.opts].sort(() => Math.random() - 0.5)
+            }));
 
             state.currentExam = { ...ex, questions: shuffledQuestions };
             state.userAns = new Array(shuffledQuestions.length).fill(null);
@@ -468,7 +453,7 @@
             let correctCount = 0;
             state.currentExam.questions.forEach((q, i) => { 
                 const userPick = state.userAns[i];
-                if(userPick !== null && q.opts[userPick] && q.opts[userPick].c === true) correctCount++; 
+                if(userPick !== null && q.opts[userPick] && q.opts[userPick].c) correctCount++; 
             });
             
             state.finalScore = Math.round((correctCount / state.currentExam.questions.length) * 10 * 10) / 10;
@@ -516,22 +501,15 @@
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
             
-            // Tối ưu tách câu hỏi: Nhận diện "Câu X:", "Câu X." hoặc chỉ cần xuống dòng có "Câu"
             const questionBlocks = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5);
-            
             const questions = questionBlocks.map(block => {
                 const lines = block.trim().split('\n').filter(l => l.trim() !== "");
                 const qText = lines[0].trim();
                 const opts = lines.slice(1).map(line => {
-                    // Cải tiến nhận diện đáp án: Chấp nhận cả @t hoặc chữ (Đúng)
                     const isCorrect = /@t|\(Đúng\)/i.test(line);
-                    
-                    // Làm sạch văn bản: 
-                    // 1. Xóa flag @t hoặc (Đúng)
-                    // 2. Xóa các ký tự đầu dòng như A. B. C. 1. 2. - + * để hiển thị sạch hơn
                     let cleanText = line.replace(/@t|\(Đúng\)/gi, '')
-                                        .replace(/^\s*([A-Za-z0-9][.:\s\-]+|[\-\+*])\s*/, '')
-                                        .trim();
+                                         .replace(/^\s*([A-Za-z0-9][.:\s\-]+|[\-\+*])\s*/, '')
+                                         .trim();
                     return { t: cleanText, c: isCorrect };
                 });
                 return { q: qText, opts: opts };
