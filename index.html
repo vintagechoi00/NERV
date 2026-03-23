@@ -33,12 +33,10 @@
             color: var(--text-main); min-height: 100vh; user-select: none;
             -webkit-user-select: none;
             transition: background 0.5s ease, color 0.3s ease;
-            /* CHẶN ZOOM CẤP ĐỘ TRÌNH DUYỆT */
             touch-action: pan-x pan-y;
-            overflow-x: hidden; /* Không cho cuộn ngang để tránh lệch */
+            overflow-x: hidden;
         }
 
-        /* FIX LỆCH: Đảm bảo app không bao giờ vượt quá chiều ngang màn hình */
         #app {
             width: 100%;
             max-width: 100vw;
@@ -49,15 +47,13 @@
         .glass {
             background: var(--glass-bg); backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border); border-radius: 28px;
-            /* FIX LỆCH: Khung không bao giờ to hơn màn hình */
             max-width: 100%;
             box-sizing: border-box;
         }
 
-        /* FIX LỆCH MOBILE: Tự động thu nhỏ các khung Menu khi ở màn hình nhỏ */
         @media (max-width: 640px) {
             #mainMenu {
-                grid-template-cols: 1fr !important;
+                grid-template-columns: 1fr !important;
                 gap: 16px !important;
                 padding: 0 10px;
             }
@@ -105,7 +101,7 @@
         .opt-card {
             background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.05);
             padding: 18px 24px; border-radius: 18px; cursor: pointer; transition: 0.2s;
-            word-wrap: break-word; /* Tránh chữ dài làm lệch khung */
+            word-wrap: break-word;
         }
         [data-theme="light"] .opt-card { background: rgba(0,0,0,0.03); }
         .opt-card:hover { background: rgba(249, 115, 22, 0.1); border-color: var(--primary); }
@@ -266,7 +262,8 @@
         <div id="resultPage" class="hidden flex flex-col items-center justify-center text-center py-10 md:py-20">
             <h2 class="text-orange-500 font-black tracking-[0.5em] mb-4 uppercase">Hoàn Thành</h2>
             <div class="text-[100px] md:text-[150px] font-black italic leading-none" id="finalScoreDisplay">0</div>
-            <p id="timeFinish" class="text-orange-500/60 font-bold uppercase tracking-widest mb-6"></p>
+            <div id="timeFinish" class="text-orange-500/60 font-bold uppercase tracking-widest mb-6 space-y-1"></div>
+            
             <div class="flex flex-col gap-4 mt-10">
                 <button onclick="showSection('mainMenu')" class="btn-premium px-12 py-5 rounded-full">QUAY VỀ MENU</button>
                 <button onclick="showSection('reviewPage')" class="btn-review-custom px-12 py-4 rounded-full text-sm">XEM LẠI ĐÁP ÁN</button>
@@ -302,19 +299,15 @@
     </div>
 
     <script>
-        // Cố định Zoom bằng Javascript (Double tap and Pinch zoom)
+        // --- GIỮ NGUYÊN PHẦN CỐ ĐỊNH ZOOM ---
         document.addEventListener('touchstart', function (event) {
-            if (event.touches.length > 1) {
-                event.preventDefault();
-            }
+            if (event.touches.length > 1) { event.preventDefault(); }
         }, { passive: false });
         
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (event) {
             let now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
+            if (now - lastTouchEnd <= 300) { event.preventDefault(); }
             lastTouchEnd = now;
         }, false);
 
@@ -324,6 +317,7 @@
             else { document.body.setAttribute('data-theme', 'light'); }
         }
 
+        // --- SUPABASE CONFIG ---
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
@@ -499,6 +493,7 @@
             }, 1000);
         }
 
+        // --- PHẪU THUẬT HÀM SUBMIT EXAM (LƯU IP, LỚP, GIỜ NỘP...) ---
         async function submitExam() {
             clearInterval(state.timer);
             document.getElementById('timerBar').classList.add('hidden');
@@ -509,14 +504,34 @@
             });
             
             state.finalScore = Math.round((correctCount / state.currentExam.questions.length) * 10 * 10) / 10;
-            const timeUsed = 900 - state.time;
-            document.getElementById('timeFinish').innerText = `Thời gian: ${Math.floor(timeUsed/60)}phút ${timeUsed%60}giây`;
             
+            const timeUsed = 900 - state.time;
+            const mUsed = Math.floor(timeUsed/60);
+            const sUsed = timeUsed%60;
+            const durationTxt = `${mUsed}:${sUsed < 10 ? '0' : ''}${sUsed}`;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('vi-VN');
+            const dateStr = now.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            // HIỂN THỊ THÔNG TIN CHI TIẾT TẠI TRANG KẾT QUẢ
+            document.getElementById('timeFinish').innerHTML = `
+                <div class="text-white font-black text-xl mb-2">ĐÚNG ${correctCount}/${state.currentExam.questions.length} CÂU</div>
+                <div>LÀM LÚC: ${timeStr}</div>
+                <div>THỜI GIAN: ${mUsed} PHÚT ${sUsed} GIÂY</div>
+                <div class="text-[10px] opacity-40 mt-2">${dateStr}</div>
+            `;
+            
+            // GỬI LÊN SUPABASE (ĐÃ THÊM CÁC CỘT CHI TIẾT)
             await _sb.from('history').insert([{ 
-                name: `${state.displayUser} (${state.class})`, 
+                name: state.displayUser,
+                user_class: state.class, // Thêm Lớp
                 exam: state.currentExam.title, 
-                score: state.finalScore, 
-                date: new Date().toLocaleDateString('vi-VN') 
+                score: state.finalScore,
+                correct_ratio: `${correctCount}/${state.currentExam.questions.length}`, // Thêm Tỉ lệ
+                duration: durationTxt, // Thêm Thời gian làm
+                submit_time: timeStr,   // Thêm Giờ nộp
+                date: dateStr 
             }]);
             
             showSection('resultPage');
@@ -527,6 +542,33 @@
             });
         }
 
+        // --- PHẪU THUẬT BẢNG VÀNG CHI TIẾT ---
+        async function renderLeaderboard() {
+            const { data } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(20);
+            document.getElementById('leaderboardContent').innerHTML = (data || []).map((h, i) => `
+                <div class="glass p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-l-4 ${i<3?'border-orange-500':'border-slate-800'} mb-4">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl md:text-3xl font-black italic ${i<3?'text-orange-500':'opacity-10'}">#${i+1}</span>
+                        <div>
+                            <p class="font-bold uppercase text-sm md:text-base text-white">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>
+                            <p class="text-[9px] opacity-40 uppercase tracking-widest mt-1">${h.exam}</p>
+                            <p class="text-[8px] text-blue-400/60 font-mono mt-2 uppercase">
+                                IP: ${h.user_ip || '0.0.0.0'} • NỘP: ${h.submit_time || '--:--'} • ${h.date}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap md:flex-nowrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                         <div class="flex flex-col items-end">
+                            <div class="text-[10px] font-bold px-2 py-1 bg-white/5 rounded text-orange-400 uppercase">ĐÚNG: ${h.correct_ratio || '--'}</div>
+                            <div class="text-[10px] font-bold px-2 py-1 bg-white/5 rounded mt-1 opacity-50 uppercase">TIME: ${h.duration || '--'}</div>
+                         </div>
+                         <div class="text-3xl md:text-5xl font-black text-orange-500">${parseFloat(h.score).toFixed(1)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- CÁC HÀM CÒN LẠI GIỮ NGUYÊN TUYỆT ĐỐI ---
         function renderReview() {
             const content = document.getElementById('reviewContent');
             content.innerHTML = state.currentExam.questions.map((q, i) => {
@@ -552,26 +594,19 @@
             const title = document.getElementById('examTitle').value;
             const text = document.getElementById('rawInput').value;
             if(!title || !text) return showStatus("DỮ LIỆU CHƯA ĐỦ!", true);
-            
             const questionBlocks = text.split(/Câu\s*\d+[:.]/gi).filter(b => b.trim().length > 5);
             const questions = questionBlocks.map(block => {
                 const lines = block.trim().split('\n').filter(l => l.trim() !== "");
                 const qText = lines[0].trim();
                 const opts = lines.slice(1).map(line => {
                     const isCorrect = /@t|\(Đúng\)/i.test(line);
-                    let cleanText = line.replace(/@t|\(Đúng\)/gi, '')
-                                         .replace(/^\s*([A-Za-z0-9][.:\s\-]+|[\-\+*])\s*/, '')
-                                         .trim();
+                    let cleanText = line.replace(/@t|\(Đúng\)/gi, '').replace(/^\s*([A-Za-z0-9][.:\s\-]+|[\-\+*])\s*/, '').trim();
                     return { t: cleanText, c: isCorrect };
                 });
                 return { q: qText, opts: opts };
             });
-
-            if(state.editingId) {
-                await _sb.from('exams').update({ title, questions }).eq('id', state.editingId);
-            } else {
-                await _sb.from('exams').insert([{ title, questions }]);
-            }
+            if(state.editingId) { await _sb.from('exams').update({ title, questions }).eq('id', state.editingId); } 
+            else { await _sb.from('exams').insert([{ title, questions }]); }
             showStatus("ĐÃ LƯU!"); cancelEdit(); await fetchExams(); renderAdminExams();
         }
 
@@ -603,19 +638,6 @@
             await _sb.from('history').delete().eq('exam', ex.title);
             await _sb.from('exams').delete().eq('id', id);
             await fetchExams(); renderAdminExams();
-        }
-
-        async function renderLeaderboard() {
-            const { data } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(20);
-            document.getElementById('leaderboardContent').innerHTML = (data || []).map((h, i) => `
-                <div class="glass p-4 md:p-5 flex justify-between items-center">
-                    <div class="flex items-center gap-3 md:gap-5">
-                        <span class="text-xl md:text-2xl font-black ${i<3?'text-orange-500':'opacity-20'}">#${i+1}</span>
-                        <div><p class="font-bold uppercase text-xs md:text-sm">${h.name}</p><p class="text-[9px] md:text-[10px] opacity-40 uppercase">${h.exam}</p></div>
-                    </div>
-                    <div class="text-2xl md:text-3xl font-black text-orange-500">${h.score}</div>
-                </div>
-            `).join('');
         }
     </script>
 </body>
