@@ -274,7 +274,7 @@
             <p id="timeFinish" class="text-orange-500/60 font-bold uppercase tracking-widest mb-6"></p>
             <div class="flex flex-col gap-4 mt-10">
                 <button onclick="showSection('mainMenu')" class="btn-premium px-12 py-5 rounded-full">QUAY VỀ MENU</button>
-                <button onclick="showSection('reviewPage')" class="btn-review-custom px-12 py-4 rounded-full text-sm">XEM LẠI ĐÁP ÁN</button>
+                <button onclick="renderReview()" class="btn-review-custom px-12 py-4 rounded-full text-sm">XEM LẠI ĐÁP ÁN</button>
             </div>
         </div>
 
@@ -474,6 +474,35 @@
             }]);
             document.getElementById('finalScoreDisplay').innerText = state.finalScore.toFixed(1);
             showSection('resultPage');
+        }
+
+        // --- REVIEW LOGIC ---
+        function renderReview() {
+            showSection('reviewPage');
+            const container = document.getElementById('reviewContent');
+            container.innerHTML = state.currentExam.questions.map((q, qi) => {
+                const userChoice = state.userAns[qi];
+                return `
+                    <div class="glass p-6 md:p-10 border-l-4 ${userChoice !== null && q.opts[userChoice].c ? 'border-green-500' : 'border-red-500'}">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-orange-500 font-black text-[10px] tracking-widest uppercase">Câu ${qi + 1}</span>
+                            <span class="text-[10px] font-black uppercase ${userChoice !== null && q.opts[userChoice].c ? 'text-green-500' : 'text-red-500'}">
+                                ${userChoice !== null && q.opts[userChoice].c ? 'Đúng' : 'Sai'}
+                            </span>
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold mb-6">${q.q}</h3>
+                        <div class="space-y-3">
+                            ${q.opts.map((o, oi) => {
+                                let statusClass = '';
+                                if (o.c) statusClass = 'opt-correct';
+                                else if (userChoice === oi && !o.c) statusClass = 'opt-wrong';
+                                
+                                return `<div class="opt-review ${statusClass}">${o.t}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function showDetails(index) {
