@@ -175,10 +175,10 @@
 
     <div id="confirmModal" class="confirm-overlay">
         <div class="glass p-10 max-w-sm w-full text-center border-2 border-orange-500/50">
-            <h3 class="text-2xl font-black text-orange-500 mb-4 italic uppercase">Xác nhận</h3>
+            <h3 class="text-2xl font-black text-orange-500 mb-4 italic uppercase">Thông báo</h3>
             <p id="confirmText" class="text-xs mb-8 tracking-widest opacity-80 uppercase leading-relaxed"></p>
             <div class="flex gap-4">
-                <button id="confirmYes" class="flex-1 btn-premium py-4 rounded-xl font-black text-black uppercase text-xs">Đồng ý</button>
+                <button id="confirmYes" class="flex-1 btn-premium py-4 rounded-xl font-black text-black uppercase text-xs">Xác nhận</button>
                 <button id="confirmNo" class="flex-1 glass py-4 rounded-xl font-bold uppercase text-xs hover:bg-white/10">Hủy bỏ</button>
             </div>
         </div>
@@ -212,7 +212,7 @@
                 </div>
                 <div class="flex gap-2">
                     <button onclick="showSection('mainMenu')" class="glass px-4 py-2 text-[10px] font-bold hover:bg-white/10 transition text-orange-500">TRANG CHỦ</button>
-                    <button onclick="customConfirm('BẠN MUỐN ĐĂNG XUẤT?', handleLogout)" class="glass px-4 py-2 text-[10px] font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
+                    <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐĂNG XUẤT?', handleLogout)" class="glass px-4 py-2 text-[10px] font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
                 </div>
             </div>
         </header>
@@ -291,7 +291,7 @@
             <div class="space-y-6">
                 <input type="text" id="examTitle" placeholder="Tên bài tập..." class="w-full p-5 rounded-2xl outline-none">
                 <textarea id="rawInput" rows="10" class="w-full p-5 rounded-2xl font-mono text-sm outline-none" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án sai&#10;B. Đáp án đúng @t"></textarea>
-                <div id="statusMsg" class="hidden text-center font-black text-lg py-2 uppercase tracking-widest"></div>
+                <div id="adminStatus" class="text-orange-500 text-[10px] font-black uppercase text-center hidden"></div>
                 <div class="flex gap-4">
                     <button id="saveBtn" onclick="handleSaveExam()" class="flex-1 btn-premium py-5 rounded-2xl">LƯU DỮ LIỆU</button>
                     <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden glass px-8 py-5 rounded-2xl font-bold text-xs">HỦY</button>
@@ -327,33 +327,6 @@
                 setupUI();
             }
         };
-
-        // --- CUSTOM ALERT/CONFIRM SYSTEM ---
-        function customAlert(text) {
-            const modal = document.getElementById('confirmModal');
-            document.getElementById('confirmText').innerText = text;
-            document.getElementById('confirmNo').style.display = 'none'; // Ẩn nút Hủy cho Alert
-            const yesBtn = document.getElementById('confirmYes');
-            yesBtn.innerText = "OK";
-            yesBtn.onclick = () => modal.style.display = 'none';
-            modal.style.display = 'flex';
-        }
-
-        function customConfirm(text, onYes) {
-            const modal = document.getElementById('confirmModal');
-            document.getElementById('confirmText').innerText = text;
-            document.getElementById('confirmNo').style.display = 'block';
-            const yesBtn = document.getElementById('confirmYes');
-            const noBtn = document.getElementById('confirmNo');
-            
-            yesBtn.innerText = "ĐỒNG Ý";
-            yesBtn.onclick = () => {
-                modal.style.display = 'none';
-                onYes();
-            };
-            noBtn.onclick = () => modal.style.display = 'none';
-            modal.style.display = 'flex';
-        }
 
         async function handleLogin() {
             const rawName = document.getElementById('username').value.trim();
@@ -546,6 +519,7 @@
             document.getElementById('detailsModal').style.display = 'flex';
         }
 
+        // --- ADMIN LOGIC ---
         function parseInput(txt) {
             return txt.split(/Câu \d+[:.]/g).filter(s => s.trim()).map(block => {
                 const lines = block.trim().split('\n');
@@ -558,18 +532,24 @@
         async function handleSaveExam() {
             const title = document.getElementById('examTitle').value;
             const raw = document.getElementById('rawInput').value;
-            if(!title || !raw) return customAlert("THIẾU THÔNG TIN BẠN ƠI!");
-            
+            if(!title || !raw) return showAdminStatus("THIẾU THÔNG TIN!");
             const questions = parseInput(raw);
             let res;
             if(state.editingId) res = await _sb.from('exams').update({title, questions}).eq('id', state.editingId);
             else res = await _sb.from('exams').insert([{title, questions}]);
             
             if(!res.error) {
-                customAlert("HỆ THỐNG ĐÃ CẬP NHẬT THÀNH CÔNG!");
+                showAdminStatus("ĐÃ LƯU THÀNH CÔNG!");
                 cancelEdit();
                 fetchExams();
             }
+        }
+
+        function showAdminStatus(msg) {
+            const el = document.getElementById('adminStatus');
+            el.innerText = msg;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3000);
         }
 
         function renderAdminList() {
@@ -578,7 +558,7 @@
                     <span class="font-bold text-xs uppercase">${ex.title}</span>
                     <div class="flex gap-2">
                         <button onclick="editExam(${ex.id})" class="text-orange-500 text-[10px] font-black underline">SỬA</button>
-                        <button onclick="deleteExam(${ex.id})" class="text-red-500 text-[10px] font-black underline">XÓA</button>
+                        <button onclick="customConfirm('XÓA BÀI TẬP NÀY?', () => deleteExam(${ex.id}))" class="text-red-500 text-[10px] font-black underline">XÓA</button>
                     </div>
                 </div>
             `).join('');
@@ -602,13 +582,40 @@
         }
 
         async function deleteExam(id) {
-            customConfirm("BẠN CÓ CHẮC CHẮN MUỐN XÓA BÀI NÀY KHÔNG?", async () => {
-                await _sb.from('exams').delete().eq('id', id);
-                fetchExams();
-            });
+            await _sb.from('exams').delete().eq('id', id);
+            fetchExams();
         }
 
         function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
+
+        // MỚI: Hàm confirm tùy chỉnh không dùng hộp thoại hệ thống
+        function customConfirm(msg, callback) {
+            const modal = document.getElementById('confirmModal');
+            const text = document.getElementById('confirmText');
+            const yesBtn = document.getElementById('confirmYes');
+            const noBtn = document.getElementById('confirmNo');
+
+            text.innerText = msg;
+            modal.style.display = 'flex';
+
+            const handleYes = () => {
+                modal.style.display = 'none';
+                callback();
+                cleanup();
+            };
+            const handleNo = () => {
+                modal.style.display = 'none';
+                cleanup();
+            };
+            const cleanup = () => {
+                yesBtn.removeEventListener('click', handleYes);
+                noBtn.removeEventListener('click', handleNo);
+            };
+
+            yesBtn.addEventListener('click', handleYes);
+            noBtn.addEventListener('click', handleNo);
+        }
+
         function toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? '' : 'light'); }
     </script>
 </body>
