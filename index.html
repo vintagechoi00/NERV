@@ -231,7 +231,7 @@
                     <hr class="flex-1 border-white"> <span class="text-xs font-bold">HOẶC</span> <hr class="flex-1 border-white">
                 </div>
 
-                <button onclick="signInWithGoogle()" class="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition btn-google">
+                <button class="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition btn-google">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
                     <span>TIẾP TỤC VỚI GOOGLE</span>
                 </button>
@@ -307,14 +307,12 @@
     </div>
 
     <script>
-        // --- 1. SUPABASE CONFIG ---
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
         let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0, historyData: [] };
 
-        // --- 2. AUTH & LOGIN ---
         window.onload = async () => {
             const saved = localStorage.getItem('nerd_session');
             if(saved) {
@@ -322,6 +320,10 @@
                 state.user = data.user;
                 state.displayUser = data.displayUser;
                 state.class = data.class;
+                
+                const adminPattern = /^(wattman|nikagay)\("(.+)"\)$/i;
+                if(state.user.match(adminPattern)) document.getElementById('adminBtn').classList.remove('hidden');
+                
                 setupUI();
             }
         };
@@ -359,28 +361,21 @@
             location.reload();
         }
 
-        // --- 3. DATABASE OPERATIONS ---
         async function fetchExams() {
             const { data } = await _sb.from('exams').select('*').order('id', { ascending: false });
             state.exams = data || [];
+            if(!document.getElementById('adminPage').classList.contains('hidden')) renderAdminList();
         }
 
         async function renderLeaderboard() {
             const container = document.getElementById('leaderboardContent');
             container.innerHTML = `<div class="text-center py-10 opacity-50 uppercase tracking-widest text-xs">Đang tải...</div>`;
-            
             const { data, error } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(50);
             if (error) {
                 container.innerHTML = `<p class="text-center text-red-500 text-[10px]">LỖI KẾT NỐI DATABASE</p>`;
                 return;
             }
-
             state.historyData = data || [];
-            if (state.historyData.length === 0) {
-                container.innerHTML = `<p class="text-center opacity-40 text-[10px]">CHƯA CÓ DỮ LIỆU</p>`;
-                return;
-            }
-
             container.innerHTML = state.historyData.map((h, i) => `
                 <div class="glass p-4 md:p-5 flex justify-between items-center">
                     <div class="flex items-center gap-3 md:gap-5">
@@ -397,7 +392,6 @@
             `).join('');
         }
 
-        // --- 4. EXAM LOGIC ---
         function showSection(id) {
             ['loginPage', 'mainMenu', 'selectExamPage', 'examPage', 'adminPage', 'leaderboard', 'resultPage', 'reviewPage'].forEach(s => {
                 const el = document.getElementById(s); if(el) el.classList.add('hidden');
@@ -405,6 +399,7 @@
             document.getElementById(id).classList.remove('hidden');
             if(id === 'selectExamPage') renderExamList();
             if(id === 'leaderboard') renderLeaderboard();
+            if(id === 'adminPage') renderAdminList();
         }
 
         function renderExamList() {
@@ -469,7 +464,6 @@
                 if(state.userAns[i] !== null && q.opts[state.userAns[i]].c) correct++; 
             });
             state.finalScore = (correct / state.currentExam.questions.length) * 10;
-            
             await _sb.from('history').insert([{ 
                 name: state.displayUser, 
                 user_class: state.class, 
@@ -478,7 +472,6 @@
                 date: new Date().toLocaleDateString('vi-VN'),
                 submit_time: new Date().toLocaleTimeString('vi-VN')
             }]);
-            
             document.getElementById('finalScoreDisplay').innerText = state.finalScore.toFixed(1);
             showSection('resultPage');
         }
@@ -496,6 +489,68 @@
                 </div>
             `;
             document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        // --- ADMIN LOGIC ---
+        function parseInput(txt) {
+            return txt.split(/Câu \d+[:.]/g).filter(s => s.trim()).map(block => {
+                const lines = block.trim().split('\n');
+                const q = lines[0].trim();
+                const opts = lines.slice(1).map(l => ({ t: l.replace('@t', '').trim(), c: l.includes('@t') }));
+                return { q, opts };
+            });
+        }
+
+        async function handleSaveExam() {
+            const title = document.getElementById('examTitle').value;
+            const raw = document.getElementById('rawInput').value;
+            if(!title || !raw) return alert("Thiếu thông tin!");
+            const questions = parseInput(raw);
+            let res;
+            if(state.editingId) res = await _sb.from('exams').update({title, questions}).eq('id', state.editingId);
+            else res = await _sb.from('exams').insert([{title, questions}]);
+            
+            if(!res.error) {
+                alert("Đã lưu!");
+                cancelEdit();
+                fetchExams();
+            }
+        }
+
+        function renderAdminList() {
+            document.getElementById('adminExamList').innerHTML = state.exams.map(ex => `
+                <div class="glass p-4 flex justify-between items-center">
+                    <span class="font-bold text-xs uppercase">${ex.title}</span>
+                    <div class="flex gap-2">
+                        <button onclick="editExam(${ex.id})" class="text-orange-500 text-[10px] font-black underline">SỬA</button>
+                        <button onclick="deleteExam(${ex.id})" class="text-red-500 text-[10px] font-black underline">XÓA</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editExam(id) {
+            const ex = state.exams.find(e => e.id === id);
+            state.editingId = id;
+            document.getElementById('examTitle').value = ex.title;
+            document.getElementById('rawInput').value = ex.questions.map((q, i) => `Câu ${i+1}: ${q.q}\n${q.opts.map(o => `${o.t} ${o.c ? '@t' : ''}`).join('\n')}`).join('\n\n');
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            document.getElementById('saveBtn').innerText = "CẬP NHẬT";
+        }
+
+        function cancelEdit() {
+            state.editingId = null;
+            document.getElementById('examTitle').value = '';
+            document.getElementById('rawInput').value = '';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            document.getElementById('saveBtn').innerText = "LƯU DỮ LIỆU";
+        }
+
+        async function deleteExam(id) {
+            if(confirm("Xóa bài tập này?")) {
+                await _sb.from('exams').delete().eq('id', id);
+                fetchExams();
+            }
         }
 
         function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
