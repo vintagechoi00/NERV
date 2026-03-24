@@ -521,10 +521,9 @@
             
             document.getElementById('timeFinish').innerText = `Thời gian: ${m}phút ${s}giây`;
             
-            // LƯU DỮ LIỆU CHUẨN THEO DATABASE CỦA BẠN
             await _sb.from('history').insert([{ 
                 name: state.displayUser, 
-                user_class: state.class, // KHỚP CỘT TRONG DATABASE
+                user_class: state.class, 
                 exam: state.currentExam.title, 
                 score: state.finalScore,
                 correct_ratio: `${correctCount}/${state.currentExam.questions.length}`,
@@ -620,12 +619,21 @@
             await fetchExams(); renderAdminExams();
         }
 
-        // --- ĐOẠN QUAN TRỌNG NHẤT: BỐC DỮ LIỆU CHO BẢNG VÀNG ---
         async function renderLeaderboard() {
-            // Lấy tất cả cột để tránh lỗi cache tên biến
-            const { data } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(20);
+            const { data, error } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(20);
+            if (error) {
+                console.error("Lỗi:", error);
+                return;
+            }
             state.historyData = data || [];
-            document.getElementById('leaderboardContent').innerHTML = state.historyData.map((h, i) => `
+            
+            const container = document.getElementById('leaderboardContent');
+            if (state.historyData.length === 0) {
+                container.innerHTML = `<p class="text-center opacity-50 uppercase text-[10px] tracking-widest py-10">Chưa có dữ liệu xếp hạng</p>`;
+                return;
+            }
+
+            container.innerHTML = state.historyData.map((h, i) => `
                 <div class="glass p-4 md:p-5 flex justify-between items-center">
                     <div class="flex items-center gap-3 md:gap-5">
                         <span class="text-xl md:text-2xl font-black ${i<3?'text-orange-500':'opacity-20'}">#${i+1}</span>
@@ -643,6 +651,7 @@
 
         function showDetails(index) {
             const h = state.historyData[index];
+            if(!h) return;
             const content = document.getElementById('detailsContent');
             content.innerHTML = `
                 <div class="grid grid-cols-2 gap-y-4 gap-x-2 text-[10px] md:text-xs uppercase tracking-wider font-bold">
