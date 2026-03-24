@@ -417,7 +417,7 @@
         }
 
         async function fetchExams() {
-            const { data } = await _sb.from('bang_vang').select('*').order('id', { ascending: false });
+            const { data } = await _sb.from('exams').select('*').order('id', { ascending: false });
             state.exams = data || [];
         }
 
@@ -529,7 +529,8 @@
             
             document.getElementById('timeFinish').innerText = `Thời gian: ${m}phút ${s}giây`;
             
-            await _sb.from('history').insert([{ 
+            // THAY ĐỔI NHỎ TẠI ĐÂY: Thêm bắt lỗi gửi dữ liệu
+            const { error } = await _sb.from('history').insert([{ 
                 name: state.displayUser, 
                 user_class: state.class,
                 exam: state.currentExam.title, 
@@ -540,6 +541,11 @@
                 date: now.toLocaleDateString('vi-VN'),
                 user_ip: userIP
             }]);
+            
+            if (error) {
+                console.error("Lưu kết quả thất bại:", error);
+                alert("LƯU KẾT QUẢ THẤT BẠI! Hãy chụp màn hình điểm số này.");
+            }
             
             showSection('resultPage');
             const scoreEl = document.getElementById('finalScoreDisplay');
@@ -590,9 +596,9 @@
             });
 
             if(state.editingId) {
-                await _sb.from('bang_vang').update({ title, questions }).eq('id', state.editingId);
+                await _sb.from('exams').update({ title, questions }).eq('id', state.editingId);
             } else {
-                await _sb.from('bang_vang').insert([{ title, questions }]);
+                await _sb.from('exams').insert([{ title, questions }]);
             }
             showStatus("ĐÃ LƯU!"); cancelEdit(); await fetchExams(); renderAdminExams();
         }
@@ -623,7 +629,7 @@
         async function deleteEx(id) {
             const ex = state.exams.find(e => e.id === id);
             await _sb.from('history').delete().eq('exam', ex.title);
-            await _sb.from('bang_vang').delete().eq('id', id);
+            await _sb.from('exams').delete().eq('id', id);
             await fetchExams(); renderAdminExams();
         }
 
