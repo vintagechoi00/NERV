@@ -160,6 +160,12 @@
             gap: 12px; border: 1px solid rgba(0,0,0,0.1);
         }
         .btn-google:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        /* Custom Table Style */
+        .details-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .details-table td { padding: 12px; background: rgba(255,255,255,0.03); }
+        .details-table td:first-child { border-radius: 12px 0 0 12px; width: 40%; font-weight: 800; color: var(--primary); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+        .details-table td:last-child { border-radius: 0 12px 12px 0; text-align: right; font-weight: 600; font-size: 12px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -187,9 +193,9 @@
     <div id="detailsModal" class="confirm-overlay" onclick="closeDetails()">
         <div class="glass p-8 max-w-lg w-full border-2 border-orange-500/50 relative" onclick="event.stopPropagation()">
             <button onclick="closeDetails()" class="absolute top-4 right-6 text-2xl font-black text-orange-500 hover:scale-110 transition">×</button>
-            <h2 class="text-2xl font-black text-orange-500 mb-6 italic uppercase tracking-tighter text-center">CHI TIẾT KẾT QUẢ</h2>
-            <div id="detailsContent" class="space-y-4 text-left"></div>
-            <button onclick="closeDetails()" class="w-full mt-8 btn-premium py-4 rounded-xl font-black uppercase text-xs">ĐÓNG</button>
+            <h2 class="text-2xl font-black text-orange-500 mb-6 italic uppercase tracking-tighter text-center">THÔNG TIN KẾT QUẢ</h2>
+            <div id="detailsContent"></div>
+            <button onclick="closeDetails()" class="w-full mt-8 btn-premium py-4 rounded-xl font-black uppercase text-xs">ĐÓNG CỬA SỔ</button>
         </div>
     </div>
 
@@ -476,7 +482,6 @@
             showSection('resultPage');
         }
 
-        // --- REVIEW LOGIC ---
         function renderReview() {
             showSection('reviewPage');
             const container = document.getElementById('reviewContent');
@@ -509,18 +514,18 @@
             const h = state.historyData[index];
             const content = document.getElementById('detailsContent');
             content.innerHTML = `
-                <div class="space-y-4 text-xs font-bold uppercase tracking-widest">
-                    <p class="opacity-40">Học sinh: <span class="text-orange-500 text-base">${h.name}</span></p>
-                    <p class="opacity-40">Lớp: <span class="text-white">${h.user_class || '8A7'}</span></p>
-                    <p class="opacity-40">Bài tập: <span class="text-white normal-case italic">${h.exam}</span></p>
-                    <p class="opacity-40">Điểm: <span class="text-orange-500 text-2xl font-black">${parseFloat(h.score).toFixed(1)}</span></p>
-                    <p class="opacity-40">Ngày nộp: <span class="text-white">${h.date} | ${h.submit_time}</span></p>
-                </div>
+                <table class="details-table">
+                    <tr><td>Học sinh</td><td>${h.name}</td></tr>
+                    <tr><td>Lớp</td><td>${h.user_class || '8A7'}</td></tr>
+                    <tr><td>Bài tập</td><td>${h.exam}</td></tr>
+                    <tr><td>Điểm số</td><td class="text-orange-500 text-xl font-black">${parseFloat(h.score).toFixed(1)}</td></tr>
+                    <tr><td>Thời gian</td><td>${h.submit_time}</td></tr>
+                    <tr><td>Ngày nộp</td><td>${h.date}</td></tr>
+                </table>
             `;
             document.getElementById('detailsModal').style.display = 'flex';
         }
 
-        // --- ADMIN LOGIC ---
         function parseInput(txt) {
             return txt.split(/Câu \d+[:.]/g).filter(s => s.trim()).map(block => {
                 const lines = block.trim().split('\n');
