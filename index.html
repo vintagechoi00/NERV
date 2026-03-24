@@ -53,7 +53,7 @@
 
         @media (max-width: 640px) {
             #mainMenu {
-                grid-template-cols: 1fr !important;
+                grid-template-columns: 1fr !important;
                 gap: 16px !important;
                 padding: 0 10px;
             }
@@ -184,7 +184,7 @@
         </div>
     </div>
 
-    <div id="detailsModal" class="confirm-overlay" onclick="closeDetails(event)">
+    <div id="detailsModal" class="confirm-overlay" onclick="closeDetails()">
         <div class="glass p-8 max-w-lg w-full border-2 border-orange-500/50 relative" onclick="event.stopPropagation()">
             <button onclick="closeDetails()" class="absolute top-4 right-6 text-2xl font-black text-orange-500 hover:scale-110 transition">×</button>
             <h2 class="text-2xl font-black text-orange-500 mb-6 italic uppercase tracking-tighter text-center">CHI TIẾT KẾT QUẢ</h2>
@@ -307,17 +307,23 @@
     </div>
 
     <script>
-        // --- 1. SUPABASE CONFIG (FIX KEY & CONNECT) ---
+        // --- 1. SUPABASE CONFIG ---
         const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
         let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0, historyData: [] };
 
-        // --- 2. LOGIC ĐĂNG NHẬP & QUYỀN ---
+        // --- 2. AUTH & LOGIN ---
         window.onload = async () => {
-            const { data: { session } } = await _sb.auth.getSession();
-            if (session) setupUserFromAuth(session.user);
+            const saved = localStorage.getItem('nerd_session');
+            if(saved) {
+                const data = JSON.parse(saved);
+                state.user = data.user;
+                state.displayUser = data.displayUser;
+                state.class = data.class;
+                setupUI();
+            }
         };
 
         async function handleLogin() {
@@ -334,37 +340,49 @@
             if(match) {
                 state.displayUser = match[2]; 
                 document.getElementById('adminBtn').classList.remove('hidden');
-            } else {
-                document.getElementById('adminBtn').classList.add('hidden');
             }
             
-            document.getElementById('userTag').innerText = `${state.displayUser} // ${c}`;
-            await fetchExams();
-            showSection('mainMenu');
-            document.getElementById('header').classList.replace('hidden', 'flex');
+            localStorage.setItem('nerd_session', JSON.stringify({user: state.user, displayUser: state.displayUser, class: state.class}));
+            setupUI();
         }
 
-        // --- 3. BẢNG XẾP HẠNG (FIX LỖI HIỂN THỊ) ---
+        async function setupUI() {
+            document.getElementById('userTag').innerText = `${state.displayUser} // ${state.class}`;
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('header').classList.replace('hidden', 'flex');
+            showSection('mainMenu');
+            await fetchExams();
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('nerd_session');
+            location.reload();
+        }
+
+        // --- 3. DATABASE OPERATIONS ---
+        async function fetchExams() {
+            const { data } = await _sb.from('exams').select('*').order('id', { ascending: false });
+            state.exams = data || [];
+        }
+
         async function renderLeaderboard() {
             const container = document.getElementById('leaderboardContent');
-            container.innerHTML = `<div class="text-center py-10 opacity-50 uppercase tracking-widest text-xs">Đang tải dữ liệu...</div>`;
+            container.innerHTML = `<div class="text-center py-10 opacity-50 uppercase tracking-widest text-xs">Đang tải...</div>`;
             
             const { data, error } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(50);
-            
             if (error) {
-                console.error("Lỗi Supabase:", error);
-                container.innerHTML = `<p class="text-center text-red-500 uppercase text-[10px] py-10">Lỗi kết nối database (401/404)</p>`;
+                container.innerHTML = `<p class="text-center text-red-500 text-[10px]">LỖI KẾT NỐI DATABASE</p>`;
                 return;
             }
 
             state.historyData = data || [];
             if (state.historyData.length === 0) {
-                container.innerHTML = `<p class="text-center opacity-50 uppercase text-[10px] tracking-widest py-10">Chưa có dữ liệu xếp hạng</p>`;
+                container.innerHTML = `<p class="text-center opacity-40 text-[10px]">CHƯA CÓ DỮ LIỆU</p>`;
                 return;
             }
 
             container.innerHTML = state.historyData.map((h, i) => `
-                <div class="glass p-4 md:p-5 flex justify-between items-center animate-fade-in">
+                <div class="glass p-4 md:p-5 flex justify-between items-center">
                     <div class="flex items-center gap-3 md:gap-5">
                         <span class="text-xl md:text-2xl font-black ${i<3?'text-orange-500':'opacity-20'}">#${i+1}</span>
                         <div>
@@ -379,21 +397,14 @@
             `).join('');
         }
 
-        // --- 4. CÁC HÀM CƠ BẢN KHÁC (GIỮ NGUYÊN) ---
-        async function fetchExams() {
-            const { data } = await _sb.from('exams').select('*').order('id', { ascending: false });
-            state.exams = data || [];
-        }
-
+        // --- 4. EXAM LOGIC ---
         function showSection(id) {
             ['loginPage', 'mainMenu', 'selectExamPage', 'examPage', 'adminPage', 'leaderboard', 'resultPage', 'reviewPage'].forEach(s => {
                 const el = document.getElementById(s); if(el) el.classList.add('hidden');
             });
             document.getElementById(id).classList.remove('hidden');
             if(id === 'selectExamPage') renderExamList();
-            if(id === 'adminPage') renderAdminExams();
             if(id === 'leaderboard') renderLeaderboard();
-            if(id === 'reviewPage') renderReview();
         }
 
         function renderExamList() {
@@ -407,11 +418,12 @@
 
         function startExam(id) {
             const ex = state.exams.find(e => e.id === id);
-            if (!ex) return;
             state.currentExam = JSON.parse(JSON.stringify(ex));
             state.currentExam.questions.sort(() => Math.random() - 0.5);
             state.userAns = new Array(state.currentExam.questions.length).fill(null);
-            showSection('examPage'); renderAllQuestions(); startTimer();
+            showSection('examPage'); 
+            renderAllQuestions(); 
+            startTimer();
         }
 
         function renderAllQuestions() {
@@ -453,7 +465,9 @@
         async function submitExam() {
             clearInterval(state.timer);
             let correct = 0;
-            state.currentExam.questions.forEach((q, i) => { if(state.userAns[i] !== null && q.opts[state.userAns[i]].c) correct++; });
+            state.currentExam.questions.forEach((q, i) => { 
+                if(state.userAns[i] !== null && q.opts[state.userAns[i]].c) correct++; 
+            });
             state.finalScore = (correct / state.currentExam.questions.length) * 10;
             
             await _sb.from('history').insert([{ 
