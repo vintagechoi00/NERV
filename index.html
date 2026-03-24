@@ -33,12 +33,10 @@
             color: var(--text-main); min-height: 100vh; user-select: none;
             -webkit-user-select: none;
             transition: background 0.5s ease, color 0.3s ease;
-            /* CHẶN ZOOM CẤP ĐỘ TRÌNH DUYỆT */
             touch-action: pan-x pan-y;
-            overflow-x: hidden; /* Không cho cuộn ngang để tránh lệch */
+            overflow-x: hidden; 
         }
 
-        /* FIX LỆCH: Đảm bảo app không bao giờ vượt quá chiều ngang màn hình */
         #app {
             width: 100%;
             max-width: 100vw;
@@ -49,12 +47,10 @@
         .glass {
             background: var(--glass-bg); backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border); border-radius: 28px;
-            /* FIX LỆCH: Khung không bao giờ to hơn màn hình */
             max-width: 100%;
             box-sizing: border-box;
         }
 
-        /* FIX LỆCH MOBILE: Tự động thu nhỏ các khung Menu khi ở màn hình nhỏ */
         @media (max-width: 640px) {
             #mainMenu {
                 grid-template-cols: 1fr !important;
@@ -105,7 +101,7 @@
         .opt-card {
             background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.05);
             padding: 18px 24px; border-radius: 18px; cursor: pointer; transition: 0.2s;
-            word-wrap: break-word; /* Tránh chữ dài làm lệch khung */
+            word-wrap: break-word;
         }
         [data-theme="light"] .opt-card { background: rgba(0,0,0,0.03); }
         .opt-card:hover { background: rgba(249, 115, 22, 0.1); border-color: var(--primary); }
@@ -185,6 +181,15 @@
                 <button id="confirmYes" class="flex-1 btn-premium py-4 rounded-xl font-black text-black uppercase text-xs">Đồng ý</button>
                 <button id="confirmNo" class="flex-1 glass py-4 rounded-xl font-bold uppercase text-xs hover:bg-white/10">Hủy bỏ</button>
             </div>
+        </div>
+    </div>
+
+    <div id="detailsModal" class="confirm-overlay" onclick="closeDetails(event)">
+        <div class="glass p-8 max-w-lg w-full border-2 border-orange-500/50 relative" onclick="event.stopPropagation()">
+            <button onclick="closeDetails()" class="absolute top-4 right-6 text-2xl font-black text-orange-500 hover:scale-110 transition">×</button>
+            <h2 class="text-2xl font-black text-orange-500 mb-6 italic uppercase tracking-tighter text-center">CHI TIẾT KẾT QUẢ</h2>
+            <div id="detailsContent" class="space-y-4 text-left"></div>
+            <button onclick="closeDetails()" class="w-full mt-8 btn-premium py-4 rounded-xl font-black uppercase text-xs">ĐÓNG</button>
         </div>
     </div>
 
@@ -302,7 +307,6 @@
     </div>
 
     <script>
-        // Cố định Zoom bằng Javascript (Double tap and Pinch zoom)
         document.addEventListener('touchstart', function (event) {
             if (event.touches.length > 1) {
                 event.preventDefault();
@@ -328,7 +332,7 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0 };
+        let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0, historyData: [] };
 
         window.onload = async () => {
             const { data: { session } } = await _sb.auth.getSession();
@@ -503,7 +507,6 @@
             clearInterval(state.timer);
             document.getElementById('timerBar').classList.add('hidden');
             
-            // Lấy IP người dùng
             let userIP = "0.0.0.0";
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
@@ -526,7 +529,6 @@
             
             document.getElementById('timeFinish').innerText = `Thời gian: ${m}phút ${s}giây`;
             
-            // Lưu vào bảng history với đầy đủ các cột mới
             await _sb.from('history').insert([{ 
                 name: state.displayUser, 
                 user_class: state.class,
@@ -627,19 +629,44 @@
 
         async function renderLeaderboard() {
             const { data } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(20);
-            document.getElementById('leaderboardContent').innerHTML = (data || []).map((h, i) => `
+            state.historyData = data || [];
+            document.getElementById('leaderboardContent').innerHTML = state.historyData.map((h, i) => `
                 <div class="glass p-4 md:p-5 flex justify-between items-center">
                     <div class="flex items-center gap-3 md:gap-5">
                         <span class="text-xl md:text-2xl font-black ${i<3?'text-orange-500':'opacity-20'}">#${i+1}</span>
                         <div>
-                            <p class="font-bold uppercase text-xs md:text-sm">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>
+                            <p onclick="showDetails(${i})" class="font-bold uppercase text-xs md:text-sm cursor-pointer hover:text-orange-500 transition underline underline-offset-4 decoration-orange-500/30">
+                                ${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span>
+                            </p>
                             <p class="text-[9px] md:text-[10px] opacity-40 uppercase tracking-widest mt-1">${h.exam}</p>
-                            <p class="text-[8px] text-blue-400/60 font-mono mt-1">IP: ${h.user_ip || '0.0.0.0'} • NỘP: ${h.submit_time}</p>
                         </div>
                     </div>
                     <div class="text-2xl md:text-4xl font-black italic text-orange-500">${parseFloat(h.score).toFixed(1)}</div>
                 </div>
             `).join('');
+        }
+
+        function showDetails(index) {
+            const h = state.historyData[index];
+            const content = document.getElementById('detailsContent');
+            content.innerHTML = `
+                <div class="grid grid-cols-2 gap-y-4 gap-x-2 text-[10px] md:text-xs uppercase tracking-wider font-bold">
+                    <div class="opacity-40">Họ tên:</div><div class="text-orange-500">${h.name}</div>
+                    <div class="opacity-40">Lớp học:</div><div>${h.user_class || '8A7'}</div>
+                    <div class="opacity-40">Tên bài thi:</div><div class="normal-case font-normal italic">${h.exam}</div>
+                    <div class="opacity-40">Điểm số:</div><div class="text-xl italic text-orange-400 font-black">${parseFloat(h.score).toFixed(1)}</div>
+                    <div class="opacity-40">Đúng / Tổng:</div><div>${h.correct_ratio || 'N/A'}</div>
+                    <div class="opacity-40">Thời gian làm:</div><div>${h.duration || 'N/A'}</div>
+                    <div class="opacity-40">Thời điểm nộp:</div><div>${h.date} | ${h.submit_time}</div>
+                    <div class="opacity-40">IP Address:</div><div class="font-mono text-blue-400 lowercase opacity-60">${h.user_ip || '0.0.0.0'}</div>
+                </div>
+            `;
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        function closeDetails(e) {
+            if (e && e.target.id !== 'detailsModal' && e.type === 'click' && e.target.tagName !== 'BUTTON') return;
+            document.getElementById('detailsModal').style.display = 'none';
         }
     </script>
 </body>
