@@ -74,7 +74,6 @@
             color: black; font-weight: 800; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
         }
-        .btn-premium:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 35px -10px rgba(251, 191, 36, 0.5); }
         
         .btn-review-custom {
             background: rgba(255, 255, 255, 0.05);
@@ -82,7 +81,6 @@
             border: 1px solid rgba(249, 115, 22, 0.3);
         }
         [data-theme="light"] .btn-review-custom { background: white; }
-        .btn-review-custom:hover { background: var(--primary); color: white; transform: scale(1.05); }
 
         .nerv-logo-img {
             width: 48px; height: 48px;
@@ -117,7 +115,7 @@
         .nav-dot {
             width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
             border-radius: 12px; background: rgba(255, 255, 255, 0.05); font-weight: 800; transition: 0.3s;
-            flex-shrink: 0;
+            flex-shrink: 0; cursor: pointer;
         }
         [data-theme="light"] .nav-dot { background: rgba(0,0,0,0.05); }
         
@@ -159,7 +157,43 @@
             display: flex; align-items: center; justify-content: center;
             gap: 12px; border: 1px solid rgba(0,0,0,0.1);
         }
-        .btn-google:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        /* HIỆU ỨNG TƯƠNG TÁC CHO NÚT */
+        button, .btn-premium, .btn-review-custom, .btn-google, [onclick], .opt-card {
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1) !important;
+        }
+
+        button:hover, .btn-premium:hover, .btn-review-custom:hover, .btn-google:hover {
+            transform: translateY(-2px) scale(1.03);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        button:active, .btn-premium:active { transform: scale(0.95); }
+
+        /* HIỆU ỨNG RIÊNG CHO 3 MỤC MENU CHÍNH */
+        #mainMenu > div {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #mainMenu > div:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        #mainMenu > div:nth-child(1):hover { box-shadow: 0 15px 30px rgba(249, 115, 22, 0.2), 0 0 20px rgba(249, 115, 22, 0.1); }
+        #mainMenu > div:nth-child(2):hover { box-shadow: 0 15px 30px rgba(234, 179, 8, 0.2), 0 0 20px rgba(234, 179, 8, 0.1); }
+        #mainMenu > div:nth-child(3):hover { box-shadow: 0 15px 30px rgba(71, 85, 105, 0.2), 0 0 20px rgba(71, 85, 105, 0.1); }
+
+        #mainMenu > div::after {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: rotate(45deg); transition: 0.6s; opacity: 0;
+        }
+
+        #mainMenu > div:hover::after { left: 100%; opacity: 1; }
+
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -443,7 +477,14 @@
         }
 
         function renderMap() {
-            document.getElementById('questionMap').innerHTML = state.userAns.map((a, i) => `<div class="nav-dot ${a !== null ? 'bg-orange-500 text-black' : ''}">${i+1}</div>`).join('');
+            document.getElementById('questionMap').innerHTML = state.userAns.map((a, i) => `<div onclick="scrollToQuestion(${i})" class="nav-dot ${a !== null ? 'bg-orange-500 text-black' : ''}">${i+1}</div>`).join('');
+        }
+
+        function scrollToQuestion(idx) {
+            const target = document.getElementById(`q-container-${idx}`);
+            if(target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function startTimer() {
@@ -519,7 +560,6 @@
             document.getElementById('detailsModal').style.display = 'flex';
         }
 
-        // --- ADMIN LOGIC ---
         function parseInput(txt) {
             return txt.split(/Câu \d+[:.]/g).filter(s => s.trim()).map(block => {
                 const lines = block.trim().split('\n');
@@ -554,12 +594,13 @@
 
         function renderAdminList() {
             document.getElementById('adminExamList').innerHTML = state.exams.map(ex => `
-                <div class="glass p-4 flex justify-between items-center">
-                    <span class="font-bold text-xs uppercase">${ex.title}</span>
-                    <div class="flex gap-2">
-                        <button onclick="editExam(${ex.id})" class="text-orange-500 text-[10px] font-black underline">SỬA</button>
-                        <button onclick="customConfirm('XÓA BÀI TẬP NÀY?', () => deleteExam(${ex.id}))" class="text-red-500 text-[10px] font-black underline">XÓA</button>
-                    </div>
+                <div class="glass p-5 flex justify-between items-center rounded-xl border border-white/5 mb-3">
+                    <span onclick="editExam(${ex.id})" class="font-bold text-sm uppercase cursor-pointer transition-colors duration-300 hover:text-orange-500 text-white/90">
+                        ${ex.title}
+                    </span>
+                    <button onclick="customConfirm('XÓA BÀI TẬP NÀY?', () => deleteExam(${ex.id}))" class="text-red-500 text-[11px] font-black uppercase tracking-tighter hover:scale-110 transition-transform">
+                        XÓA
+                    </button>
                 </div>
             `).join('');
         }
@@ -588,30 +629,16 @@
 
         function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
 
-        // MỚI: Hàm confirm tùy chỉnh không dùng hộp thoại hệ thống
         function customConfirm(msg, callback) {
             const modal = document.getElementById('confirmModal');
             const text = document.getElementById('confirmText');
             const yesBtn = document.getElementById('confirmYes');
             const noBtn = document.getElementById('confirmNo');
-
             text.innerText = msg;
             modal.style.display = 'flex';
-
-            const handleYes = () => {
-                modal.style.display = 'none';
-                callback();
-                cleanup();
-            };
-            const handleNo = () => {
-                modal.style.display = 'none';
-                cleanup();
-            };
-            const cleanup = () => {
-                yesBtn.removeEventListener('click', handleYes);
-                noBtn.removeEventListener('click', handleNo);
-            };
-
+            const handleYes = () => { modal.style.display = 'none'; callback(); cleanup(); };
+            const handleNo = () => { modal.style.display = 'none'; cleanup(); };
+            const cleanup = () => { yesBtn.removeEventListener('click', handleYes); noBtn.removeEventListener('click', handleNo); };
             yesBtn.addEventListener('click', handleYes);
             noBtn.addEventListener('click', handleNo);
         }
