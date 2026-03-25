@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root { 
             --primary: #f97316; 
@@ -158,7 +159,6 @@
             gap: 12px; border: 1px solid rgba(0,0,0,0.1);
         }
 
-        /* HIỆU ỨNG TƯƠNG TÁC CHO NÚT */
         button, .btn-premium, .btn-review-custom, .btn-google, [onclick], .opt-card {
             transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1) !important;
         }
@@ -171,7 +171,6 @@
 
         button:active, .btn-premium:active { transform: scale(0.95); }
 
-        /* HIỆU ỨNG RIÊNG CHO 3 MỤC MENU CHÍNH */
         #mainMenu > div {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
             position: relative;
@@ -295,7 +294,7 @@
                 <div class="w-full lg:w-80 space-y-6">
                     <div class="glass p-6 md:p-8 text-center sticky top-10">
                         <div id="timer" class="text-4xl md:text-5xl font-black text-orange-500 tracking-tighter">15:00</div>
-                        <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN NỘP BÀI KHÔNG?', submitExam)" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white">NỘP BÀI</button>
+                        <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐỘP BÀI KHÔNG?', submitExam)" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white">NỘP BÀI</button>
                     </div>
                     <div class="glass p-4 md:p-6"><div id="questionMap" class="flex flex-wrap gap-2 justify-center"></div></div>
                 </div>
@@ -305,6 +304,7 @@
         <div id="resultPage" class="hidden flex flex-col items-center justify-center text-center py-10 md:py-20">
             <h2 class="text-orange-500 font-black tracking-[0.5em] mb-4 uppercase">Hoàn Thành</h2>
             <div class="text-[100px] md:text-[150px] font-black italic leading-none" id="finalScoreDisplay">0</div>
+            <p id="scoreStats" class="text-lg font-bold opacity-80 mt-4"></p>
             <p id="timeFinish" class="text-orange-500/60 font-bold uppercase tracking-widest mb-6"></p>
             <div class="flex flex-col gap-4 mt-10">
                 <button onclick="showSection('mainMenu')" class="btn-premium px-12 py-5 rounded-full">QUAY VỀ MENU</button>
@@ -345,40 +345,53 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0, historyData: [] };
+        let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0, historyData: [], isAdmin: false, userIP: 'Unknown' };
 
         window.onload = async () => {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                state.userIP = data.ip;
+            } catch(e) { console.log("IP Fetch Error"); }
+
             const saved = localStorage.getItem('nerd_session');
             if(saved) {
                 const data = JSON.parse(saved);
                 state.user = data.user;
                 state.displayUser = data.displayUser;
                 state.class = data.class;
-                
-                const adminPattern = /^(wattman|nikagay)\("(.+)"\)$/i;
-                if(state.user.match(adminPattern)) document.getElementById('adminBtn').classList.remove('hidden');
-                
+                checkAdmin(state.user);
                 setupUI();
             }
         };
+
+        function checkAdmin(username) {
+            const adminPattern = /^(wattman|nikagay)\("(.+)"\)$/i;
+            if(username.match(adminPattern)) {
+                state.isAdmin = true;
+                document.getElementById('adminBtn').classList.remove('hidden');
+                return true;
+            }
+            state.isAdmin = false;
+            document.getElementById('adminBtn').classList.add('hidden');
+            return false;
+        }
 
         async function handleLogin() {
             const rawName = document.getElementById('username').value.trim();
             const c = document.getElementById('userClass').value.trim();
             if(!rawName || !c) return;
-            
             state.user = rawName;
             state.displayUser = rawName;
             state.class = c;
-
             const adminPattern = /^(wattman|nikagay)\("(.+)"\)$/i;
             const match = rawName.match(adminPattern);
             if(match) {
                 state.displayUser = match[2]; 
-                document.getElementById('adminBtn').classList.remove('hidden');
+                state.isAdmin = true;
             }
-            
             localStorage.setItem('nerd_session', JSON.stringify({user: state.user, displayUser: state.displayUser, class: state.class}));
+            checkAdmin(state.user);
             setupUI();
         }
 
@@ -404,26 +417,33 @@
         async function renderLeaderboard() {
             const container = document.getElementById('leaderboardContent');
             container.innerHTML = `<div class="text-center py-10 opacity-50 uppercase tracking-widest text-xs">Đang tải...</div>`;
+            
             const { data, error } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(50);
             if (error) {
                 container.innerHTML = `<p class="text-center text-red-500 text-[10px]">LỖI KẾT NỐI DATABASE</p>`;
                 return;
             }
             state.historyData = data || [];
-            container.innerHTML = state.historyData.map((h, i) => `
+            
+            container.innerHTML = state.historyData.map((h, i) => {
+                const nameDisplay = state.isAdmin 
+                    ? `<p onclick="showDetails(${i})" class="font-bold uppercase text-xs md:text-sm cursor-pointer hover:text-orange-500 transition underline underline-offset-4 decoration-orange-500/20">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>`
+                    : `<p class="font-bold uppercase text-xs md:text-sm text-white/90">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>`;
+
+                return `
                 <div class="glass p-4 md:p-5 flex justify-between items-center">
                     <div class="flex items-center gap-3 md:gap-5">
                         <span class="text-xl md:text-2xl font-black ${i<3?'text-orange-500':'opacity-20'}">#${i+1}</span>
                         <div>
-                            <p onclick="showDetails(${i})" class="font-bold uppercase text-xs md:text-sm cursor-pointer hover:text-orange-500 transition underline underline-offset-4 decoration-orange-500/30">
-                                ${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span>
-                            </p>
-                            <p class="text-[9px] md:text-[10px] opacity-40 uppercase tracking-widest mt-1">${h.exam}</p>
+                            ${nameDisplay}
+                            <p class="text-[9px] md:text-[10px] opacity-40 uppercase tracking-widest mt-0.5">${h.exam}</p>
                         </div>
                     </div>
-                    <div class="text-2xl md:text-4xl font-black italic text-orange-500">${parseFloat(h.score).toFixed(1)}</div>
+                    <div class="text-right">
+                        <div class="text-2xl md:text-4xl font-black italic text-orange-500">${parseFloat(h.score).toFixed(1)}</div>
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function showSection(id) {
@@ -482,9 +502,7 @@
 
         function scrollToQuestion(idx) {
             const target = document.getElementById(`q-container-${idx}`);
-            if(target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function startTimer() {
@@ -501,19 +519,27 @@
         async function submitExam() {
             clearInterval(state.timer);
             let correct = 0;
+            const total = state.currentExam.questions.length;
             state.currentExam.questions.forEach((q, i) => { 
                 if(state.userAns[i] !== null && q.opts[state.userAns[i]].c) correct++; 
             });
-            state.finalScore = (correct / state.currentExam.questions.length) * 10;
+            const wrong = total - correct;
+            state.finalScore = (correct / total) * 10;
+            
             await _sb.from('history').insert([{ 
                 name: state.displayUser, 
                 user_class: state.class, 
                 exam: state.currentExam.title, 
                 score: state.finalScore,
+                correct_count: correct,
+                wrong_count: wrong,
+                ip_address: state.userIP,
                 date: new Date().toLocaleDateString('vi-VN'),
                 submit_time: new Date().toLocaleTimeString('vi-VN')
             }]);
+
             document.getElementById('finalScoreDisplay').innerText = state.finalScore.toFixed(1);
+            document.getElementById('scoreStats').innerText = `ĐÚNG: ${correct} | SAI: ${wrong}`;
             showSection('resultPage');
         }
 
@@ -536,7 +562,6 @@
                                 let statusClass = '';
                                 if (o.c) statusClass = 'opt-correct';
                                 else if (userChoice === oi && !o.c) statusClass = 'opt-wrong';
-                                
                                 return `<div class="opt-review ${statusClass}">${o.t}</div>`;
                             }).join('')}
                         </div>
@@ -546,15 +571,26 @@
         }
 
         function showDetails(index) {
+            if(!state.isAdmin) return;
             const h = state.historyData[index];
             const content = document.getElementById('detailsContent');
             content.innerHTML = `
                 <div class="space-y-4 text-xs font-bold uppercase tracking-widest">
                     <p class="opacity-40">Học sinh: <span class="text-orange-500 text-base">${h.name}</span></p>
                     <p class="opacity-40">Lớp: <span class="text-white">${h.user_class || '8A7'}</span></p>
+                    <div class="flex items-center gap-2">
+                        <p class="opacity-40">IP: <span class="text-white font-mono lowercase tracking-tighter">${h.ip_address || 'Unknown'}</span></p>
+                        ${h.ip_address ? `
+                            <button onclick="navigator.clipboard.writeText('${h.ip_address}'); this.innerText='done'; setTimeout(()=>this.innerText='content_copy', 1000)" 
+                                    class="material-icons text-[12px] text-orange-500 cursor-pointer hover:scale-110 transition">
+                                content_copy
+                            </button>
+                        ` : ''}
+                    </div>
                     <p class="opacity-40">Bài tập: <span class="text-white normal-case italic">${h.exam}</span></p>
+                    <p class="opacity-40">Kết quả: <span class="text-green-500">${h.correct_count || 0} ĐÚNG</span> / <span class="text-red-500">${h.wrong_count || 0} SAI</span></p>
                     <p class="opacity-40">Điểm: <span class="text-orange-500 text-2xl font-black">${parseFloat(h.score).toFixed(1)}</span></p>
-                    <p class="opacity-40">Ngày nộp: <span class="text-white">${h.date} | ${h.submit_time}</span></p>
+                    <p class="opacity-40">Thời gian: <span class="text-white">${h.date} | ${h.submit_time}</span></p>
                 </div>
             `;
             document.getElementById('detailsModal').style.display = 'flex';
@@ -577,30 +613,20 @@
             let res;
             if(state.editingId) res = await _sb.from('exams').update({title, questions}).eq('id', state.editingId);
             else res = await _sb.from('exams').insert([{title, questions}]);
-            
-            if(!res.error) {
-                showAdminStatus("ĐÃ LƯU THÀNH CÔNG!");
-                cancelEdit();
-                fetchExams();
-            }
+            if(!res.error) { showAdminStatus("ĐÃ LƯU THÀNH CÔNG!"); cancelEdit(); fetchExams(); }
         }
 
         function showAdminStatus(msg) {
             const el = document.getElementById('adminStatus');
-            el.innerText = msg;
-            el.classList.remove('hidden');
+            el.innerText = msg; el.classList.remove('hidden');
             setTimeout(() => el.classList.add('hidden'), 3000);
         }
 
         function renderAdminList() {
             document.getElementById('adminExamList').innerHTML = state.exams.map(ex => `
                 <div class="glass p-5 flex justify-between items-center rounded-xl border border-white/5 mb-3">
-                    <span onclick="editExam(${ex.id})" class="font-bold text-sm uppercase cursor-pointer transition-colors duration-300 hover:text-orange-500 text-white/90">
-                        ${ex.title}
-                    </span>
-                    <button onclick="customConfirm('XÓA BÀI TẬP NÀY?', () => deleteExam(${ex.id}))" class="text-red-500 text-[11px] font-black uppercase tracking-tighter hover:scale-110 transition-transform">
-                        XÓA
-                    </button>
+                    <span onclick="editExam(${ex.id})" class="font-bold text-sm uppercase cursor-pointer transition-colors duration-300 hover:text-orange-500 text-white/90">${ex.title}</span>
+                    <button onclick="customConfirm('XÓA BÀI TẬP NÀY?', () => deleteExam(${ex.id}))" class="text-red-500 text-[11px] font-black uppercase tracking-tighter hover:scale-110 transition-transform">XÓA</button>
                 </div>
             `).join('');
         }
@@ -622,10 +648,7 @@
             document.getElementById('saveBtn').innerText = "LƯU DỮ LIỆU";
         }
 
-        async function deleteExam(id) {
-            await _sb.from('exams').delete().eq('id', id);
-            fetchExams();
-        }
+        async function deleteExam(id) { await _sb.from('exams').delete().eq('id', id); fetchExams(); }
 
         function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
 
@@ -634,8 +657,7 @@
             const text = document.getElementById('confirmText');
             const yesBtn = document.getElementById('confirmYes');
             const noBtn = document.getElementById('confirmNo');
-            text.innerText = msg;
-            modal.style.display = 'flex';
+            text.innerText = msg; modal.style.display = 'flex';
             const handleYes = () => { modal.style.display = 'none'; callback(); cleanup(); };
             const handleNo = () => { modal.style.display = 'none'; cleanup(); };
             const cleanup = () => { yesBtn.removeEventListener('click', handleYes); noBtn.removeEventListener('click', handleNo); };
