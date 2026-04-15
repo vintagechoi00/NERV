@@ -177,10 +177,7 @@
             overflow: hidden;
         }
 
-        #mainMenu > div:hover {
-            transform: translateY(-8px) scale(1.02);
-        }
-
+        #mainMenu > div:hover { transform: translateY(-8px) scale(1.02); }
         #mainMenu > div:nth-child(1):hover { box-shadow: 0 15px 30px rgba(249, 115, 22, 0.2), 0 0 20px rgba(249, 115, 22, 0.1); }
         #mainMenu > div:nth-child(2):hover { box-shadow: 0 15px 30px rgba(234, 179, 8, 0.2), 0 0 20px rgba(234, 179, 8, 0.1); }
         #mainMenu > div:nth-child(3):hover { box-shadow: 0 15px 30px rgba(71, 85, 105, 0.2), 0 0 20px rgba(71, 85, 105, 0.1); }
@@ -190,19 +187,28 @@
             background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
             transform: rotate(45deg); transition: 0.6s; opacity: 0;
         }
-
         #mainMenu > div:hover::after { left: 100%; opacity: 1; }
 
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 14px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        button:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; filter: none !important; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="timerBar" class="timer-progress hidden"></div>
+
     <div id="cheatGuard">
         <div class="p-10 text-white">
             <h1 class="text-4xl md:text-6xl font-black italic mb-4">GIAO DIỆN BỊ KHÓA</h1>
             <p class="text-lg md:text-xl tracking-widest opacity-80 uppercase">ĐANG LÀM BÀI MÀ ĐI ĐÂU VẬY E?</p>
-            <button onclick="document.getElementById('cheatGuard').style.display='none'" class="mt-10 px-10 py-4 bg-white text-black font-black rounded-full italic">TÔI ĐÃ HIỂU</button>
+            <button onclick="dismissCheatGuard()" class="mt-10 px-10 py-4 bg-white text-black font-black rounded-full italic">TÔI ĐÃ HIỂU</button>
         </div>
     </div>
 
@@ -235,7 +241,6 @@
                     <p id="userTag" class="text-[9px] md:text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]"></p>
                 </div>
             </div>
-            
             <div class="flex items-center gap-2">
                 <div class="switch-container">
                     <label class="theme-switch">
@@ -256,14 +261,12 @@
                 <p class="opacity-60 text-sm">Hệ thống học tập Lớp 8A7</p>
             </div>
             <div class="space-y-5">
-                <input type="text" id="username" placeholder="Tên của bạn..." class="w-full p-4 rounded-2xl outline-none">
-                <input type="text" id="userClass" placeholder="Lớp (VD: 8A7)..." class="w-full p-4 rounded-2xl outline-none">
-                <button onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">ĐĂNG NHẬP</button>
-                
+                <input type="text" id="username" placeholder="Tên của bạn..." class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter') handleLogin()">
+                <input type="text" id="userClass" placeholder="Lớp (VD: 8A7)..." class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter') handleLogin()">
+                <button id="loginBtn" onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">ĐĂNG NHẬP</button>
                 <div class="flex items-center gap-4 my-6 opacity-30">
                     <hr class="flex-1 border-white"> <span class="text-xs font-bold">HOẶC</span> <hr class="flex-1 border-white">
                 </div>
-
                 <button class="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition btn-google">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
                     <span>TIẾP TỤC VỚI GOOGLE</span>
@@ -294,7 +297,7 @@
                 <div class="w-full lg:w-80 space-y-6">
                     <div class="glass p-6 md:p-8 text-center sticky top-10">
                         <div id="timer" class="text-4xl md:text-5xl font-black text-orange-500 tracking-tighter">15:00</div>
-                        <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐỘP BÀI KHÔNG?', submitExam)" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white">NỘP BÀI</button>
+                        <button id="submitBtn" onclick="customConfirm('BẠN CÓ CHẮC MUỐN NỘP BÀI KHÔNG?', submitExam)" class="w-full mt-6 py-4 bg-red-600 rounded-2xl font-black text-white">NỘP BÀI</button>
                     </div>
                     <div class="glass p-4 md:p-6"><div id="questionMap" class="flex flex-wrap gap-2 justify-center"></div></div>
                 </div>
@@ -305,7 +308,7 @@
             <h2 class="text-orange-500 font-black tracking-[0.5em] mb-4 uppercase">Hoàn Thành</h2>
             <div class="text-[100px] md:text-[150px] font-black italic leading-none" id="finalScoreDisplay">0</div>
             <p id="scoreStats" class="text-lg font-bold opacity-80 mt-4"></p>
-            <p id="timeFinish" class="text-orange-500/60 font-bold uppercase tracking-widest mb-6"></p>
+            <p id="timeFinish" class="text-orange-500/60 font-bold uppercase tracking-widest mb-6 mt-2"></p>
             <div class="flex flex-col gap-4 mt-10">
                 <button onclick="showSection('mainMenu')" class="btn-premium px-12 py-5 rounded-full">QUAY VỀ MENU</button>
                 <button onclick="renderReview()" class="btn-review-custom px-12 py-4 rounded-full text-sm">XEM LẠI ĐÁP ÁN</button>
@@ -345,14 +348,24 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        let state = { user: '', displayUser: '', class: '', exams: [], currentExam: null, userAns: [], timer: null, time: 900, editingId: null, finalScore: 0, historyData: [], isAdmin: false, userIP: 'Unknown' };
+        let state = {
+            user: '', displayUser: '', class: '',
+            exams: [], currentExam: null, userAns: [],
+            timer: null, time: 900,
+            editingId: null, finalScore: 0,
+            historyData: [], isAdmin: false,
+            userIP: 'Unknown',
+            submitted: false,
+            timeUsed: 0,
+            cheatCount: 0
+        };
 
         window.onload = async () => {
             try {
                 const res = await fetch('https://api.ipify.org?format=json');
                 const data = await res.json();
                 state.userIP = data.ip;
-            } catch(e) { console.log("IP Fetch Error"); }
+            } catch(e) {}
 
             const saved = localStorage.getItem('nerd_session');
             if(saved) {
@@ -381,18 +394,26 @@
             const rawName = document.getElementById('username').value.trim();
             const c = document.getElementById('userClass').value.trim();
             if(!rawName || !c) return;
+
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerText = 'ĐANG VÀO...';
+
             state.user = rawName;
             state.displayUser = rawName;
             state.class = c;
             const adminPattern = /^(wattman|nikagay)\("(.+)"\)$/i;
             const match = rawName.match(adminPattern);
-            if(match) {
-                state.displayUser = match[2]; 
-                state.isAdmin = true;
-            }
-            localStorage.setItem('nerd_session', JSON.stringify({user: state.user, displayUser: state.displayUser, class: state.class}));
+            if(match) { state.displayUser = match[2]; state.isAdmin = true; }
+
+            localStorage.setItem('nerd_session', JSON.stringify({
+                user: state.user, displayUser: state.displayUser, class: state.class
+            }));
             checkAdmin(state.user);
             setupUI();
+
+            btn.disabled = false;
+            btn.innerText = 'ĐĂNG NHẬP';
         }
 
         async function setupUI() {
@@ -404,8 +425,21 @@
         }
 
         function handleLogout() {
+            stopCheatGuard();
             localStorage.removeItem('nerd_session');
             location.reload();
+        }
+
+        function showSection(id) {
+            ['loginPage','mainMenu','selectExamPage','examPage','adminPage','leaderboard','resultPage','reviewPage'].forEach(s => {
+                const el = document.getElementById(s);
+                if(el) el.classList.add('hidden');
+            });
+            if(id !== 'examPage') stopCheatGuard();
+            document.getElementById(id).classList.remove('hidden');
+            if(id === 'selectExamPage') renderExamList();
+            if(id === 'leaderboard') renderLeaderboard();
+            if(id === 'adminPage') renderAdminList();
         }
 
         async function fetchExams() {
@@ -414,49 +448,11 @@
             if(!document.getElementById('adminPage').classList.contains('hidden')) renderAdminList();
         }
 
-        async function renderLeaderboard() {
-            const container = document.getElementById('leaderboardContent');
-            container.innerHTML = `<div class="text-center py-10 opacity-50 uppercase tracking-widest text-xs">Đang tải...</div>`;
-            
-            const { data, error } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(50);
-            if (error) {
-                container.innerHTML = `<p class="text-center text-red-500 text-[10px]">LỖI KẾT NỐI DATABASE</p>`;
+        function renderExamList() {
+            if(state.exams.length === 0) {
+                document.getElementById('examList').innerHTML = `<p class="opacity-40 text-sm uppercase tracking-widest">Chưa có bài tập nào.</p>`;
                 return;
             }
-            state.historyData = data || [];
-            
-            container.innerHTML = state.historyData.map((h, i) => {
-                const nameDisplay = state.isAdmin 
-                    ? `<p onclick="showDetails(${i})" class="font-bold uppercase text-xs md:text-sm cursor-pointer hover:text-orange-500 transition underline underline-offset-4 decoration-orange-500/20">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>`
-                    : `<p class="font-bold uppercase text-xs md:text-sm text-white/90">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>`;
-
-                return `
-                <div class="glass p-4 md:p-5 flex justify-between items-center">
-                    <div class="flex items-center gap-3 md:gap-5">
-                        <span class="text-xl md:text-2xl font-black ${i<3?'text-orange-500':'opacity-20'}">#${i+1}</span>
-                        <div>
-                            ${nameDisplay}
-                            <p class="text-[9px] md:text-[10px] opacity-40 uppercase tracking-widest mt-0.5">${h.exam}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-2xl md:text-4xl font-black italic text-orange-500">${parseFloat(h.score).toFixed(1)}</div>
-                    </div>
-                </div>
-            `}).join('');
-        }
-
-        function showSection(id) {
-            ['loginPage', 'mainMenu', 'selectExamPage', 'examPage', 'adminPage', 'leaderboard', 'resultPage', 'reviewPage'].forEach(s => {
-                const el = document.getElementById(s); if(el) el.classList.add('hidden');
-            });
-            document.getElementById(id).classList.remove('hidden');
-            if(id === 'selectExamPage') renderExamList();
-            if(id === 'leaderboard') renderLeaderboard();
-            if(id === 'adminPage') renderAdminList();
-        }
-
-        function renderExamList() {
             document.getElementById('examList').innerHTML = state.exams.map(ex => `
                 <div onclick="startExam(${ex.id})" class="glass p-6 md:p-8 cursor-pointer border-l-4 border-orange-500 hover:bg-orange-500/10 transition">
                     <h3 class="text-lg md:text-xl font-bold">${ex.title}</h3>
@@ -470,9 +466,43 @@
             state.currentExam = JSON.parse(JSON.stringify(ex));
             state.currentExam.questions.sort(() => Math.random() - 0.5);
             state.userAns = new Array(state.currentExam.questions.length).fill(null);
-            showSection('examPage'); 
-            renderAllQuestions(); 
+            state.submitted = false;
+            state.cheatCount = 0;
+            showSection('examPage');
+            renderAllQuestions();
             startTimer();
+            startCheatGuard();
+            const submitBtn = document.getElementById('submitBtn');
+            if(submitBtn) { submitBtn.disabled = false; submitBtn.innerText = 'NỘP BÀI'; }
+        }
+
+        function handleVisibilityChange() {
+            if(document.hidden && !state.submitted) {
+                state.cheatCount++;
+                document.getElementById('cheatGuard').style.display = 'flex';
+            }
+        }
+
+        function startCheatGuard() {
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('blur', handleWindowBlur);
+        }
+
+        function handleWindowBlur() {
+            if(!state.submitted) {
+                state.cheatCount++;
+                document.getElementById('cheatGuard').style.display = 'flex';
+            }
+        }
+
+        function stopCheatGuard() {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('blur', handleWindowBlur);
+            document.getElementById('cheatGuard').style.display = 'none';
+        }
+
+        function dismissCheatGuard() {
+            document.getElementById('cheatGuard').style.display = 'none';
         }
 
         function renderAllQuestions() {
@@ -489,15 +519,18 @@
             renderMap();
         }
 
-        function pick(qi, oi) { 
-            state.userAns[qi] = oi; 
+        function pick(qi, oi) {
+            if(state.submitted) return;
+            state.userAns[qi] = oi;
             document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(el => el.classList.remove('selected'));
             document.getElementById(`opt-${qi}-${oi}`).classList.add('selected');
-            renderMap(); 
+            renderMap();
         }
 
         function renderMap() {
-            document.getElementById('questionMap').innerHTML = state.userAns.map((a, i) => `<div onclick="scrollToQuestion(${i})" class="nav-dot ${a !== null ? 'bg-orange-500 text-black' : ''}">${i+1}</div>`).join('');
+            document.getElementById('questionMap').innerHTML = state.userAns.map((a, i) => `
+                <div onclick="scrollToQuestion(${i})" class="nav-dot ${a !== null ? 'bg-orange-500 text-black' : ''}">${i+1}</div>
+            `).join('');
         }
 
         function scrollToQuestion(idx) {
@@ -510,36 +543,53 @@
             if(state.timer) clearInterval(state.timer);
             state.timer = setInterval(() => {
                 state.time--;
-                let m = Math.floor(state.time/60), s = state.time%60;
-                document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
+                let m = Math.floor(state.time / 60), s = state.time % 60;
+                const timerEl = document.getElementById('timer');
+                if(timerEl) timerEl.innerText = `${m}:${s < 10 ? '0' + s : s}`;
+                if(state.time <= 60 && timerEl) timerEl.style.color = '#ef4444';
                 if(state.time <= 0) submitExam();
             }, 1000);
         }
 
         async function submitExam() {
+            if(state.submitted) return;
+            state.submitted = true;
             clearInterval(state.timer);
+            stopCheatGuard();
+
+            const submitBtn = document.getElementById('submitBtn');
+            if(submitBtn) { submitBtn.disabled = true; submitBtn.innerText = 'ĐÃ NỘP'; }
+
             let correct = 0;
             const total = state.currentExam.questions.length;
-            state.currentExam.questions.forEach((q, i) => { 
-                if(state.userAns[i] !== null && q.opts[state.userAns[i]].c) correct++; 
+            state.currentExam.questions.forEach((q, i) => {
+                if(state.userAns[i] !== null && q.opts[state.userAns[i]].c) correct++;
             });
             const wrong = total - correct;
             state.finalScore = (correct / total) * 10;
-            
-            await _sb.from('history').insert([{ 
-                name: state.displayUser, 
-                user_class: state.class, 
-                exam: state.currentExam.title, 
+
+            const timeUsedSeconds = 900 - state.time;
+            const mm = Math.floor(timeUsedSeconds / 60);
+            const ss = timeUsedSeconds % 60;
+            const timeUsedStr = `${mm}:${ss < 10 ? '0' + ss : ss}`;
+
+            await _sb.from('history').insert([{
+                name: state.displayUser,
+                user_class: state.class,
+                exam: state.currentExam.title,
                 score: state.finalScore,
                 correct_count: correct,
                 wrong_count: wrong,
                 ip_address: state.userIP,
+                cheat_count: state.cheatCount,
                 date: new Date().toLocaleDateString('vi-VN'),
                 submit_time: new Date().toLocaleTimeString('vi-VN')
             }]);
 
             document.getElementById('finalScoreDisplay').innerText = state.finalScore.toFixed(1);
             document.getElementById('scoreStats').innerText = `ĐÚNG: ${correct} | SAI: ${wrong}`;
+            document.getElementById('timeFinish').innerText = `Hoàn thành trong ${timeUsedStr} | Rời tab: ${state.cheatCount} lần`;
+
             showSection('resultPage');
         }
 
@@ -548,22 +598,72 @@
             const container = document.getElementById('reviewContent');
             container.innerHTML = state.currentExam.questions.map((q, qi) => {
                 const userChoice = state.userAns[qi];
+                const isCorrect = userChoice !== null && q.opts[userChoice].c;
                 return `
-                    <div class="glass p-6 md:p-10 border-l-4 ${userChoice !== null && q.opts[userChoice].c ? 'border-green-500' : 'border-red-500'}">
+                    <div class="glass p-6 md:p-10 border-l-4 ${isCorrect ? 'border-green-500' : 'border-red-500'}">
                         <div class="flex justify-between items-start mb-4">
                             <span class="text-orange-500 font-black text-[10px] tracking-widest uppercase">Câu ${qi + 1}</span>
-                            <span class="text-[10px] font-black uppercase ${userChoice !== null && q.opts[userChoice].c ? 'text-green-500' : 'text-red-500'}">
-                                ${userChoice !== null && q.opts[userChoice].c ? 'Đúng' : 'Sai'}
+                            <span class="text-[10px] font-black uppercase ${isCorrect ? 'text-green-500' : 'text-red-500'}">
+                                ${isCorrect ? '✓ Đúng' : '✗ Sai'}
                             </span>
                         </div>
                         <h3 class="text-lg md:text-xl font-bold mb-6">${q.q}</h3>
                         <div class="space-y-3">
                             ${q.opts.map((o, oi) => {
-                                let statusClass = '';
-                                if (o.c) statusClass = 'opt-correct';
-                                else if (userChoice === oi && !o.c) statusClass = 'opt-wrong';
-                                return `<div class="opt-review ${statusClass}">${o.t}</div>`;
+                                let cls = '';
+                                if(o.c) cls = 'opt-correct';
+                                else if(userChoice === oi && !o.c) cls = 'opt-wrong';
+                                return `<div class="opt-review ${cls}">${o.t}</div>`;
                             }).join('')}
+                        </div>
+                        ${userChoice === null ? '<p class="text-[10px] opacity-40 uppercase tracking-widest mt-4">⚠ Chưa trả lời</p>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function renderLeaderboard() {
+            const container = document.getElementById('leaderboardContent');
+            container.innerHTML = Array(5).fill(0).map(() => `
+                <div class="glass p-4 md:p-5 flex justify-between items-center">
+                    <div class="flex items-center gap-5">
+                        <div class="skeleton w-10 h-8 rounded-lg"></div>
+                        <div class="space-y-2">
+                            <div class="skeleton w-40 h-4 rounded"></div>
+                            <div class="skeleton w-24 h-3 rounded"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton w-16 h-10 rounded-lg"></div>
+                </div>
+            `).join('');
+
+            const { data, error } = await _sb.from('history').select('*').order('score', { ascending: false }).limit(50);
+            if(error) {
+                container.innerHTML = `<p class="text-center text-red-500 text-[10px]">LỖI KẾT NỐI DATABASE</p>`;
+                return;
+            }
+            state.historyData = data || [];
+
+            if(state.historyData.length === 0) {
+                container.innerHTML = `<p class="text-center opacity-40 text-sm uppercase tracking-widest py-10">Chưa có kết quả nào.</p>`;
+                return;
+            }
+
+            container.innerHTML = state.historyData.map((h, i) => {
+                const nameDisplay = state.isAdmin
+                    ? `<p onclick="showDetails(${i})" class="font-bold uppercase text-xs md:text-sm cursor-pointer hover:text-orange-500 transition underline underline-offset-4 decoration-orange-500/20">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>`
+                    : `<p class="font-bold uppercase text-xs md:text-sm">${h.name} - <span class="text-orange-500">${h.user_class || '8A7'}</span></p>`;
+                return `
+                    <div class="glass p-4 md:p-5 flex justify-between items-center">
+                        <div class="flex items-center gap-3 md:gap-5">
+                            <span class="text-xl md:text-2xl font-black ${i < 3 ? 'text-orange-500' : 'opacity-20'}">#${i + 1}</span>
+                            <div>
+                                ${nameDisplay}
+                                <p class="text-[9px] md:text-[10px] opacity-40 uppercase tracking-widest mt-0.5">${h.exam}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl md:text-4xl font-black italic text-orange-500">${parseFloat(h.score).toFixed(1)}</div>
                         </div>
                     </div>
                 `;
@@ -573,23 +673,18 @@
         function showDetails(index) {
             if(!state.isAdmin) return;
             const h = state.historyData[index];
-            const content = document.getElementById('detailsContent');
-            content.innerHTML = `
+            document.getElementById('detailsContent').innerHTML = `
                 <div class="space-y-4 text-xs font-bold uppercase tracking-widest">
                     <p class="opacity-40">Học sinh: <span class="text-orange-500 text-base">${h.name}</span></p>
                     <p class="opacity-40">Lớp: <span class="text-white">${h.user_class || '8A7'}</span></p>
                     <div class="flex items-center gap-2">
                         <p class="opacity-40">IP: <span class="text-white font-mono lowercase tracking-tighter">${h.ip_address || 'Unknown'}</span></p>
-                        ${h.ip_address ? `
-                            <button onclick="navigator.clipboard.writeText('${h.ip_address}'); this.innerText='done'; setTimeout(()=>this.innerText='content_copy', 1000)" 
-                                    class="material-icons text-[12px] text-orange-500 cursor-pointer hover:scale-110 transition">
-                                content_copy
-                            </button>
-                        ` : ''}
+                        ${h.ip_address ? `<button onclick="navigator.clipboard.writeText('${h.ip_address}'); this.innerText='done'; setTimeout(()=>this.innerText='content_copy',1000)" class="material-icons text-[12px] text-orange-500 cursor-pointer">content_copy</button>` : ''}
                     </div>
                     <p class="opacity-40">Bài tập: <span class="text-white normal-case italic">${h.exam}</span></p>
                     <p class="opacity-40">Kết quả: <span class="text-green-500">${h.correct_count || 0} ĐÚNG</span> / <span class="text-red-500">${h.wrong_count || 0} SAI</span></p>
                     <p class="opacity-40">Điểm: <span class="text-orange-500 text-2xl font-black">${parseFloat(h.score).toFixed(1)}</span></p>
+                    <p class="opacity-40">Rời tab: <span class="${(h.cheat_count || 0) > 0 ? 'text-red-400' : 'text-green-400'}">${h.cheat_count || 0} lần</span></p>
                     <p class="opacity-40">Thời gian: <span class="text-white">${h.date} | ${h.submit_time}</span></p>
                 </div>
             `;
@@ -600,20 +695,42 @@
             return txt.split(/Câu \d+[:.]/g).filter(s => s.trim()).map(block => {
                 const lines = block.trim().split('\n');
                 const q = lines[0].trim();
-                const opts = lines.slice(1).map(l => ({ t: l.replace('@t', '').trim(), c: l.includes('@t') }));
+                const opts = lines.slice(1).filter(l => l.trim()).map(l => ({
+                    t: l.replace('@t', '').trim(),
+                    c: l.includes('@t')
+                }));
                 return { q, opts };
             });
         }
 
         async function handleSaveExam() {
-            const title = document.getElementById('examTitle').value;
-            const raw = document.getElementById('rawInput').value;
+            const title = document.getElementById('examTitle').value.trim();
+            const raw = document.getElementById('rawInput').value.trim();
             if(!title || !raw) return showAdminStatus("THIẾU THÔNG TIN!");
+
             const questions = parseInput(raw);
+            if(questions.length === 0) return showAdminStatus("KHÔNG PARSE ĐƯỢC CÂU HỎI!");
+            const invalid = questions.find(q => !q.opts.some(o => o.c));
+            if(invalid) return showAdminStatus(`CÂU "${invalid.q.substring(0,30)}..." THIẾU ĐÁP ÁN ĐÚNG (@t)`);
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerText = 'ĐANG LƯU...';
+
             let res;
             if(state.editingId) res = await _sb.from('exams').update({title, questions}).eq('id', state.editingId);
             else res = await _sb.from('exams').insert([{title, questions}]);
-            if(!res.error) { showAdminStatus("ĐÃ LƯU THÀNH CÔNG!"); cancelEdit(); fetchExams(); }
+
+            saveBtn.disabled = false;
+            saveBtn.innerText = state.editingId ? 'CẬP NHẬT' : 'LƯU DỮ LIỆU';
+
+            if(!res.error) {
+                showAdminStatus("ĐÃ LƯU ĐỀ THÀNH CÔNG!");
+                cancelEdit();
+                fetchExams();
+            } else {
+                showAdminStatus("LỖI LƯU DỮ LIỆU!");
+            }
         }
 
         function showAdminStatus(msg) {
@@ -625,19 +742,25 @@
         function renderAdminList() {
             document.getElementById('adminExamList').innerHTML = state.exams.map(ex => `
                 <div class="glass p-5 flex justify-between items-center rounded-xl border border-white/5 mb-3">
-                    <span onclick="editExam(${ex.id})" class="font-bold text-sm uppercase cursor-pointer transition-colors duration-300 hover:text-orange-500 text-white/90">${ex.title}</span>
-                    <button onclick="customConfirm('XÓA BÀI TẬP NÀY?', () => deleteExam(${ex.id}))" class="text-red-500 text-[11px] font-black uppercase tracking-tighter hover:scale-110 transition-transform">XÓA</button>
+                    <span onclick="editExam(${ex.id})" class="font-bold text-sm uppercase cursor-pointer transition-colors duration-300 hover:text-orange-500">${ex.title}</span>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] opacity-30">${ex.questions ? ex.questions.length : 0} câu</span>
+                        <button onclick="customConfirm('XÓA BÀI TẬP NÀY?', () => deleteExam(${ex.id}))" class="text-red-500 text-[11px] font-black uppercase tracking-tighter hover:scale-110 transition-transform">XÓA</button>
+                    </div>
                 </div>
-            `).join('');
+            `).join('') || '<p class="text-center opacity-30 text-xs uppercase tracking-widest py-4">Chưa có bài tập nào</p>';
         }
 
         function editExam(id) {
             const ex = state.exams.find(e => e.id === id);
             state.editingId = id;
             document.getElementById('examTitle').value = ex.title;
-            document.getElementById('rawInput').value = ex.questions.map((q, i) => `Câu ${i+1}: ${q.q}\n${q.opts.map(o => `${o.t} ${o.c ? '@t' : ''}`).join('\n')}`).join('\n\n');
+            document.getElementById('rawInput').value = ex.questions.map((q, i) =>
+                `Câu ${i + 1}: ${q.q}\n${q.opts.map(o => `${o.t}${o.c ? ' @t' : ''}`).join('\n')}`
+            ).join('\n\n');
             document.getElementById('cancelEditBtn').classList.remove('hidden');
-            document.getElementById('saveBtn').innerText = "CẬP NHẬT";
+            document.getElementById('saveBtn').innerText = 'CẬP NHẬT';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function cancelEdit() {
@@ -645,27 +768,35 @@
             document.getElementById('examTitle').value = '';
             document.getElementById('rawInput').value = '';
             document.getElementById('cancelEditBtn').classList.add('hidden');
-            document.getElementById('saveBtn').innerText = "LƯU DỮ LIỆU";
+            document.getElementById('saveBtn').innerText = 'LƯU DỮ LIỆU';
         }
 
-        async function deleteExam(id) { await _sb.from('exams').delete().eq('id', id); fetchExams(); }
+        async function deleteExam(id) {
+            await _sb.from('exams').delete().eq('id', id);
+            fetchExams();
+        }
 
         function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
 
         function customConfirm(msg, callback) {
             const modal = document.getElementById('confirmModal');
-            const text = document.getElementById('confirmText');
+            document.getElementById('confirmText').innerText = msg;
+            modal.style.display = 'flex';
             const yesBtn = document.getElementById('confirmYes');
             const noBtn = document.getElementById('confirmNo');
-            text.innerText = msg; modal.style.display = 'flex';
+            const cleanup = () => {
+                yesBtn.removeEventListener('click', handleYes);
+                noBtn.removeEventListener('click', handleNo);
+            };
             const handleYes = () => { modal.style.display = 'none'; callback(); cleanup(); };
             const handleNo = () => { modal.style.display = 'none'; cleanup(); };
-            const cleanup = () => { yesBtn.removeEventListener('click', handleYes); noBtn.removeEventListener('click', handleNo); };
             yesBtn.addEventListener('click', handleYes);
             noBtn.addEventListener('click', handleNo);
         }
 
-        function toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? '' : 'light'); }
+        function toggleTheme() {
+            document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? '' : 'light');
+        }
     </script>
 </body>
 </html>
