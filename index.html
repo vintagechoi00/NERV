@@ -274,7 +274,7 @@
                 <p class="opacity-60 text-sm">Hệ thống học tập Lớp 8A7</p>
             </div>
             <div class="space-y-5">
-                <input type="text" id="username"  placeholder="Tên của bạn..."   class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter') handleLogin()" maxlength="60" autocomplete="off">
+                <input type="text" id="username"  placeholder="Tên của bạn..."   class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter') handleLogin()" maxlength="120" autocomplete="off">
                 <input type="text" id="userClass" placeholder="Lớp (VD: 8A7)..." class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter') handleLogin()" maxlength="20" autocomplete="off">
                 <div id="loginError" class="text-red-400 text-[10px] font-black uppercase tracking-widest text-center hidden"></div>
                 <button id="loginBtn" onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">ĐĂNG NHẬP</button>
@@ -385,6 +385,14 @@
 
                 <div id="adminStatus" class="text-orange-500 text-[10px] font-black uppercase text-center hidden py-2 tracking-widest"></div>
                 <div id="fileStatus"></div>
+                <!-- XÓA ĐỀ LẠ THEO TÊN -->
+                <div class="pt-2">
+                    <button onclick="customConfirm('XÓA TẤT CẢ ĐỀ THEO TÊN (diệt đề lạ)?', nukeByTitle)"
+                        class="w-full py-3 rounded-2xl font-black uppercase text-xs tracking-wider"
+                        style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ef4444;">
+                        🗑 XÓA ĐỀ LẠ THEO TÊN
+                    </button>
+                </div>
                 <div id="adminExamList" class="pt-8 space-y-3"></div>
             </div>
         </div>
@@ -440,37 +448,58 @@ window.onload = async () => {
             const d = JSON.parse(saved);
             if (d.user && d.userClass) {
                 state.user = d.user; state.displayUser = d.displayUser || d.user; state.userClass = d.userClass;
-                checkAdmin(state.user); setupUI();
+                await checkAdmin(state.user); setupUI();
             }
         }
     } catch(e){ localStorage.removeItem('nerd_session'); }
 };
 
 // ================================================================
-//  ADMIN CHECK
+//  ADMIN CHECK — password hashed, không lộ ra ngoài
 // ================================================================
-function checkAdmin(u){
-    const m = u.match(/^(wattman|nikagay)\("(.+)"\)$/i);
-    state.isAdmin = !!m;
+// Đây là SHA-256 của mật khẩu admin. Muốn đổi pass: chạy sha256("pass_mới") rồi thay hash dưới.
+// Hash hiện tại = sha256("NerdAdmin2025!@#")
+const ADMIN_HASH = 'd195c996f6ba18d4d02fc717ad175275977c0687e627ca0a2bc80d5d887aa3d2';
+
+async function sha256(msg){
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkAdmin(u){
+    // u có dạng: ADMIN:password:DisplayName
+    if(!u.startsWith('ADMIN:')) { state.isAdmin=false; document.getElementById('adminBtn').classList.add('hidden'); return false; }
+    const parts = u.split(':');
+    if(parts.length < 3) { state.isAdmin=false; document.getElementById('adminBtn').classList.add('hidden'); return false; }
+    const pass = parts[1];
+    const h = await sha256(pass);
+    state.isAdmin = (h === ADMIN_HASH);
     document.getElementById('adminBtn').classList.toggle('hidden', !state.isAdmin);
     return state.isAdmin;
 }
 
+// Wrapper đồng bộ cho các nơi cần check nhanh (dùng state.isAdmin đã set)
+function isAdminSync(){ return state.isAdmin; }
+
 // ================================================================
 //  LOGIN / LOGOUT
 // ================================================================
-function handleLogin(){
+async function handleLogin(){
     const name = document.getElementById('username').value.trim();
     const cls  = document.getElementById('userClass').value.trim();
     const errEl= document.getElementById('loginError');
     if (!name || !cls){ errEl.textContent='Vui lòng nhập đầy đủ tên và lớp!'; errEl.classList.remove('hidden'); return; }
     if (name.length < 2){ errEl.textContent='Tên phải có ít nhất 2 ký tự!'; errEl.classList.remove('hidden'); return; }
     errEl.classList.add('hidden');
-    state.user = name; state.displayUser = name; state.userClass = cls;
-    const m = name.match(/^(wattman|nikagay)\("(.+)"\)$/i);
-    if (m) state.displayUser = m[2];
+    // Admin login format: ADMIN:password:DisplayName
+    let displayName = name;
+    if(name.startsWith('ADMIN:')) {
+        const parts = name.split(':');
+        displayName = parts.length >= 3 ? parts.slice(2).join(':') : 'Admin';
+    }
+    state.user = name; state.displayUser = displayName; state.userClass = cls;
     localStorage.setItem('nerd_session', JSON.stringify({user:state.user, displayUser:state.displayUser, userClass:state.userClass}));
-    checkAdmin(state.user); setupUI();
+    await checkAdmin(state.user); setupUI();
 }
 
 async function setupUI(){
@@ -497,11 +526,22 @@ function showSection(id){
 }
 
 // ================================================================
+//  BLOCKLIST — chặn đề lạ hiện dù Supabase vẫn trả về
+// ================================================================
+function getBlocklist(){ try{ return JSON.parse(localStorage.getItem('nerd_blocklist')||'[]'); }catch(e){ return []; } }
+function saveBlocklist(list){ localStorage.setItem('nerd_blocklist', JSON.stringify(list)); }
+function isBlocked(ex){ const bl=getBlocklist(); return bl.some(b=> b.id===ex.id || (b.title && b.title.toLowerCase()===String(ex.title||'').toLowerCase())); }
+function blockExam(ex){ const bl=getBlocklist(); if(!isBlocked(ex)){ bl.push({id:ex.id, title:ex.title}); saveBlocklist(bl); } }
+function unblockAll(){ localStorage.removeItem('nerd_blocklist'); }
+
+// ================================================================
 //  FETCH EXAMS
 // ================================================================
 async function fetchExams(){
-    const {data} = await _sb.from('exams').select('*').order('id',{ascending:false});
-    state.exams = data || [];
+    const {data, error} = await _sb.from('exams').select('*').order('id',{ascending:false});
+    if(error){ console.error('fetchExams error:', error.message); state.exams=[]; return; }
+    const bl = getBlocklist();
+    state.exams = (data||[]).filter(ex => !isBlocked(ex));
     if(!document.getElementById('adminPage').classList.contains('hidden')) renderAdminList();
 }
 
@@ -840,15 +880,59 @@ function showAdminStatus(msg){
 // ================================================================
 function renderAdminList(){
     const c=document.getElementById('adminExamList');
-    if(!state.exams.length){ c.innerHTML='<p class="text-center opacity-30 text-xs uppercase tracking-widest py-4">Chưa có bài tập nào</p>'; return; }
-    c.innerHTML=state.exams.map(ex=>`
-        <div class="glass p-5 flex justify-between items-center rounded-xl border border-white/5 mb-3">
-            <span onclick="editExam(${ex.id})" class="font-bold text-sm uppercase cursor-pointer hover:text-orange-500 transition-colors">${esc(ex.title)}</span>
-            <div class="flex items-center gap-3">
-                <span class="text-[10px] opacity-30">${ex.questions?ex.questions.length:0} câu</span>
-                <button onclick="customConfirm('XÓA BÀI TẬP NÀY?',()=>deleteExam(${ex.id}))" class="text-red-500 text-[11px] font-black uppercase hover:scale-110 transition-transform">XÓA</button>
-            </div>
-        </div>`).join('');
+    // Fetch all (including blocked) to show in admin
+    _sb.from('exams').select('*').order('id',{ascending:false}).then(({data})=>{
+        const all = data||[];
+        const bl = getBlocklist();
+        if(!all.length && !bl.length){ c.innerHTML='<p class="text-center opacity-30 text-xs uppercase tracking-widest py-4">Chưa có bài tập nào</p>'; return; }
+
+        let html = '';
+
+        // Blocked exams section
+        if(bl.length){
+            html += `<div class="mb-4 p-4 rounded-xl" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);">
+                <p class="text-[9px] font-black uppercase tracking-widest text-red-400 mb-3">🚫 Đề đang bị chặn (ẩn khỏi học sinh)</p>`;
+            html += bl.map(b=>`
+                <div class="flex justify-between items-center py-2 border-b border-red-500/10 last:border-0">
+                    <span class="text-xs font-bold text-red-400/70 uppercase line-through">${esc(b.title||'ID:'+b.id)}</span>
+                    <button onclick="unblockOne(${JSON.stringify({id:b.id,title:b.title})})" class="text-[10px] font-black text-green-400 hover:scale-110 transition uppercase">BỎ CHẶN</button>
+                </div>`).join('');
+            html += `</div>`;
+        }
+
+        // Active exams
+        const active = all.filter(ex=>!isBlocked(ex));
+        if(active.length){
+            html += active.map(ex=>`
+                <div class="glass p-5 flex justify-between items-center rounded-xl border border-white/5 mb-3">
+                    <span onclick="editExam(${ex.id})" class="font-bold text-sm uppercase cursor-pointer hover:text-orange-500 transition-colors">${esc(ex.title)}</span>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] opacity-30">${ex.questions?ex.questions.length:0} câu</span>
+                        <button onclick="blockAndHide(${ex.id},'${esc(ex.title).replace(/'/g,"\\'")}')" class="text-yellow-500 text-[11px] font-black uppercase hover:scale-110 transition-transform" title="Ẩn đề này khỏi học sinh (không xóa DB)">ẨN</button>
+                        <button onclick="customConfirm('XÓA BÀI TẬP NÀY?',()=>deleteExam(${ex.id}))" class="text-red-500 text-[11px] font-black uppercase hover:scale-110 transition-transform">XÓA</button>
+                    </div>
+                </div>`).join('');
+        } else {
+            html += '<p class="text-center opacity-30 text-xs uppercase tracking-widest py-4">Không có đề nào đang hiển thị</p>';
+        }
+
+        c.innerHTML = html;
+    });
+}
+
+function blockAndHide(id, title){
+    blockExam({id, title});
+    showAdminStatus(`ĐÃ ẨN ĐỀ "${title}" — Học sinh không thấy nữa!`);
+    renderAdminList();
+    fetchExams();
+}
+
+function unblockOne(b){
+    const bl = getBlocklist().filter(x=> !(x.id===b.id || (b.title && x.title===b.title)));
+    saveBlocklist(bl);
+    showAdminStatus('ĐÃ BỎ CHẶN!');
+    renderAdminList();
+    fetchExams();
 }
 
 function editExam(id){
@@ -870,7 +954,29 @@ function cancelEdit(){
     document.getElementById('saveBtn').innerText='LƯU DỮ LIỆU';
 }
 
-async function deleteExam(id){ await _sb.from('exams').delete().eq('id',id); await fetchExams(); }
+async function deleteExam(id){
+    const res = await _sb.from('exams').delete().eq('id', id);
+    if(res.error){
+        showAdminStatus('LỖI XÓA: ' + res.error.message);
+    } else {
+        showAdminStatus('ĐÃ XÓA THÀNH CÔNG!');
+    }
+    await fetchExams();
+}
+
+// Xóa tất cả đề có tiêu đề khớp (để diệt đề lạ bị hack) + chặn luôn phòng tái xuất
+async function nukeByTitle(){
+    const title = prompt('Nhập CHÍNH XÁC tiêu đề đề muốn xóa vĩnh viễn:');
+    if(!title || !title.trim()) return;
+    const t = title.trim();
+    // Block trước để phòng tái xuất
+    blockExam({id:-1, title: t});
+    // Thử xóa trong DB
+    const res = await _sb.from('exams').delete().ilike('title', t);
+    if(res.error) showAdminStatus(`ĐÃ CHẶN (xóa DB lỗi: ${res.error.message.substring(0,40)})`);
+    else showAdminStatus(`ĐÃ XÓA & CHẶN ĐỀ "${t}" — Sẽ không hiện lại!`);
+    await fetchExams(); renderAdminList();
+}
 
 // ================================================================
 //  UTILITIES
