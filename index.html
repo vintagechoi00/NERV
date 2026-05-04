@@ -200,11 +200,159 @@
         }
         .admin-link:hover { color: var(--primary); }
         #adminLoginError { color: #ef4444; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; min-height: 20px; margin-bottom: 8px; }
+        /* Shuffle pills */
+
+        /* ===== PROFILE ===== */
+        .avatar-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: 2px solid rgba(249,115,22,0.5);
+            cursor: pointer; overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 14px; color: black;
+            transition: all 0.3s; box-shadow: 0 0 12px rgba(249,115,22,0.3);
+        }
+        .avatar-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(249,115,22,0.5); }
+        .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+        #profileModal { z-index: 10001; }
+        .profile-avatar-wrap {
+            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative; cursor: pointer; overflow: hidden;
+            box-shadow: 0 0 30px rgba(249,115,22,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; font-weight: 900; color: black;
+            transition: all 0.3s;
+        }
+        .profile-avatar-wrap:hover .avatar-overlay { opacity: 1; }
+        .avatar-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: 0.3s; border-radius: 50%;
+            font-size: 28px;
+        }
+        .profile-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+        .edit-field {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 14px; padding: 12px 16px; margin-bottom: 10px;
+        }
+        .edit-field span { flex: 1; font-weight: 700; font-size: 14px; }
+        .edit-field input {
+            flex: 1; background: transparent !important; border: none !important;
+            outline: none; font-weight: 700; font-size: 14px; color: var(--text-main) !important;
+        }
+        .pencil-btn {
+            background: none; border: none; cursor: pointer; font-size: 14px;
+            opacity: 0.5; transition: 0.2s; padding: 2px;
+        }
+        .pencil-btn:hover { opacity: 1; transform: scale(1.2) !important; box-shadow: none !important; }
+        .stat-badge {
+            background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 14px; padding: 12px 16px; text-align: center; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .stat-badge:hover { background: rgba(249,115,22,0.2); transform: translateY(-2px) !important; }
+        .history-item {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer;
+            transition: 0.2s;
+        }
+        .history-item:hover { border-color: var(--primary); background: rgba(249,115,22,0.05); }
+        /* Google post-login modal */
+        #googleNameModal input {
+            width: 100%; padding: 14px 18px; border-radius: 16px;
+            outline: none; margin-bottom: 12px; font-size: 14px;
+        }
+        #shufflePills button { transition: all 0.2s; cursor: pointer; }
+        #shufflePills button:hover { opacity: 1 !important; }
+        #shufflePills button.active-pill { border-color: var(--primary) !important; background: rgba(249,115,22,0.2) !important; color: var(--primary) !important; opacity: 1 !important; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="timerBar" class="timer-progress hidden"></div>
+
+
+    <!-- GOOGLE POST-LOGIN: nhập tên + lớp -->
+    <div id="googleNameModal" class="confirm-overlay">
+        <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 text-center">
+            <div class="text-4xl mb-3">👋</div>
+            <h3 class="text-xl font-black text-orange-500 mb-1 italic uppercase">Chào mừng!</h3>
+            <p class="text-[9px] opacity-40 uppercase tracking-widest mb-6">Nhập thông tin để tiếp tục</p>
+            <input type="text" id="googleName"  placeholder="Tên của bạn..." maxlength="120" autocomplete="off">
+            <input type="text" id="googleClass" placeholder="Lớp (VD: 8A7)..." maxlength="20" autocomplete="off">
+            <div id="googleNameError" class="text-red-400 text-[10px] font-black uppercase tracking-widest text-center mb-3 min-h-[16px]"></div>
+            <button onclick="saveGoogleProfile()" class="w-full btn-premium py-4 rounded-xl font-black uppercase text-sm">BẮT ĐẦU 🚀</button>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div id="profileModal" class="confirm-overlay" onclick="closeProfile()">
+        <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 relative"
+             style="max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
+            <button onclick="closeProfile()" class="absolute top-4 right-6 text-2xl font-black text-orange-500">×</button>
+
+            <!-- AVATAR -->
+            <div class="profile-avatar-wrap" onclick="triggerAvatarPick()" id="profileAvatarWrap">
+                <span id="profileAvatarInitial">?</span>
+                <div class="avatar-overlay">📷</div>
+            </div>
+            <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleAvatarFile(this)">
+
+            <!-- NAME -->
+            <div class="edit-field" id="nameField">
+                <span id="profileNameDisplay" class="truncate"></span>
+                <button class="pencil-btn" onclick="toggleEditField('name')" title="Sửa tên">✏️</button>
+            </div>
+            <div class="edit-field hidden" id="nameEditField">
+                <input type="text" id="profileNameInput" maxlength="120" placeholder="Tên...">
+                <button class="pencil-btn" onclick="saveFieldEdit('name')" title="Lưu">✅</button>
+            </div>
+
+            <!-- CLASS -->
+            <div class="edit-field" id="classField">
+                <span id="profileClassDisplay" class="truncate opacity-60"></span>
+                <button class="pencil-btn" onclick="toggleEditField('class')" title="Sửa lớp">✏️</button>
+            </div>
+            <div class="edit-field hidden" id="classEditField">
+                <input type="text" id="profileClassInput" maxlength="20" placeholder="Lớp...">
+                <button class="pencil-btn" onclick="saveFieldEdit('class')" title="Lưu">✅</button>
+            </div>
+
+            <!-- STATS -->
+            <div class="grid grid-cols-3 gap-2 my-4" id="profileStats">
+                <div class="stat-badge" onclick="showProfileHistory()">
+                    <div id="statCount" class="text-2xl font-black text-orange-500">—</div>
+                    <div class="text-[8px] uppercase tracking-widest opacity-50 mt-1">Bài đã nộp</div>
+                </div>
+                <div class="stat-badge">
+                    <div id="statAvgScore" class="text-2xl font-black text-yellow-400">—</div>
+                    <div class="text-[8px] uppercase tracking-widest opacity-50 mt-1">Điểm TB</div>
+                </div>
+                <div class="stat-badge">
+                    <div id="statBest" class="text-2xl font-black text-green-400">—</div>
+                    <div class="text-[8px] uppercase tracking-widest opacity-50 mt-1">Cao nhất</div>
+                </div>
+            </div>
+
+            <!-- JOINED DATE -->
+            <p id="profileJoined" class="text-[9px] opacity-30 uppercase tracking-widest text-center mt-2 mb-4"></p>
+
+            <!-- HISTORY LIST -->
+            <div id="profileHistoryList" class="hidden">
+                <p class="text-[9px] font-black uppercase tracking-widest text-orange-500 mb-3">📋 Lịch sử làm bài</p>
+                <div id="profileHistoryItems"></div>
+                <button onclick="hideProfileHistory()" class="w-full mt-3 glass py-2 rounded-xl text-[10px] font-bold uppercase">THU GỌN ▲</button>
+            </div>
+
+            <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐĂNG XUẤT?', handleLogout)"
+                class="w-full mt-4 py-3 rounded-xl font-black uppercase text-xs"
+                style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;">
+                ĐĂNG XUẤT
+            </button>
+        </div>
+    </div>
 
     <!-- CHEAT GUARD -->
     <div id="cheatGuard">
@@ -287,6 +435,8 @@
                         <span class="slider"></span>
                     </label>
                 </div>
+                <!-- PROFILE AVATAR BTN -->
+                <div class="avatar-btn" id="headerAvatar" onclick="openProfile()" title="Hồ sơ">?</div>
                 <div class="flex gap-2 flex-wrap">
                     <button onclick="showSection('mainMenu')" class="glass px-4 py-2 text-[10px] font-bold hover:bg-white/10 transition text-orange-500">TRANG CHỦ</button>
                     <!-- ✅ FIX: Admin logout cũng sign out Supabase Auth -->
@@ -307,6 +457,13 @@
                 <div id="loginError" class="text-red-400 text-[10px] font-black uppercase tracking-widest text-center hidden"></div>
                 <button id="loginBtn" onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">ĐĂNG NHẬP</button>
             </div>
+            <div class="flex items-center gap-4 my-6 opacity-30">
+                <hr class="flex-1 border-white"> <span class="text-xs font-bold">HOẶC</span> <hr class="flex-1 border-white">
+            </div>
+            <button onclick="handleGoogleLogin()" class="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition btn-google">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                <span>TIẾP TỤC VỚI GOOGLE</span>
+            </button>
             <!-- ✅ FIX: Admin login tách biệt, không dùng chuỗi ADMIN:pass:Name -->
             <a class="admin-link" onclick="openAdminLoginModal()">🔐 Đăng nhập Admin</a>
         </div>
@@ -329,7 +486,25 @@
 
         <!-- SELECT EXAM -->
         <div id="selectExamPage" class="hidden">
-            <h2 class="text-3xl md:text-4xl font-black mb-10 uppercase italic">Chọn <span class="text-orange-500">Bài Tập</span></h2>
+            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                <h2 class="text-3xl md:text-4xl font-black uppercase italic">Chọn <span class="text-orange-500">Bài Tập</span></h2>
+                <div class="glass px-5 py-3 flex items-center gap-3 rounded-2xl">
+                    <span class="text-xl">🔀</span>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-orange-500">Xáo trộn</p>
+                        <p id="shuffleDesc" class="text-[9px] opacity-40 uppercase tracking-widest">Bật</p>
+                    </div>
+                    <label class="theme-switch ml-2">
+                        <input type="checkbox" id="shuffleToggle" checked onchange="updateShuffleUI()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div id="shufflePills" class="flex gap-2 mb-6 flex-wrap">
+                <button onclick="setShuffleMode('both')"  id="sm-both" class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border border-orange-500 bg-orange-500/20 text-orange-400">🔀 Câu + Đáp án</button>
+                <button onclick="setShuffleMode('q')"    id="sm-q"    class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border border-white/10 opacity-50">📋 Chỉ câu hỏi</button>
+                <button onclick="setShuffleMode('opts')" id="sm-opts" class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border border-white/10 opacity-50">🅰 Chỉ đáp án</button>
+            </div>
             <div id="examList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </div>
 
@@ -339,6 +514,10 @@
                 <div class="flex-1 glass p-6 md:p-12 max-h-[70vh] md:max-h-[80vh] overflow-y-auto space-y-12" id="questionArea"></div>
                 <div class="w-full lg:w-80 space-y-6">
                     <div class="glass p-6 md:p-8 text-center sticky top-10">
+                        <!-- Shuffle badge -->
+                        <div id="shuffleBadge" class="hidden mb-2 justify-center">
+                            <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full" style="background:rgba(249,115,22,0.15);color:var(--primary);border:1px solid rgba(249,115,22,0.3);">🔀 ĐỀ ĐÃ XÁO TRỘN</span>
+                        </div>
                         <div id="timer" class="text-4xl md:text-5xl font-black text-orange-500 tracking-tighter">15:00</div>
                         <div class="mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
                             <div id="progressFill" class="h-full bg-orange-500 rounded-full transition-all duration-300" style="width:0%"></div>
@@ -461,13 +640,9 @@ window.onload = async () => {
         state.userIP = (d.ip || '').replace(/[^0-9a-fA-F.:]/g, '').substring(0, 45);
     } catch (e) {}
 
-    // ✅ FIX 2: Khôi phục phiên admin từ Supabase Auth (không dùng hash client-side nữa)
+    // ✅ FIX 2: Khôi phục phiên admin từ Supabase Auth + OAuth redirect
     try {
-        const { data: { session } } = await _sb.auth.getSession();
-        if (session) {
-            state.isAdmin = true;
-            document.getElementById('adminBtn').classList.remove('hidden');
-        }
+        await checkOAuthSession();
     } catch (e) {}
 
     // Khôi phục phiên học sinh
@@ -578,6 +753,11 @@ async function setupUI() {
     document.getElementById('userTag').textContent = state.displayUser + ' // ' + state.userClass;
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('header').classList.replace('hidden', 'flex');
+    // Lưu ngày tham gia lần đầu
+    if (!localStorage.getItem('nerd_joined')) {
+        localStorage.setItem('nerd_joined', new Date().toLocaleDateString('vi-VN'));
+    }
+    initAvatarUI();
     showSection('mainMenu');
     await fetchExams();
 }
@@ -633,20 +813,81 @@ function renderExamList() {
 }
 
 // ================================================================
+//  SHUFFLE STATE
+// ================================================================
+let shuffleEnabled = true;
+let shuffleMode = 'both'; // 'both' | 'q' | 'opts'
+
+function updateShuffleUI() {
+    shuffleEnabled = document.getElementById('shuffleToggle').checked;
+    const pills = document.getElementById('shufflePills');
+    const desc  = document.getElementById('shuffleDesc');
+    pills.style.opacity = shuffleEnabled ? '1' : '0.3';
+    pills.style.pointerEvents = shuffleEnabled ? 'auto' : 'none';
+    desc.textContent = shuffleEnabled ? 'Bật' : 'Tắt';
+}
+
+function setShuffleMode(mode) {
+    shuffleMode = mode;
+    ['both','q','opts'].forEach(m => {
+        const btn = document.getElementById('sm-'+m);
+        if (btn) {
+            if (m === mode) {
+                btn.classList.add('active-pill');
+                btn.style.borderColor = 'var(--primary)';
+                btn.style.background = 'rgba(249,115,22,0.2)';
+                btn.style.color = 'var(--primary)';
+                btn.style.opacity = '1';
+            } else {
+                btn.classList.remove('active-pill');
+                btn.style.borderColor = '';
+                btn.style.background = '';
+                btn.style.color = '';
+                btn.style.opacity = '0.5';
+            }
+        }
+    });
+}
+
+// Shuffle array in-place (Fisher-Yates)
+function shuffleArr(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// ================================================================
 //  START EXAM
 // ================================================================
 function startExam(id) {
     const ex = state.exams.find(e => e.id === id); if (!ex) return;
     state.currentExam = JSON.parse(JSON.stringify(ex));
-    state.currentExam.questions.sort(() => Math.random() - 0.5);
+
+    // ✅ Xáo trộn thứ tự câu hỏi
+    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'q')) {
+        shuffleArr(state.currentExam.questions);
+    }
+
+    // ✅ Xáo trộn đáp án từng câu — c (correct) đi kèm với option nên vẫn chấm đúng
+    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'opts')) {
+        state.currentExam.questions.forEach(q => shuffleArr(q.opts));
+    }
+
     state.userAns   = new Array(state.currentExam.questions.length).fill(null);
     state.submitted = false;
     state.cheatCount = 0;
-    state.startTime = Date.now(); // ✅ FIX: ghi thời điểm bắt đầu thật
+    state.startTime = Date.now();
     _submitting     = false;
 
     showSection('examPage');
     renderAllQuestions();
+
+    // Hiện badge xáo trộn nếu bật
+    const badge = document.getElementById('shuffleBadge');
+    if (badge) badge.style.display = (shuffleEnabled ? 'flex' : 'none');
+
     startTimer();
     startCheatGuard();
 
@@ -1138,6 +1379,252 @@ function customConfirm(msg, cb) {
 
     newYes.addEventListener('click', () => { modal.style.display = 'none'; cb(); });
     newNo.addEventListener('click',  () => { modal.style.display = 'none'; });
+}
+
+// ================================================================
+//  GOOGLE LOGIN — dùng Supabase OAuth
+// ================================================================
+async function handleGoogleLogin() {
+    const { error } = await _sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: window.location.href,
+            queryParams: { prompt: 'select_account' }
+        }
+    });
+    if (error) alert('Lỗi Google Login: ' + error.message);
+}
+
+// Sau khi redirect về, kiểm tra session OAuth
+async function checkOAuthSession() {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) return;
+    state.isAdmin = true;
+    document.getElementById('adminBtn').classList.remove('hidden');
+    if (!state.user) {
+        const saved = localStorage.getItem('nerd_session');
+        if (saved) {
+            const d = JSON.parse(saved);
+            if (d.user && d.userClass) {
+                state.user = d.user; state.displayUser = d.displayUser || d.user; state.userClass = d.userClass;
+                setupUI(); return;
+            }
+        }
+        // Chưa có tên → hỏi tên + lớp
+        const email = session.user.email || '';
+        const suggestedName = session.user.user_metadata?.full_name || email.split('@')[0] || '';
+        document.getElementById('googleName').value  = suggestedName;
+        document.getElementById('googleClass').value = '';
+        document.getElementById('googleNameModal').style.display = 'flex';
+        document.getElementById('googleName').focus();
+    }
+}
+
+function saveGoogleProfile() {
+    const name = (document.getElementById('googleName').value || '').trim();
+    const cls  = (document.getElementById('googleClass').value || '').trim();
+    const errEl = document.getElementById('googleNameError');
+    if (!name || name.length < 2) { errEl.textContent = 'Tên phải có ít nhất 2 ký tự!'; return; }
+    if (!cls) { errEl.textContent = 'Vui lòng nhập lớp!'; return; }
+    errEl.textContent = '';
+    state.user        = sanitizeText(name, 120);
+    state.displayUser = sanitizeText(name, 120);
+    state.userClass   = sanitizeText(cls, 20);
+    // Lưu ngày tạo tài khoản lần đầu
+    const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
+    localStorage.setItem('nerd_joined', joined);
+    localStorage.setItem('nerd_session', JSON.stringify({
+        user: state.user, displayUser: state.displayUser, userClass: state.userClass
+    }));
+    document.getElementById('googleNameModal').style.display = 'none';
+    setupUI();
+}
+
+// ================================================================
+//  PROFILE
+// ================================================================
+async function openProfile() {
+    // Sync display
+    const avatarData = localStorage.getItem('nerd_avatar');
+    const wrap = document.getElementById('profileAvatarWrap');
+    const initial = document.getElementById('profileAvatarInitial');
+    if (avatarData) {
+        let img = wrap.querySelector('img');
+        if (!img) { img = document.createElement('img'); wrap.prepend(img); }
+        img.src = avatarData;
+        initial.style.display = 'none';
+    } else {
+        const existing = wrap.querySelector('img');
+        if (existing) existing.remove();
+        initial.style.display = '';
+        initial.textContent = (state.displayUser || '?')[0].toUpperCase();
+    }
+
+    document.getElementById('profileNameDisplay').textContent = state.displayUser || '—';
+    document.getElementById('profileClassDisplay').textContent = '📚 ' + (state.userClass || '—');
+
+    const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
+    document.getElementById('profileJoined').textContent = '🗓 Tham gia: ' + joined;
+
+    // Ẩn history list khi mở
+    hideProfileHistory();
+
+    document.getElementById('profileModal').style.display = 'flex';
+
+    // Load stats từ Supabase
+    try {
+        const { data } = await _sb.from('history')
+            .select('score,correct_count,wrong_count,time_used,exam,date,submit_time')
+            .eq('name', state.displayUser)
+            .order('id', { ascending: false });
+        const rows = data || [];
+        document.getElementById('statCount').textContent = rows.length || '0';
+        if (rows.length) {
+            const avg = rows.reduce((s, r) => s + parseFloat(r.score || 0), 0) / rows.length;
+            document.getElementById('statAvgScore').textContent = avg.toFixed(1);
+            const best = Math.max(...rows.map(r => parseFloat(r.score || 0)));
+            document.getElementById('statBest').textContent = best.toFixed(1);
+        } else {
+            document.getElementById('statAvgScore').textContent = '—';
+            document.getElementById('statBest').textContent = '—';
+        }
+        // Cache history for detail view
+        window._profileHistory = rows;
+    } catch (e) {
+        document.getElementById('statCount').textContent = '?';
+    }
+}
+
+function closeProfile() { document.getElementById('profileModal').style.display = 'none'; }
+
+function triggerAvatarPick() { document.getElementById('avatarFileInput').click(); }
+
+function handleAvatarFile(input) {
+    const file = input.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        // Resize to 200x200 để tiết kiệm localStorage
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 200; canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            const min = Math.min(img.width, img.height);
+            const sx = (img.width - min) / 2, sy = (img.height - min) / 2;
+            ctx.drawImage(img, sx, sy, min, min, 0, 0, 200, 200);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            localStorage.setItem('nerd_avatar', dataUrl);
+            updateAvatarUI(dataUrl);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+}
+
+function updateAvatarUI(dataUrl) {
+    // Header avatar
+    const hav = document.getElementById('headerAvatar');
+    if (hav) {
+        hav.innerHTML = dataUrl
+            ? `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+            : (state.displayUser || '?')[0].toUpperCase();
+    }
+    // Profile modal avatar
+    const wrap = document.getElementById('profileAvatarWrap');
+    if (wrap) {
+        let img = wrap.querySelector('img');
+        if (dataUrl) {
+            if (!img) { img = document.createElement('img'); wrap.prepend(img); }
+            img.src = dataUrl;
+            const initial = document.getElementById('profileAvatarInitial');
+            if (initial) initial.style.display = 'none';
+        } else {
+            if (img) img.remove();
+            const initial = document.getElementById('profileAvatarInitial');
+            if (initial) { initial.style.display = ''; initial.textContent = (state.displayUser || '?')[0].toUpperCase(); }
+        }
+    }
+}
+
+function initAvatarUI() {
+    const av = localStorage.getItem('nerd_avatar');
+    updateAvatarUI(av || null);
+    if (!av) {
+        const hav = document.getElementById('headerAvatar');
+        if (hav) hav.textContent = (state.displayUser || '?')[0].toUpperCase();
+    }
+}
+
+function toggleEditField(field) {
+    if (field === 'name') {
+        document.getElementById('nameField').classList.toggle('hidden');
+        document.getElementById('nameEditField').classList.toggle('hidden');
+        document.getElementById('profileNameInput').value = state.displayUser || '';
+        document.getElementById('profileNameInput').focus();
+    } else {
+        document.getElementById('classField').classList.toggle('hidden');
+        document.getElementById('classEditField').classList.toggle('hidden');
+        document.getElementById('profileClassInput').value = state.userClass || '';
+        document.getElementById('profileClassInput').focus();
+    }
+}
+
+function saveFieldEdit(field) {
+    if (field === 'name') {
+        const val = sanitizeText(document.getElementById('profileNameInput').value, 120);
+        if (!val || val.length < 2) return;
+        state.displayUser = val; state.user = val;
+        document.getElementById('profileNameDisplay').textContent = val;
+        document.getElementById('nameField').classList.remove('hidden');
+        document.getElementById('nameEditField').classList.add('hidden');
+        document.getElementById('userTag').textContent = val + ' // ' + state.userClass;
+        updateAvatarUI(localStorage.getItem('nerd_avatar') || null);
+    } else {
+        const val = sanitizeText(document.getElementById('profileClassInput').value, 20);
+        if (!val) return;
+        state.userClass = val;
+        document.getElementById('profileClassDisplay').textContent = '📚 ' + val;
+        document.getElementById('classField').classList.remove('hidden');
+        document.getElementById('classEditField').classList.add('hidden');
+        document.getElementById('userTag').textContent = state.displayUser + ' // ' + val;
+    }
+    localStorage.setItem('nerd_session', JSON.stringify({
+        user: state.user, displayUser: state.displayUser, userClass: state.userClass
+    }));
+}
+
+function showProfileHistory() {
+    const rows = window._profileHistory || [];
+    const el = document.getElementById('profileHistoryItems');
+    if (!rows.length) {
+        el.innerHTML = '<p class="text-[10px] opacity-40 uppercase text-center py-4">Chưa có bài nào</p>';
+    } else {
+        el.innerHTML = rows.map((r, i) => {
+            const score = parseFloat(r.score || 0).toFixed(1);
+            const color = score >= 8 ? '#22c55e' : score >= 5 ? '#fbbf24' : '#ef4444';
+            const dur = r.time_used ? Math.floor(r.time_used/60)+'p'+(r.time_used%60+'').padStart(2,'0')+'s' : '—';
+            return `<div class="history-item" onclick="toggleHistoryDetail(${i})">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold truncate flex-1 mr-2">${esc(r.exam)}</span>
+                    <span class="font-black text-lg" style="color:${color}">${score}</span>
+                </div>
+                <div id="hd-${i}" class="hidden mt-3 space-y-1 text-[10px] opacity-60 uppercase tracking-widest">
+                    <p>✅ Đúng: ${r.correct_count||0} &nbsp;|&nbsp; ❌ Sai: ${r.wrong_count||0}</p>
+                    <p>⏱ Thời gian: ${dur}</p>
+                    <p>📅 Nộp lúc: ${esc(r.submit_time||'')} — ${esc(r.date||'')}</p>
+                </div>
+            </div>`;
+        }).join('');
+    }
+    document.getElementById('profileHistoryList').classList.remove('hidden');
+}
+
+function hideProfileHistory() { document.getElementById('profileHistoryList').classList.add('hidden'); }
+
+function toggleHistoryDetail(i) {
+    const el = document.getElementById('hd-'+i);
+    if (el) el.classList.toggle('hidden');
 }
 
 // ================================================================
