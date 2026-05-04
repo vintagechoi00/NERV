@@ -866,7 +866,7 @@ function parseInput(txt) {
     if (!txt || !txt.trim()) return [];
 
     // Tách theo "Câu N:" hoặc "Q N." hoặc "Question N:"
-    const blocks = txt.split(/(?=(?:^|\n)(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]]/im));
+    const blocks = txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]])/im);
 
     return blocks
         .map(block => {
