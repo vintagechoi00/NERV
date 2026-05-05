@@ -9,34 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <!--
-    ╔══════════════════════════════════════════════════════════════╗
-    ║  SUPABASE RLS — PHẢI THIẾT LẬP TRÊN DASHBOARD               ║
-    ╠══════════════════════════════════════════════════════════════╣
-    ║  -- Bảng exams --                                            ║
-    ║  ALTER TABLE exams ENABLE ROW LEVEL SECURITY;               ║
-    ║  CREATE POLICY "Public read exams"                           ║
-    ║    ON exams FOR SELECT USING (true);                         ║
-    ║  CREATE POLICY "Auth insert exams"                           ║
-    ║    ON exams FOR INSERT                                       ║
-    ║    WITH CHECK (auth.role() = 'authenticated');               ║
-    ║  CREATE POLICY "Auth update exams"                           ║
-    ║    ON exams FOR UPDATE                                       ║
-    ║    USING (auth.role() = 'authenticated');                    ║
-    ║  CREATE POLICY "Auth delete exams"                           ║
-    ║    ON exams FOR DELETE                                       ║
-    ║    USING (auth.role() = 'authenticated');                    ║
-    ║                                                              ║
-    ║  -- Bảng history --                                          ║
-    ║  ALTER TABLE history ENABLE ROW LEVEL SECURITY;             ║
-    ║  CREATE POLICY "Public insert history"                       ║
-    ║    ON history FOR INSERT WITH CHECK (true);                  ║
-    ║  CREATE POLICY "Public read history"                         ║
-    ║    ON history FOR SELECT USING (true);                       ║
-    ╚══════════════════════════════════════════════════════════════╝
-    -->
-
     <style>
         :root {
             --primary: #f97316; --secondary: #fbbf24;
@@ -188,7 +160,6 @@
         .wq-card { border: 1px solid rgba(249,115,22,0.2); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; font-size: 12px; }
         .wq-correct { background: rgba(34,197,94,0.18); color: #16a34a; font-weight: 700; border-radius: 6px; padding: 3px 10px; margin-bottom: 4px; }
         .wq-wrong { opacity: 0.65; padding: 3px 10px; margin-bottom: 4px; }
-        /* Admin Login Modal */
         #adminLoginModal input {
             width: 100%; padding: 14px 18px; border-radius: 16px;
             outline: none; margin-bottom: 12px; font-size: 14px;
@@ -200,9 +171,6 @@
         }
         .admin-link:hover { color: var(--primary); }
         #adminLoginError { color: #ef4444; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; min-height: 20px; margin-bottom: 8px; }
-        /* Shuffle pills */
-
-        /* ===== PROFILE ===== */
         .avatar-btn {
             width: 36px; height: 36px; border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -259,7 +227,6 @@
             transition: 0.2s;
         }
         .history-item:hover { border-color: var(--primary); background: rgba(249,115,22,0.05); }
-        /* Google post-login modal */
         #googleNameModal input {
             width: 100%; padding: 14px 18px; border-radius: 16px;
             outline: none; margin-bottom: 12px; font-size: 14px;
@@ -273,8 +240,15 @@
 
     <div id="timerBar" class="timer-progress hidden"></div>
 
+    <!-- DEVTOOLS GUARD -->
+    <div id="devtoolsGuard" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:99999;align-items:center;justify-content:center;text-align:center;backdrop-filter:blur(20px);">
+        <div style="color:white;padding:40px;">
+            <div style="font-size:60px;margin-bottom:20px;">🚫</div>
+            <h1 style="font-size:28px;font-weight:900;font-style:italic;letter-spacing:-1px;color:#f97316;">KHÔNG ĐƯỢC PHÉP</h1>
+            <p style="margin-top:12px;opacity:0.6;font-size:12px;text-transform:uppercase;letter-spacing:0.2em;">Đóng DevTools để tiếp tục</p>
+        </div>
+    </div>
 
-    <!-- GOOGLE POST-LOGIN: nhập tên + lớp -->
     <div id="googleNameModal" class="confirm-overlay">
         <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 text-center">
             <div class="text-4xl mb-3">👋</div>
@@ -287,20 +261,15 @@
         </div>
     </div>
 
-    <!-- PROFILE MODAL -->
     <div id="profileModal" class="confirm-overlay" onclick="closeProfile()">
         <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 relative"
              style="max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
             <button onclick="closeProfile()" class="absolute top-4 right-6 text-2xl font-black text-orange-500">×</button>
-
-            <!-- AVATAR -->
             <div class="profile-avatar-wrap" onclick="triggerAvatarPick()" id="profileAvatarWrap">
                 <span id="profileAvatarInitial">?</span>
                 <div class="avatar-overlay">📷</div>
             </div>
             <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleAvatarFile(this)">
-
-            <!-- NAME -->
             <div class="edit-field" id="nameField">
                 <span id="profileNameDisplay" class="truncate"></span>
                 <button class="pencil-btn" onclick="toggleEditField('name')" title="Sửa tên">✏️</button>
@@ -309,8 +278,6 @@
                 <input type="text" id="profileNameInput" maxlength="120" placeholder="Tên...">
                 <button class="pencil-btn" onclick="saveFieldEdit('name')" title="Lưu">✅</button>
             </div>
-
-            <!-- CLASS -->
             <div class="edit-field" id="classField">
                 <span id="profileClassDisplay" class="truncate opacity-60"></span>
                 <button class="pencil-btn" onclick="toggleEditField('class')" title="Sửa lớp">✏️</button>
@@ -319,8 +286,6 @@
                 <input type="text" id="profileClassInput" maxlength="20" placeholder="Lớp...">
                 <button class="pencil-btn" onclick="saveFieldEdit('class')" title="Lưu">✅</button>
             </div>
-
-            <!-- STATS -->
             <div class="grid grid-cols-3 gap-2 my-4" id="profileStats">
                 <div class="stat-badge" onclick="showProfileHistory()">
                     <div id="statCount" class="text-2xl font-black text-orange-500">—</div>
@@ -335,17 +300,12 @@
                     <div class="text-[8px] uppercase tracking-widest opacity-50 mt-1">Cao nhất</div>
                 </div>
             </div>
-
-            <!-- JOINED DATE -->
             <p id="profileJoined" class="text-[9px] opacity-30 uppercase tracking-widest text-center mt-2 mb-4"></p>
-
-            <!-- HISTORY LIST -->
             <div id="profileHistoryList" class="hidden">
                 <p class="text-[9px] font-black uppercase tracking-widest text-orange-500 mb-3">📋 Lịch sử làm bài</p>
                 <div id="profileHistoryItems"></div>
                 <button onclick="hideProfileHistory()" class="w-full mt-3 glass py-2 rounded-xl text-[10px] font-bold uppercase">THU GỌN ▲</button>
             </div>
-
             <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐĂNG XUẤT?', handleLogout)"
                 class="w-full mt-4 py-3 rounded-xl font-black uppercase text-xs"
                 style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;">
@@ -354,7 +314,6 @@
         </div>
     </div>
 
-    <!-- CHEAT GUARD -->
     <div id="cheatGuard">
         <div class="p-10 text-white">
             <h1 class="text-4xl md:text-6xl font-black italic mb-4">GIAO DIỆN BỊ KHÓA</h1>
@@ -363,7 +322,6 @@
         </div>
     </div>
 
-    <!-- CONFIRM MODAL -->
     <div id="confirmModal" class="confirm-overlay">
         <div class="glass p-10 max-w-sm w-full text-center border-2 border-orange-500/50">
             <h3 class="text-2xl font-black text-orange-500 mb-4 italic uppercase">Thông báo</h3>
@@ -375,7 +333,6 @@
         </div>
     </div>
 
-    <!-- DETAILS MODAL -->
     <div id="detailsModal" class="confirm-overlay" onclick="closeDetails()">
         <div class="glass p-8 max-w-lg w-full border-2 border-orange-500/50 relative" onclick="event.stopPropagation()">
             <button onclick="closeDetails()" class="absolute top-4 right-6 text-2xl font-black text-orange-500 hover:scale-110 transition">×</button>
@@ -385,7 +342,6 @@
         </div>
     </div>
 
-    <!-- WORD IMPORT PREVIEW MODAL -->
     <div id="wordModal" class="confirm-overlay" onclick="closeWordModal()">
         <div class="glass p-8 max-w-2xl w-full border-2 border-orange-500/50 relative"
              style="max-height:90vh; overflow-y:auto;" onclick="event.stopPropagation()">
@@ -401,7 +357,6 @@
         </div>
     </div>
 
-    <!-- ✅ FIX: ADMIN LOGIN MODAL (thay thế chuỗi ADMIN:pass:Name) -->
     <div id="adminLoginModal" class="confirm-overlay">
         <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 text-center">
             <h3 class="text-xl font-black text-orange-500 mb-2 italic uppercase">🔐 Admin Login</h3>
@@ -416,10 +371,8 @@
         </div>
     </div>
 
-    <!-- ===================== MAIN APP ===================== -->
     <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
 
-        <!-- HEADER -->
         <header id="header" class="hidden flex flex-wrap justify-between items-center mb-8 md:mb-12 gap-4">
             <div class="flex items-center gap-4">
                 <div class="nerv-logo-img" onclick="showSection('mainMenu')"><span>N</span></div>
@@ -435,17 +388,14 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <!-- PROFILE AVATAR BTN -->
                 <div class="avatar-btn" id="headerAvatar" onclick="openProfile()" title="Hồ sơ">?</div>
                 <div class="flex gap-2 flex-wrap">
                     <button onclick="showSection('mainMenu')" class="glass px-4 py-2 text-[10px] font-bold hover:bg-white/10 transition text-orange-500">TRANG CHỦ</button>
-                    <!-- ✅ FIX: Admin logout cũng sign out Supabase Auth -->
                     <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐĂNG XUẤT?', handleLogout)" class="glass px-4 py-2 text-[10px] font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
                 </div>
             </div>
         </header>
 
-        <!-- LOGIN -->
         <div id="loginPage" class="max-w-md mx-auto mt-10 md:mt-20 glass p-6 md:p-10 shadow-2xl">
             <div class="text-center mb-10">
                 <h2 class="text-4xl font-black mb-2 tracking-tighter italic">NERD <span class="text-orange-500">V3.7</span></h2>
@@ -464,11 +414,9 @@
                 <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
                 <span>TIẾP TỤC VỚI GOOGLE</span>
             </button>
-            <!-- ✅ FIX: Admin login tách biệt, không dùng chuỗi ADMIN:pass:Name -->
             <a class="admin-link" onclick="openAdminLoginModal()">🔐 Đăng nhập Admin</a>
         </div>
 
-        <!-- MAIN MENU -->
         <div id="mainMenu" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <div onclick="showSection('selectExamPage')" class="glass p-8 md:p-12 flex flex-col items-center cursor-pointer border-b-4 border-orange-500">
                 <div class="text-5xl md:text-6xl mb-6">📝</div>
@@ -484,7 +432,6 @@
             </div>
         </div>
 
-        <!-- SELECT EXAM -->
         <div id="selectExamPage" class="hidden">
             <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
                 <h2 class="text-3xl md:text-4xl font-black uppercase italic">Chọn <span class="text-orange-500">Bài Tập</span></h2>
@@ -508,13 +455,11 @@
             <div id="examList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </div>
 
-        <!-- EXAM PAGE -->
         <div id="examPage" class="hidden">
             <div class="flex flex-col lg:flex-row gap-8">
                 <div class="flex-1 glass p-6 md:p-12 max-h-[70vh] md:max-h-[80vh] overflow-y-auto space-y-12" id="questionArea"></div>
                 <div class="w-full lg:w-80 space-y-6">
                     <div class="glass p-6 md:p-8 text-center sticky top-10">
-                        <!-- Shuffle badge -->
                         <div id="shuffleBadge" class="hidden mb-2 justify-center">
                             <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full" style="background:rgba(249,115,22,0.15);color:var(--primary);border:1px solid rgba(249,115,22,0.3);">🔀 ĐỀ ĐÃ XÁO TRỘN</span>
                         </div>
@@ -532,7 +477,6 @@
             </div>
         </div>
 
-        <!-- RESULT PAGE -->
         <div id="resultPage" class="hidden flex flex-col items-center justify-center text-center py-10 md:py-20">
             <h2 class="text-orange-500 font-black tracking-[0.5em] mb-4 uppercase">Hoàn Thành</h2>
             <div class="text-[100px] md:text-[150px] font-black italic leading-none" id="finalScoreDisplay">0</div>
@@ -544,7 +488,6 @@
             </div>
         </div>
 
-        <!-- REVIEW PAGE -->
         <div id="reviewPage" class="hidden max-w-3xl mx-auto">
             <div class="flex justify-between items-center mb-10">
                 <h2 class="text-2xl md:text-3xl font-black italic uppercase">Xem lại <span class="text-orange-500">Đáp án</span></h2>
@@ -553,7 +496,6 @@
             <div id="reviewContent" class="space-y-8 pb-20"></div>
         </div>
 
-        <!-- ADMIN PAGE -->
         <div id="adminPage" class="hidden max-w-4xl mx-auto glass p-6 md:p-10">
             <h2 class="text-2xl md:text-3xl font-black mb-1 italic text-orange-500">HỆ THỐNG QUẢN TRỊ</h2>
             <p class="text-[9px] opacity-30 uppercase tracking-widest mb-8">
@@ -585,24 +527,72 @@
             </div>
         </div>
 
-        <!-- LEADERBOARD -->
         <div id="leaderboard" class="hidden max-w-4xl mx-auto glass p-6 md:p-10">
             <h2 class="text-3xl md:text-4xl font-black mb-10 text-center italic uppercase">Bảng <span class="text-orange-500">Xếp Hạng</span></h2>
             <div id="leaderboardContent" class="space-y-4"></div>
         </div>
 
-    </div><!-- /app -->
+    </div>
 
 <script>
 // ================================================================
-//  CONFIG — anon key an toàn khi dùng với RLS
+//  CHẶN CONSOLE / DEVTOOLS
+// ================================================================
+(function() {
+    // Tắt toàn bộ console
+    const noop = () => {};
+    ['log','warn','error','info','debug','table','dir','trace','group','groupEnd','time','timeEnd','assert','count','clear'].forEach(m => {
+        try { console[m] = noop; } catch(e) {}
+    });
+
+    // Chặn chuột phải (đã có oncontextmenu nhưng thêm JS cho chắc)
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Chặn F12, Ctrl+Shift+I/J/C, Ctrl+U
+    document.addEventListener('keydown', e => {
+        if (
+            e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) ||
+            (e.ctrlKey && e.key.toUpperCase() === 'U') ||
+            (e.metaKey && e.altKey && ['I','J','C'].includes(e.key.toUpperCase()))
+        ) {
+            e.preventDefault(); e.stopPropagation(); return false;
+        }
+    });
+
+    // Phát hiện DevTools mở → hiện cảnh báo
+    let devOpen = false;
+    const threshold = 160;
+    setInterval(() => {
+        const widthDiff  = window.outerWidth  - window.innerWidth  > threshold;
+        const heightDiff = window.outerHeight - window.innerHeight > threshold;
+        if ((widthDiff || heightDiff) && !devOpen) {
+            devOpen = true;
+            document.getElementById('devtoolsGuard') && (document.getElementById('devtoolsGuard').style.display = 'flex');
+        } else if (!widthDiff && !heightDiff && devOpen) {
+            devOpen = false;
+            document.getElementById('devtoolsGuard') && (document.getElementById('devtoolsGuard').style.display = 'none');
+        }
+    }, 500);
+})();
+
+// ================================================================
+//  CONFIG
 // ================================================================
 const SB_URL = 'https://fzlbtemrspagisfjvaxs.supabase.co';
-const SB_KEY = 'sb_publishable_mTbQWcDgrvR9q2WdngJOrQ_Ly18ed20';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
 const _sb = supabase.createClient(SB_URL, SB_KEY);
 
 // ================================================================
-//  ✅ FIX 1: XSS — escape đầy đủ 6 ký tự nguy hiểm
+//  ✅ WHITELIST EMAIL ADMIN — chỉ những email này mới có quyền admin
+//     Thêm email của mày vô đây
+// ================================================================
+const ADMIN_EMAILS = [
+    'YOUR_EMAIL@gmail.com'  // ← ĐỔI THÀNH EMAIL THẬT CỦA MÀY
+];
+
+// ================================================================
+//  XSS ESCAPE
 // ================================================================
 function esc(s) {
     if (!s) return '';
@@ -621,53 +611,46 @@ function esc(s) {
 let state = {
     user: '', displayUser: '', userClass: '',
     exams: [], currentExam: null, userAns: [],
-    timer: null, time: 900, startTime: null,   // ✅ FIX: thêm startTime
+    timer: null, time: 900, startTime: null,
     editingId: null, finalScore: 0,
     historyData: [], isAdmin: false,
     userIP: 'Unknown', submitted: false,
     cheatCount: 0, wordParsed: null
 };
-let _submitting = false; // ✅ FIX: atomic submit lock
+let _submitting = false;
 
 // ================================================================
 //  INIT
 // ================================================================
 window.onload = async () => {
-    // Lấy IP
     try {
         const r = await fetch('https://api.ipify.org?format=json');
         const d = await r.json();
         state.userIP = (d.ip || '').replace(/[^0-9a-fA-F.:]/g, '').substring(0, 45);
     } catch (e) {}
 
-    // ✅ FIX 2: Khôi phục phiên admin từ Supabase Auth + OAuth redirect
-    try {
-        await checkOAuthSession();
-    } catch (e) {}
+    try { await checkOAuthSession(); } catch (e) {}
 
-    // Khôi phục phiên học sinh
     try {
         const saved = localStorage.getItem('nerd_session');
         if (saved) {
             const d = JSON.parse(saved);
             if (d.user && d.userClass) {
-                state.user       = sanitizeText(d.user, 120);
-                state.displayUser= sanitizeText(d.displayUser || d.user, 120);
-                state.userClass  = sanitizeText(d.userClass, 20);
+                state.user        = sanitizeText(d.user, 120);
+                state.displayUser = sanitizeText(d.displayUser || d.user, 120);
+                state.userClass   = sanitizeText(d.userClass, 20);
                 setupUI();
             }
         }
     } catch (e) { localStorage.removeItem('nerd_session'); }
 };
 
-// ✅ FIX: sanitize input — xóa ký tự nguy hiểm
 function sanitizeText(s, maxLen) {
     return String(s || '').replace(/[<>"'`]/g, '').substring(0, maxLen).trim();
 }
 
 // ================================================================
-//  ✅ FIX 2: ADMIN AUTH — Supabase Auth (email + password)
-//            Thay thế hoàn toàn chuỗi ADMIN:pass:Name và SHA-256 client-side
+//  ADMIN AUTH
 // ================================================================
 function openAdminLoginModal() {
     document.getElementById('adminEmail').value    = '';
@@ -687,6 +670,12 @@ async function handleAdminLogin() {
 
     if (!email || !pass) { errEl.textContent = 'Nhập đầy đủ email và mật khẩu!'; return; }
 
+    // ✅ Kiểm tra whitelist ngay từ đầu
+    if (!ADMIN_EMAILS.includes(email)) {
+        errEl.textContent = 'Email này không có quyền admin!';
+        return;
+    }
+
     const btn = document.getElementById('adminLoginBtn');
     btn.disabled = true; btn.textContent = 'ĐANG ĐĂNG NHẬP...';
 
@@ -694,16 +683,12 @@ async function handleAdminLogin() {
 
     btn.disabled = false; btn.textContent = 'ĐĂNG NHẬP';
 
-    if (error) {
-        errEl.textContent = 'Sai email hoặc mật khẩu!';
-        return;
-    }
+    if (error) { errEl.textContent = 'Sai email hoặc mật khẩu!'; return; }
 
     state.isAdmin = true;
     document.getElementById('adminBtn').classList.remove('hidden');
     closeAdminLoginModal();
 
-    // Nếu chưa đăng nhập student, đặt tên admin tạm
     if (!state.user) {
         state.user        = data.user.email;
         state.displayUser = 'Admin';
@@ -721,15 +706,14 @@ async function handleAdminLogin() {
 //  LOGIN / LOGOUT
 // ================================================================
 async function handleLogin() {
-    const name = document.getElementById('username').value.trim();
-    const cls  = document.getElementById('userClass').value.trim();
+    const name  = document.getElementById('username').value.trim();
+    const cls   = document.getElementById('userClass').value.trim();
     const errEl = document.getElementById('loginError');
 
     if (!name || !cls) { errEl.textContent = 'Vui lòng nhập đầy đủ tên và lớp!'; errEl.classList.remove('hidden'); return; }
     if (name.length < 2) { errEl.textContent = 'Tên phải có ít nhất 2 ký tự!'; errEl.classList.remove('hidden'); return; }
     errEl.classList.add('hidden');
 
-    // ✅ FIX: Sanitize trước khi lưu — không cho phép HTML injection
     state.user        = sanitizeText(name, 120);
     state.displayUser = sanitizeText(name, 120);
     state.userClass   = sanitizeText(cls, 20);
@@ -742,7 +726,6 @@ async function handleLogin() {
 
 async function handleLogout() {
     stopCheatGuard();
-    // ✅ FIX: Sign out cả Supabase Auth (nếu admin đang đăng nhập)
     try { await _sb.auth.signOut(); } catch (e) {}
     state.isAdmin = false;
     localStorage.removeItem('nerd_session');
@@ -753,7 +736,6 @@ async function setupUI() {
     document.getElementById('userTag').textContent = state.displayUser + ' // ' + state.userClass;
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('header').classList.replace('hidden', 'flex');
-    // Lưu ngày tham gia lần đầu
     if (!localStorage.getItem('nerd_joined')) {
         localStorage.setItem('nerd_joined', new Date().toLocaleDateString('vi-VN'));
     }
@@ -767,10 +749,7 @@ async function setupUI() {
 // ================================================================
 const SECTIONS = ['loginPage','mainMenu','selectExamPage','examPage','adminPage','leaderboard','resultPage','reviewPage'];
 function showSection(id) {
-    // ✅ FIX: Bảo vệ trang admin — chỉ admin mới vào được
-    if (id === 'adminPage' && !state.isAdmin) {
-        alert('Bạn không có quyền truy cập!'); return;
-    }
+    if (id === 'adminPage' && !state.isAdmin) { alert('Bạn không có quyền truy cập!'); return; }
     SECTIONS.forEach(s => { const e = document.getElementById(s); if (e) e.classList.add('hidden'); });
     if (id !== 'examPage') stopCheatGuard();
     document.getElementById(id).classList.remove('hidden');
@@ -782,10 +761,10 @@ function showSection(id) {
 // ================================================================
 //  BLOCKLIST
 // ================================================================
-function getBlocklist()  { try { return JSON.parse(localStorage.getItem('nerd_blocklist') || '[]'); } catch (e) { return []; } }
+function getBlocklist()      { try { return JSON.parse(localStorage.getItem('nerd_blocklist') || '[]'); } catch (e) { return []; } }
 function saveBlocklist(list) { localStorage.setItem('nerd_blocklist', JSON.stringify(list)); }
-function isBlocked(ex)   { const bl = getBlocklist(); return bl.some(b => b.id === ex.id || (b.title && b.title.toLowerCase() === String(ex.title || '').toLowerCase())); }
-function blockExam(ex)   { const bl = getBlocklist(); if (!isBlocked(ex)) { bl.push({ id: ex.id, title: ex.title }); saveBlocklist(bl); } }
+function isBlocked(ex)       { const bl = getBlocklist(); return bl.some(b => b.id === ex.id || (b.title && b.title.toLowerCase() === String(ex.title || '').toLowerCase())); }
+function blockExam(ex)       { const bl = getBlocklist(); if (!isBlocked(ex)) { bl.push({ id: ex.id, title: ex.title }); saveBlocklist(bl); } }
 
 // ================================================================
 //  FETCH EXAMS
@@ -813,10 +792,10 @@ function renderExamList() {
 }
 
 // ================================================================
-//  SHUFFLE STATE
+//  SHUFFLE
 // ================================================================
 let shuffleEnabled = true;
-let shuffleMode = 'both'; // 'both' | 'q' | 'opts'
+let shuffleMode = 'both';
 
 function updateShuffleUI() {
     shuffleEnabled = document.getElementById('shuffleToggle').checked;
@@ -849,7 +828,6 @@ function setShuffleMode(mode) {
     });
 }
 
-// Shuffle array in-place (Fisher-Yates)
 function shuffleArr(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -865,26 +843,18 @@ function startExam(id) {
     const ex = state.exams.find(e => e.id === id); if (!ex) return;
     state.currentExam = JSON.parse(JSON.stringify(ex));
 
-    // ✅ Xáo trộn thứ tự câu hỏi
-    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'q')) {
-        shuffleArr(state.currentExam.questions);
-    }
+    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'q')) shuffleArr(state.currentExam.questions);
+    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'opts')) state.currentExam.questions.forEach(q => shuffleArr(q.opts));
 
-    // ✅ Xáo trộn đáp án từng câu — c (correct) đi kèm với option nên vẫn chấm đúng
-    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'opts')) {
-        state.currentExam.questions.forEach(q => shuffleArr(q.opts));
-    }
-
-    state.userAns   = new Array(state.currentExam.questions.length).fill(null);
-    state.submitted = false;
+    state.userAns    = new Array(state.currentExam.questions.length).fill(null);
+    state.submitted  = false;
     state.cheatCount = 0;
-    state.startTime = Date.now();
-    _submitting     = false;
+    state.startTime  = Date.now();
+    _submitting      = false;
 
     showSection('examPage');
     renderAllQuestions();
 
-    // Hiện badge xáo trộn nếu bật
     const badge = document.getElementById('shuffleBadge');
     if (badge) badge.style.display = (shuffleEnabled ? 'flex' : 'none');
 
@@ -964,20 +934,17 @@ function stopCheatGuard()  { document.removeEventListener('visibilitychange', _o
 function dismissCheatGuard() { document.getElementById('cheatGuard').style.display = 'none'; }
 
 // ================================================================
-//  ✅ FIX 4+5: SUBMIT — atomic lock + xác thực thời gian thật
+//  SUBMIT
 // ================================================================
 async function submitExam() {
-    // ✅ Kiểm tra atomic — không submit 2 lần dù click nhanh hoặc timer + button cùng kích hoạt
     if (_submitting || state.submitted) return;
     _submitting = true;
 
-    // ✅ Khóa ngay nút submit để tránh double-submit
     const btn = document.getElementById('submitBtn');
     if (btn) { btn.disabled = true; btn.innerText = 'ĐANG NỘP...'; }
 
-    // ✅ FIX: Tính thời gian từ startTime thật (không tin client timer có thể bị hack)
     const realElapsed = Math.floor((Date.now() - state.startTime) / 1000);
-    const timeUsed    = Math.min(realElapsed, 900); // tối đa 15 phút
+    const timeUsed    = Math.min(realElapsed, 900);
 
     state.submitted = true;
     clearInterval(state.timer);
@@ -1004,7 +971,7 @@ async function submitExam() {
             wrong_count:   wrong,
             ip_address:    state.userIP,
             cheat_count:   state.cheatCount,
-            time_used:     timeUsed, // ✅ ghi thời gian thật
+            time_used:     timeUsed,
             date:          new Date().toLocaleDateString('vi-VN'),
             submit_time:   new Date().toLocaleTimeString('vi-VN')
         }]);
@@ -1015,7 +982,7 @@ async function submitExam() {
     document.getElementById('timeFinish').textContent = `Hoàn thành trong ${timeStr} | Rời tab: ${state.cheatCount} lần`;
     showSection('resultPage');
 
-    _submitting = false; // Reset lock sau khi xong
+    _submitting = false;
 }
 
 // ================================================================
@@ -1063,7 +1030,6 @@ async function renderLeaderboard() {
 
     const medals = ['🥇', '🥈', '🥉'];
     c.innerHTML = state.historyData.map((h, i) => {
-        // ✅ FIX: Không render IP/cheat_count vào DOM cho học sinh — chỉ admin mới thấy chi tiết
         const nm = state.isAdmin
             ? `<p onclick="showDetails(${i})" class="font-bold uppercase text-xs md:text-sm cursor-pointer hover:text-orange-500 transition underline underline-offset-4 decoration-orange-500/20">${esc(h.name)} - <span class="text-orange-500">${esc(h.user_class || '8A7')}</span></p>`
             : `<p class="font-bold uppercase text-xs md:text-sm">${esc(h.name)} - <span class="text-orange-500">${esc(h.user_class || '8A7')}</span></p>`;
@@ -1078,7 +1044,7 @@ async function renderLeaderboard() {
 }
 
 function showDetails(i) {
-    if (!state.isAdmin) return; // ✅ Guard
+    if (!state.isAdmin) return;
     const h = state.historyData[i]; if (!h) return;
     const ip = esc(h.ip_address || 'Unknown');
     document.getElementById('detailsContent').innerHTML = `
@@ -1101,50 +1067,31 @@ function showDetails(i) {
 function closeDetails() { document.getElementById('detailsModal').style.display = 'none'; }
 
 // ================================================================
-//  ✅ FIX 6: parseInput — robust hơn, handle nhiều định dạng
+//  PARSE INPUT
 // ================================================================
 function parseInput(txt) {
     if (!txt || !txt.trim()) return [];
-
-    // Tách theo "Câu N:" hoặc "Q N." hoặc "Question N:"
     const blocks = txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]])/im);
-
-    return blocks
-        .map(block => {
-            block = block.trim();
-            if (!block) return null;
-
-            // Xóa prefix "Câu N:"
-            const lines = block.replace(/^(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]]\s*/im, '')
-                               .split('\n')
-                               .map(l => l.trim())
-                               .filter(l => l.length > 0);
-
-            if (!lines.length) return null;
-
-            // ✅ Tìm dòng đầu tiên có option (A. B. C. D. hoặc A) B) etc.)
-            const optRegex = /^[A-Da-d]\s*[.)：:]\s*\S/;
-            let optStartIdx = lines.findIndex(l => optRegex.test(l));
-
-            // Không tìm thấy option → bỏ qua block này
-            if (optStartIdx === -1) return null;
-            // Không có nội dung câu hỏi → optStartIdx = 0 thì bỏ
-            if (optStartIdx === 0)  return null;
-
-            const q    = lines.slice(0, optStartIdx).join(' ').trim();
-            const opts = lines.slice(optStartIdx).map(l => ({
-                t: l.replace(/@t\s*/g, '').replace(/^[A-Da-d]\s*[.)：:]\s*/, '').trim(),
-                c: l.includes('@t')
-            })).filter(o => o.t.length > 0);
-
-            if (!q || opts.length < 2) return null;
-            return { q, opts };
-        })
-        .filter(Boolean);
+    return blocks.map(block => {
+        block = block.trim(); if (!block) return null;
+        const lines = block.replace(/^(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]]\s*/im, '')
+                           .split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        if (!lines.length) return null;
+        const optRegex = /^[A-Da-d]\s*[.)：:]\s*\S/;
+        let optStartIdx = lines.findIndex(l => optRegex.test(l));
+        if (optStartIdx === -1 || optStartIdx === 0) return null;
+        const q    = lines.slice(0, optStartIdx).join(' ').trim();
+        const opts = lines.slice(optStartIdx).map(l => ({
+            t: l.replace(/@t\s*/g, '').replace(/^[A-Da-d]\s*[.)：:]\s*/, '').trim(),
+            c: l.includes('@t')
+        })).filter(o => o.t.length > 0);
+        if (!q || opts.length < 2) return null;
+        return { q, opts };
+    }).filter(Boolean);
 }
 
 // ================================================================
-//  WORD FILE IMPORT
+//  WORD IMPORT
 // ================================================================
 async function handleWordFile(input) {
     const file = input.files[0]; if (!file) return;
@@ -1227,7 +1174,7 @@ function showFileStatus(cls, msg) {
 }
 
 // ================================================================
-//  ADMIN — SAVE (✅ RLS sẽ chặn nếu không phải authenticated user)
+//  ADMIN — SAVE
 // ================================================================
 async function handleSaveExam() {
     if (!state.isAdmin) { showAdminStatus('BẠN KHÔNG CÓ QUYỀN!'); return; }
@@ -1264,7 +1211,7 @@ function showAdminStatus(msg) {
 //  ADMIN — LIST / EDIT / DELETE
 // ================================================================
 function renderAdminList() {
-    if (!state.isAdmin) return; // ✅ Guard
+    if (!state.isAdmin) return;
     const c = document.getElementById('adminExamList');
     _sb.from('exams').select('*').order('id', { ascending: false }).then(({ data }) => {
         const all = data || [];
@@ -1273,9 +1220,7 @@ function renderAdminList() {
             c.innerHTML = '<p class="text-center opacity-30 text-xs uppercase tracking-widest py-4">Chưa có bài tập nào</p>';
             return;
         }
-
         let html = '';
-
         if (bl.length) {
             html += `<div class="mb-4 p-4 rounded-xl" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);">
                 <p class="text-[9px] font-black uppercase tracking-widest text-red-400 mb-3">🚫 Đề đang bị chặn</p>`;
@@ -1286,7 +1231,6 @@ function renderAdminList() {
                 </div>`).join('');
             html += `</div>`;
         }
-
         const active = all.filter(ex => !isBlocked(ex));
         if (active.length) {
             html += active.map(ex => `
@@ -1301,23 +1245,20 @@ function renderAdminList() {
         } else {
             html += '<p class="text-center opacity-30 text-xs uppercase tracking-widest py-4">Không có đề nào đang hiển thị</p>';
         }
-
         c.innerHTML = html;
     });
 }
 
 function blockAndHide(id, title) {
     if (!state.isAdmin) return;
-    blockExam({ id, title });
-    showAdminStatus(`ĐÃ ẨN ĐỀ "${title}"`);
+    blockExam({ id, title }); showAdminStatus(`ĐÃ ẨN ĐỀ "${title}"`);
     renderAdminList(); fetchExams();
 }
 
 function unblockOne(b) {
     if (!state.isAdmin) return;
     const bl = getBlocklist().filter(x => !(x.id === b.id || (b.title && x.title === b.title)));
-    saveBlocklist(bl);
-    showAdminStatus('ĐÃ BỎ CHẶN!');
+    saveBlocklist(bl); showAdminStatus('ĐÃ BỎ CHẶN!');
     renderAdminList(); fetchExams();
 }
 
@@ -1326,7 +1267,7 @@ function editExam(id) {
     const ex = state.exams.find(e => e.id === id); if (!ex) return;
     state.editingId = id;
     document.getElementById('examTitle').value = ex.title;
-    document.getElementById('rawInput').value = ex.questions.map((q, i) =>
+    document.getElementById('rawInput').value  = ex.questions.map((q, i) =>
         `Câu ${i + 1}: ${q.q}\n${q.opts.map(o => `${o.t}${o.c ? ' @t' : ''}`).join('\n')}`).join('\n\n');
     document.getElementById('cancelEditBtn').classList.remove('hidden');
     document.getElementById('saveBtn').innerText = 'CẬP NHẬT';
@@ -1362,45 +1303,46 @@ async function nukeByTitle() {
 }
 
 // ================================================================
-//  ✅ FIX 3: customConfirm — không còn memory leak event listener
+//  CONFIRM MODAL
 // ================================================================
 function customConfirm(msg, cb) {
     const modal = document.getElementById('confirmModal');
     document.getElementById('confirmText').textContent = msg;
     modal.style.display = 'flex';
-
-    // ✅ Clone buttons → xóa toàn bộ listener cũ, tránh stack
     const yes = document.getElementById('confirmYes');
     const no  = document.getElementById('confirmNo');
     const newYes = yes.cloneNode(true);
     const newNo  = no.cloneNode(true);
     yes.parentNode.replaceChild(newYes, yes);
     no.parentNode.replaceChild(newNo,  no);
-
     newYes.addEventListener('click', () => { modal.style.display = 'none'; cb(); });
     newNo.addEventListener('click',  () => { modal.style.display = 'none'; });
 }
 
 // ================================================================
-//  GOOGLE LOGIN — dùng Supabase OAuth
+//  GOOGLE LOGIN
 // ================================================================
 async function handleGoogleLogin() {
     const { error } = await _sb.auth.signInWithOAuth({
         provider: 'google',
-        options: {
-            redirectTo: window.location.href,
-            queryParams: { prompt: 'select_account' }
-        }
+        options: { redirectTo: window.location.href, queryParams: { prompt: 'select_account' } }
     });
     if (error) alert('Lỗi Google Login: ' + error.message);
 }
 
-// Sau khi redirect về, kiểm tra session OAuth
+// ================================================================
+//  ✅ CHECK OAUTH SESSION — chỉ cấp admin nếu email nằm trong ADMIN_EMAILS
+// ================================================================
 async function checkOAuthSession() {
     const { data: { session } } = await _sb.auth.getSession();
     if (!session) return;
-    state.isAdmin = true;
-    document.getElementById('adminBtn').classList.remove('hidden');
+
+    // ✅ Kiểm tra whitelist — không phải email admin thì KHÔNG cấp quyền
+    if (ADMIN_EMAILS.includes(session.user.email)) {
+        state.isAdmin = true;
+        document.getElementById('adminBtn').classList.remove('hidden');
+    }
+
     if (!state.user) {
         const saved = localStorage.getItem('nerd_session');
         if (saved) {
@@ -1410,7 +1352,6 @@ async function checkOAuthSession() {
                 setupUI(); return;
             }
         }
-        // Chưa có tên → hỏi tên + lớp
         const email = session.user.email || '';
         const suggestedName = session.user.user_metadata?.full_name || email.split('@')[0] || '';
         document.getElementById('googleName').value  = suggestedName;
@@ -1421,8 +1362,8 @@ async function checkOAuthSession() {
 }
 
 function saveGoogleProfile() {
-    const name = (document.getElementById('googleName').value || '').trim();
-    const cls  = (document.getElementById('googleClass').value || '').trim();
+    const name  = (document.getElementById('googleName').value || '').trim();
+    const cls   = (document.getElementById('googleClass').value || '').trim();
     const errEl = document.getElementById('googleNameError');
     if (!name || name.length < 2) { errEl.textContent = 'Tên phải có ít nhất 2 ký tự!'; return; }
     if (!cls) { errEl.textContent = 'Vui lòng nhập lớp!'; return; }
@@ -1430,7 +1371,6 @@ function saveGoogleProfile() {
     state.user        = sanitizeText(name, 120);
     state.displayUser = sanitizeText(name, 120);
     state.userClass   = sanitizeText(cls, 20);
-    // Lưu ngày tạo tài khoản lần đầu
     const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
     localStorage.setItem('nerd_joined', joined);
     localStorage.setItem('nerd_session', JSON.stringify({
@@ -1444,7 +1384,6 @@ function saveGoogleProfile() {
 //  PROFILE
 // ================================================================
 async function openProfile() {
-    // Sync display
     const avatarData = localStorage.getItem('nerd_avatar');
     const wrap = document.getElementById('profileAvatarWrap');
     const initial = document.getElementById('profileAvatarInitial');
@@ -1459,19 +1398,12 @@ async function openProfile() {
         initial.style.display = '';
         initial.textContent = (state.displayUser || '?')[0].toUpperCase();
     }
-
-    document.getElementById('profileNameDisplay').textContent = state.displayUser || '—';
+    document.getElementById('profileNameDisplay').textContent  = state.displayUser || '—';
     document.getElementById('profileClassDisplay').textContent = '📚 ' + (state.userClass || '—');
-
     const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
     document.getElementById('profileJoined').textContent = '🗓 Tham gia: ' + joined;
-
-    // Ẩn history list khi mở
     hideProfileHistory();
-
     document.getElementById('profileModal').style.display = 'flex';
-
-    // Load stats từ Supabase
     try {
         const { data } = await _sb.from('history')
             .select('score,correct_count,wrong_count,time_used,exam,date,submit_time')
@@ -1486,24 +1418,19 @@ async function openProfile() {
             document.getElementById('statBest').textContent = best.toFixed(1);
         } else {
             document.getElementById('statAvgScore').textContent = '—';
-            document.getElementById('statBest').textContent = '—';
+            document.getElementById('statBest').textContent     = '—';
         }
-        // Cache history for detail view
         window._profileHistory = rows;
-    } catch (e) {
-        document.getElementById('statCount').textContent = '?';
-    }
+    } catch (e) { document.getElementById('statCount').textContent = '?'; }
 }
 
 function closeProfile() { document.getElementById('profileModal').style.display = 'none'; }
-
 function triggerAvatarPick() { document.getElementById('avatarFileInput').click(); }
 
 function handleAvatarFile(input) {
     const file = input.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = e => {
-        // Resize to 200x200 để tiết kiệm localStorage
         const img = new Image();
         img.onload = () => {
             const canvas = document.createElement('canvas');
@@ -1523,14 +1450,12 @@ function handleAvatarFile(input) {
 }
 
 function updateAvatarUI(dataUrl) {
-    // Header avatar
     const hav = document.getElementById('headerAvatar');
     if (hav) {
         hav.innerHTML = dataUrl
             ? `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
             : (state.displayUser || '?')[0].toUpperCase();
     }
-    // Profile modal avatar
     const wrap = document.getElementById('profileAvatarWrap');
     if (wrap) {
         let img = wrap.querySelector('img');
@@ -1621,15 +1546,8 @@ function showProfileHistory() {
 }
 
 function hideProfileHistory() { document.getElementById('profileHistoryList').classList.add('hidden'); }
+function toggleHistoryDetail(i) { const el = document.getElementById('hd-'+i); if (el) el.classList.toggle('hidden'); }
 
-function toggleHistoryDetail(i) {
-    const el = document.getElementById('hd-'+i);
-    if (el) el.classList.toggle('hidden');
-}
-
-// ================================================================
-//  UTILITIES
-// ================================================================
 function toggleTheme() {
     document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? '' : 'light');
 }
