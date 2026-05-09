@@ -62,6 +62,29 @@
             border-color: rgba(249, 115, 22, 0.4);
             z-index: 10;
         }
+
+        /* TOAST SYSTEM */
+        #toast-container {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; pointer-events: none;
+            display: flex; flex-direction: column; gap: 10px; align-items: center;
+        }
+        .toast {
+            background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1); color: white;
+            padding: 14px 28px; border-radius: 20px; font-weight: 900;
+            text-transform: uppercase; font-size: 10px; letter-spacing: 1px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: flex; align-items: center; gap: 12px;
+            animation: toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            pointer-events: auto; border-bottom: 2px solid var(--accent);
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-40px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .toast.error { border-bottom-color: #ff4d4d; }
+        .toast.success { border-bottom-color: #00ff88; }
         
         @media (max-width: 640px) {
             #mainMenu { grid-template-columns: 1fr !important; gap: 16px !important; padding: 0 10px; }
@@ -201,34 +224,56 @@
         .admin-link:hover { color: var(--primary); }
         #adminLoginError { color: #ef4444; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; min-height: 20px; margin-bottom: 8px; }
         .avatar-btn {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: 2px solid rgba(249,115,22,0.5);
+            width: 42px; height: 42px; border-radius: 999px;
             cursor: pointer; overflow: hidden; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 14px; color: black;
-            transition: all 0.3s; box-shadow: 0 0 12px rgba(249,115,22,0.3);
-        }
-        .avatar-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(249,115,22,0.5); }
-        .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
-        #profileModal { z-index: 10001; }
-        .profile-avatar-wrap {
-            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px;
+            display: grid; place-items: center;
+            font-weight: 900; font-size: 14px; color: #0b0b0b;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: 1px solid rgba(249,115,22,0.25) !important;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 8px 20px rgba(249,115,22,0.2);
+            transition: transform .22s ease, box-shadow .25s ease, filter .22s ease;
+        }
+        .avatar-btn:hover {
+            transform: translateY(-1px) scale(1.03);
+            box-shadow: 0 0 0 2px rgba(249,115,22,0.22), 0 12px 24px rgba(249,115,22,0.3);
+        }
+        .avatar-btn img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+        .avatar-btn.has-image { background: rgba(0,0,0,0.65); color: transparent; }
+        #profileModal { z-index: 10001; }
+        .profile-modal-panel {
+            animation: profileModalIn .36s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: top center;
+        }
+        .confirm-overlay.closing .profile-modal-panel { animation: profileModalOut .24s ease forwards; }
+        @keyframes profileModalIn {
+            from { opacity: 0; transform: translateY(14px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes profileModalOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(10px) scale(0.98); }
+        }
+        .profile-modal-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+        .profile-avatar-wrap {
+            width: 112px; height: 112px; border-radius: 50%; margin: 2px auto 16px;
             position: relative; cursor: pointer; overflow: hidden;
-            box-shadow: 0 0 30px rgba(249,115,22,0.4);
             display: flex; align-items: center; justify-content: center;
-            font-size: 36px; font-weight: 900; color: black;
-            transition: all 0.3s;
+            font-size: 40px; font-weight: 900; color: #0b0b0b;
+            transition: transform .25s ease, box-shadow .25s ease;
+            border: 2px solid rgba(249,115,22,0.55);
+            box-shadow: 0 0 0 8px rgba(249,115,22,0.06), 0 18px 34px rgba(249,115,22,0.25);
         }
-        .profile-avatar-wrap:hover .avatar-overlay { opacity: 1; }
-        .avatar-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.55);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: 0.3s; border-radius: 50%;
-            font-size: 28px;
-        }
-        .profile-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+        .profile-avatar-wrap:hover { transform: scale(1.02); }
+        .profile-avatar-wrap:not(.has-image) { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 0 30px rgba(249,115,22,0.4); }
+        .profile-avatar-wrap.has-image { background: #000 !important; border: none !important; box-shadow: none !important; }
+        .profile-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; position: absolute; border-radius: 50%; }
+        .profile-headline { text-align: center; margin-top: 2px; margin-bottom: 14px; }
+        .profile-headline h4 { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
+        .profile-headline p { font-size: 11px; opacity: .55; text-transform: uppercase; letter-spacing: .14em; }
         .edit-field {
             display: flex; align-items: center; gap: 8px;
             background: var(--glass-bg); border: 1px solid var(--glass-border);
@@ -245,11 +290,35 @@
         }
         .pencil-btn:hover { opacity: 1; transform: scale(1.2) !important; box-shadow: none !important; }
         .stat-badge {
-            background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.2);
-            border-radius: 14px; padding: 12px 16px; text-align: center; cursor: pointer;
-            transition: all 0.2s;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(249,115,22,0.25);
+            border-radius: 16px; padding: 12px 12px; text-align: center; cursor: pointer;
+            transition: transform .2s ease, background .2s ease, border-color .2s ease;
         }
-        .stat-badge:hover { background: rgba(249,115,22,0.2); transform: translateY(-2px) !important; }
+        .stat-badge:hover {
+            transform: translateY(-2px) !important;
+            background: rgba(249,115,22,0.12);
+            border-color: rgba(249,115,22,0.45);
+        }
+        .profile-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin: 10px 0 2px;
+        }
+        .profile-meta-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(249,115,22,0.15);
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+        .profile-meta-item p:first-child {
+            font-size: 9px; opacity: .45; text-transform: uppercase;
+            letter-spacing: .12em; font-weight: 800; margin-bottom: 4px;
+        }
+        .profile-meta-item p:last-child {
+            font-size: 12px; font-weight: 800;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         .history-item {
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer;
@@ -263,6 +332,60 @@
         #shufflePills button { transition: all 0.2s; cursor: pointer; }
         #shufflePills button:hover { opacity: 1 !important; }
         #shufflePills button.active-pill { border-color: var(--primary) !important; background: rgba(249,115,22,0.2) !important; color: var(--primary) !important; opacity: 1 !important; }
+
+        /* AVATAR SYSTEM CSS */
+        #avatarMenu {
+            position: absolute; top: 120%; left: 50%; transform: translateX(-50%);
+            width: 160px; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 20px; padding: 8px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: 100;
+        }
+        .avatar-menu-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+            border-radius: 14px; font-size: 10px; font-weight: 800; text-transform: uppercase;
+            color: white; cursor: pointer; transition: 0.2s;
+        }
+        .avatar-menu-item:hover { background: rgba(249,115,22,0.2); color: var(--primary); }
+        .avatar-menu-item span { font-size: 16px; }
+
+        #avatarEditorModal { z-index: 10005; }
+        .avatar-editor-shell { width: min(94vw, 520px); margin-inline: auto; }
+        .avatar-canvas-wrap {
+            width: 100%; aspect-ratio: 1 / 1;
+            border-radius: 22px; background: #050505;
+            position: relative; overflow: hidden;
+            border: 1px solid rgba(249,115,22,0.3);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 20px 35px rgba(0,0,0,.45);
+        }
+        #avatarEditorModal canvas {
+            width: 100%; height: 100%; display: block;
+            touch-action: none; cursor: grab;
+        }
+        #avatarEditorModal canvas.dragging { cursor: grabbing; }
+        .avatar-mask { position: absolute; inset: 0; pointer-events: none; }
+        .avatar-mask::before {
+            content: ""; position: absolute; inset: 0;
+            background: transparent;
+        }
+        .avatar-mask::after {
+            content: ""; position: absolute; inset: 10%;
+            border-radius: 999px;
+            border: 2px solid rgba(255,255,255,0.25);
+            box-shadow: 0 0 0 1px rgba(249,115,22,0.22) inset;
+        }
+        .zoom-ctrl { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 14px; }
+        .zoom-ctrl input[type=range] {
+            flex: 1; -webkit-appearance: none; appearance: none;
+            height: 6px; border-radius: 999px;
+            background: linear-gradient(90deg, rgba(249,115,22,.8), rgba(251,191,36,.75));
+        }
+        .zoom-ctrl input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 18px; height: 18px; background: #fff;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 14px rgba(249,115,22,.65);
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -290,14 +413,33 @@
     </div>
 
     <div id="profileModal" class="confirm-overlay" onclick="closeProfile()">
-        <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 relative"
+        <div class="glass profile-modal-card profile-modal-panel p-8 max-w-sm w-full border-2 border-orange-500/50 relative"
              style="max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
             <button onclick="closeProfile()" class="absolute top-4 right-6 text-2xl font-black text-orange-500">×</button>
-            <div class="profile-avatar-wrap" onclick="triggerAvatarPick()" id="profileAvatarWrap">
-                <span id="profileAvatarInitial">?</span>
-                <div class="avatar-overlay">📷</div>
+            <div class="relative inline-block w-full text-center">
+                <div class="profile-avatar-wrap relative mx-auto" onclick="toggleAvatarMenu()" id="profileAvatarWrap">
+                    <img id="userAvatar" src="" class="hidden" style="border-radius:50%;">
+                    <span id="profileAvatarInitial">?</span>
+                </div>
+                <div class="profile-headline">
+                    <h4 id="profileNameTitle">—</h4>
+                    <p id="profileClassTitle">—</p>
+                </div>
+                
+                <!-- MENU 3 DÒNG (Đã đưa ra ngoài để không bị che) -->
+                <div id="avatarMenu" class="hidden">
+                    <div class="avatar-menu-item" onclick="startAvatarUpload()">
+                        <span class="material-icons">upload</span> Upload photo
+                    </div>
+                    <div class="avatar-menu-item" onclick="viewAvatar()">
+                        <span class="material-icons">visibility</span> View photo
+                    </div>
+                    <div class="avatar-menu-item" onclick="downloadAvatar()">
+                        <span class="material-icons">download</span> Download
+                    </div>
+                </div>
             </div>
-            <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleAvatarFile(this)">
+            <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleAvatarFile(this)">
             <div class="edit-field" id="nameField">
                 <span id="profileNameDisplay" class="truncate"></span>
                 <button class="pencil-btn" onclick="toggleEditField('name')" title="Sửa tên">✏️</button>
@@ -329,6 +471,24 @@
                 </div>
             </div>
             <p id="profileJoined" class="text-[9px] opacity-30 uppercase tracking-widest text-center mt-2 mb-4"></p>
+            <div class="profile-meta-grid">
+                <div class="profile-meta-item">
+                    <p>Tổng đúng</p>
+                    <p id="statTotalCorrect">—</p>
+                </div>
+                <div class="profile-meta-item">
+                    <p>Thời gian TB</p>
+                    <p id="statAvgTime">—</p>
+                </div>
+                <div class="profile-meta-item">
+                    <p>Lần nộp gần nhất</p>
+                    <p id="statLatestSubmit">—</p>
+                </div>
+                <div class="profile-meta-item">
+                    <p>Bài gần nhất</p>
+                    <p id="statLatestExam">—</p>
+                </div>
+            </div>
             <div id="profileHistoryList" class="hidden">
                 <p class="text-[9px] font-black uppercase tracking-widest text-orange-500 mb-3">📋 Lịch sử làm bài</p>
                 <div id="profileHistoryItems"></div>
@@ -396,6 +556,36 @@
                 <button id="adminLoginBtn" onclick="handleAdminLogin()" class="flex-1 btn-premium py-4 rounded-xl font-black uppercase text-xs">ĐĂNG NHẬP</button>
                 <button onclick="closeAdminLoginModal()" class="flex-1 glass py-4 rounded-xl font-bold uppercase text-xs">HỦY</button>
             </div>
+        </div>
+    </div>
+
+    <div id="avatarEditorModal" class="confirm-overlay">
+        <div class="glass p-6 sm:p-10 max-w-2xl w-full border-2 border-orange-500/50 text-center flex flex-col items-center">
+            <div class="avatar-editor-shell">
+                <h3 class="text-xl font-black text-white/80 mb-4 italic uppercase text-center">Căn chỉnh ảnh</h3>
+                <div class="avatar-canvas-wrap">
+                    <canvas id="avatarCanvas" width="600" height="600"></canvas>
+                    <div class="avatar-mask"></div>
+                </div>
+                <div class="zoom-ctrl">
+                    <span class="material-icons text-white/40">zoom_out</span>
+                    <input type="range" id="avatarZoom" min="-100" max="100" step="1" value="0">
+                    <span class="material-icons text-orange-500">zoom_in</span>
+                </div>
+                <p class="text-[10px] opacity-40 uppercase tracking-widest mt-3 text-center leading-relaxed px-1">Giữa thanh = vừa ô tròn • Trái = thu nhỏ trong tròn • Phải = phóng to<br>Kéo để căn chỉnh • Cuộn chuột / mũi tên để nhích</p>
+                <div class="flex gap-3 w-full mt-6">
+                    <button onclick="saveAvatar()" class="flex-1 btn-premium py-3 rounded-xl font-black uppercase text-xs">XÁC NHẬN</button>
+                    <button onclick="closeAvatarEditor()" class="flex-1 glass py-3 rounded-xl font-bold uppercase text-xs text-white">HỦY</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="avatarViewModal" class="confirm-overlay" onclick="closeAvatarView()" style="z-index: 10010;">
+        <div class="relative max-w-[95vw] max-h-[90vh] flex items-center justify-center" onclick="event.stopPropagation()">
+            <button class="absolute -top-10 -right-2 text-white/50 hover:text-white transition-colors" onclick="closeAvatarView()">
+                <span class="material-icons size-10">close</span>
+            </button>
+            <img id="avatarFullImage" src="" class="max-w-full max-h-full object-contain">
         </div>
     </div>
 
@@ -581,6 +771,8 @@
             <div id="leaderboardContent" class="space-y-4"></div>
         </div>
 
+    <div id="toast-container"></div>
+    <div id="overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 hidden transition-all duration-700 opacity-0"></div>
     </div>
 
 <script>
@@ -623,12 +815,14 @@ const _sb = supabase.createClient(SB_URL, SB_KEY);
 //  ✅ ADMIN EMAILS — load từ bảng admins trong Supabase
 //     Thêm/xóa admin: vào Table Editor → admins → insert/delete row
 // ================================================================
-let ADMIN_EMAILS = [];
+let ADMIN_EMAILS = ['concu@gmail.com']; // Fallback email
 async function loadAdminEmails() {
     try {
         const { data } = await _sb.from('admins').select('email');
-        ADMIN_EMAILS = (data || []).map(r => r.email);
-    } catch(e) { ADMIN_EMAILS = []; }
+        if (data && data.length > 0) {
+            ADMIN_EMAILS = data.map(r => r.email);
+        }
+    } catch(e) { }
 }
 
 function esc(s) {
@@ -643,7 +837,7 @@ function esc(s) {
 }
 
 let state = {
-    user: '', displayUser: '', userClass: '',
+    user: '', displayUser: '', userClass: '', avatarKey: '',
     exams: [], currentExam: null, userAns: [],
     timer: null, time: 900, startTime: null,
     editingId: null, finalScore: 0,
@@ -651,9 +845,30 @@ let state = {
     userIP: 'Unknown', submitted: false,
     cheatCount: 0, wordParsed: null,
     adminSortAZ: true, adminHiddenOnly: false,
-    expandedExams: new Set()
+    expandedExams: new Set(),
+    avatarFile: null, avatarScale: 1, avatarPos: { x: 0, y: 0 }
 };
 let _submitting = false;
+
+function showToast(msg, type = 'normal') {
+    const container = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    const icon = type === 'error' ? 'report_problem' : (type === 'success' ? 'check_circle' : 'notifications');
+    t.innerHTML = `<span class="material-icons text-sm ${type === 'error' ? 'text-red-500' : (type === 'success' ? 'text-green-400' : 'text-orange-500')}">${icon}</span> <span>${msg}</span>`;
+    container.appendChild(t);
+    setTimeout(() => {
+        t.style.animation = 'toastOut 0.5s forwards';
+        setTimeout(() => t.remove(), 500);
+    }, 4000);
+}
+// Add toastOut keyframes in JS if not in CSS
+if (!document.getElementById('toast-anim')) {
+    const s = document.createElement('style');
+    s.id = 'toast-anim';
+    s.innerHTML = `@keyframes toastOut { to { opacity: 0; transform: translateY(-20px) scale(0.9); } }`;
+    document.head.appendChild(s);
+}
 
 window.onload = async () => {
     await loadAdminEmails();
@@ -673,6 +888,9 @@ window.onload = async () => {
                 state.user        = sanitizeText(d.user, 120);
                 state.displayUser = sanitizeText(d.displayUser || d.user, 120);
                 state.userClass   = sanitizeText(d.userClass, 20);
+                state.avatarKey   = sanitizeText(d.avatarKey || d.user, 120);
+                // Không được ghi đè ngược quyền admin đã lấy từ OAuth session
+                state.isAdmin     = state.isAdmin || !!d.isAdmin || ADMIN_EMAILS.includes(d.user);
                 setupUI();
             }
         }
@@ -719,16 +937,16 @@ async function handleAdminLogin() {
     document.getElementById('adminBtn').classList.remove('hidden');
     closeAdminLoginModal();
 
-    if (!state.user) {
-        state.user        = data.user.email;
-        state.displayUser = 'Admin';
-        state.userClass   = 'ADMIN';
-        localStorage.setItem('nerd_session', JSON.stringify({
-            user: state.user, displayUser: state.displayUser, userClass: state.userClass
-        }));
-        setupUI();
-    }
-
+    const savedSession = JSON.parse(localStorage.getItem('nerd_session') || '{}');
+    state.user        = data.user.email;
+    state.displayUser = savedSession.displayUser || 'Admin';
+    state.userClass   = savedSession.userClass || 'ADMIN';
+    
+    state.avatarKey = sanitizeText(state.user, 120);
+    localStorage.setItem('nerd_session', JSON.stringify({
+        user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: true, avatarKey: state.avatarKey
+    }));
+    setupUI();
     showSection('adminPage');
 }
 
@@ -745,9 +963,9 @@ async function handleLogin() {
     state.displayUser = sanitizeText(name, 120);
     state.userClass   = sanitizeText(cls, 20);
 
-    localStorage.setItem('nerd_session', JSON.stringify({
-        user: state.user, displayUser: state.displayUser, userClass: state.userClass
-    }));
+    state.avatarKey = sanitizeText(state.user, 120);
+    const sessionData = { user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: state.isAdmin, avatarKey: state.avatarKey };
+    localStorage.setItem('nerd_session', JSON.stringify(sessionData));
     setupUI();
 }
 
@@ -763,10 +981,18 @@ async function setupUI() {
     document.getElementById('userTag').textContent = state.displayUser + ' // ' + state.userClass;
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('header').classList.replace('hidden', 'flex');
+    
+    // Đảm bảo nút Admin hiện ra nếu đã đăng nhập
+    if (state.isAdmin) {
+        document.getElementById('adminBtn').classList.remove('hidden');
+    } else {
+        document.getElementById('adminBtn').classList.add('hidden');
+    }
+
     if (!localStorage.getItem('nerd_joined')) {
         localStorage.setItem('nerd_joined', new Date().toLocaleDateString('vi-VN'));
     }
-    initAvatarUI();
+    loadUserAvatar(); // Nạp ảnh đại diện khi đăng nhập
     showSection('mainMenu');
     await fetchExams();
 }
@@ -951,7 +1177,7 @@ function removeWatermark() { const el = document.getElementById('examWatermark')
 async function submitExam() {
     if (_submitting || state.submitted) return;
     const _lastSub = localStorage.getItem('nerd_last_submit');
-    if (_lastSub && Date.now() - parseInt(_lastSub) < 30000) { alert('Vui lòng đợi 30 giây giữa các lần nộp!'); return; }
+    if (_lastSub && Date.now() - parseInt(_lastSub) < 15000) { showToast('Vui lòng đợi 15 giây giữa các lần nộp!', 'error'); return; }
     localStorage.setItem('nerd_last_submit', String(Date.now()));
     _submitting = true;
 
@@ -1571,6 +1797,8 @@ async function checkOAuthSession() {
             const d = JSON.parse(saved);
             if (d.user && d.userClass) {
                 state.user = d.user; state.displayUser = d.displayUser || d.user; state.userClass = d.userClass;
+                state.avatarKey = sanitizeText(d.avatarKey || d.user, 120);
+                state.isAdmin = state.isAdmin || !!d.isAdmin || ADMIN_EMAILS.includes(d.user);
                 setupUI(); return;
             }
         }
@@ -1593,41 +1821,40 @@ function saveGoogleProfile() {
     state.user        = sanitizeText(name, 120);
     state.displayUser = sanitizeText(name, 120);
     state.userClass   = sanitizeText(cls, 20);
+    state.avatarKey   = state.user;
     const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
     localStorage.setItem('nerd_joined', joined);
     localStorage.setItem('nerd_session', JSON.stringify({
-        user: state.user, displayUser: state.displayUser, userClass: state.userClass
+        user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: state.isAdmin, avatarKey: state.avatarKey
     }));
     document.getElementById('googleNameModal').style.display = 'none';
     setupUI();
 }
 
 async function openProfile() {
-    const avatarData = localStorage.getItem('nerd_avatar');
-    const wrap = document.getElementById('profileAvatarWrap');
-    const initial = document.getElementById('profileAvatarInitial');
-    if (avatarData) {
-        let img = wrap.querySelector('img');
-        if (!img) { img = document.createElement('img'); wrap.prepend(img); }
-        img.src = avatarData;
-        initial.style.display = 'none';
-    } else {
-        const existing = wrap.querySelector('img');
-        if (existing) existing.remove();
-        initial.style.display = '';
-        initial.textContent = (state.displayUser || '?')[0].toUpperCase();
-    }
+    loadUserAvatar();
+    document.getElementById('profileNameTitle').textContent = state.displayUser || 'Người dùng';
+    document.getElementById('profileClassTitle').textContent = 'Lớp ' + (state.userClass || '—');
     document.getElementById('profileNameDisplay').textContent  = state.displayUser || '—';
     document.getElementById('profileClassDisplay').textContent = '📚 ' + (state.userClass || '—');
     const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
     document.getElementById('profileJoined').textContent = '🗓 Tham gia: ' + joined;
+    document.getElementById('statTotalCorrect').textContent = '—';
+    document.getElementById('statAvgTime').textContent = '—';
+    document.getElementById('statLatestSubmit').textContent = '—';
+    document.getElementById('statLatestExam').textContent = '—';
     hideProfileHistory();
-    document.getElementById('profileModal').style.display = 'flex';
+    const modal = document.getElementById('profileModal');
+    modal.classList.remove('closing');
+    modal.style.display = 'flex';
     try {
-        const { data } = await _sb.from('history')
+        const names = profileHistoryNameFilters();
+        if (!names.length && state.displayUser) names.push(sanitizeText(state.displayUser, 120));
+        let histQ = _sb.from('history')
             .select('score,correct_count,wrong_count,time_used,exam,date,submit_time')
-            .eq('name', state.displayUser)
-            .order('id', { ascending: false });
+            .eq('user_class', state.userClass);
+        histQ = names.length <= 1 ? histQ.eq('name', names[0]) : histQ.in('name', names);
+        const { data } = await histQ.order('id', { ascending: false });
         const rows = data || [];
         document.getElementById('statCount').textContent = rows.length || '0';
         if (rows.length) {
@@ -1635,69 +1862,38 @@ async function openProfile() {
             document.getElementById('statAvgScore').textContent = avg.toFixed(1);
             const best = Math.max(...rows.map(r => parseFloat(r.score || 0)));
             document.getElementById('statBest').textContent = best.toFixed(1);
+            const totalCorrect = rows.reduce((s, r) => s + Number(r.correct_count || 0), 0);
+            const avgTime = rows.reduce((s, r) => s + Number(r.time_used || 0), 0) / rows.length;
+            const latest = rows[0];
+            const mm = Math.floor(avgTime / 60);
+            const ss = Math.round(avgTime % 60);
+            document.getElementById('statTotalCorrect').textContent = `${totalCorrect} câu`;
+            document.getElementById('statAvgTime').textContent = `${mm}p${String(ss).padStart(2, '0')}s`;
+            document.getElementById('statLatestSubmit').textContent = `${latest.submit_time || '—'} ${latest.date || ''}`.trim();
+            document.getElementById('statLatestExam').textContent = latest.exam || '—';
         } else {
             document.getElementById('statAvgScore').textContent = '—';
             document.getElementById('statBest').textContent     = '—';
+            document.getElementById('statTotalCorrect').textContent = '0 câu';
+            document.getElementById('statAvgTime').textContent = '—';
+            document.getElementById('statLatestSubmit').textContent = '—';
+            document.getElementById('statLatestExam').textContent = '—';
         }
         window._profileHistory = rows;
-    } catch (e) { document.getElementById('statCount').textContent = '?'; }
-}
-
-function closeProfile() { document.getElementById('profileModal').style.display = 'none'; }
-function triggerAvatarPick() { document.getElementById('avatarFileInput').click(); }
-
-function handleAvatarFile(input) {
-    const file = input.files[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = 100; canvas.height = 100;
-            const ctx = canvas.getContext('2d');
-            const min = Math.min(img.width, img.height);
-            const sx = (img.width - min) / 2, sy = (img.height - min) / 2;
-            ctx.drawImage(img, sx, sy, min, min, 0, 0, 200, 200);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
-            localStorage.setItem('nerd_avatar', dataUrl);
-            updateAvatarUI(dataUrl);
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-    input.value = '';
-}
-
-function updateAvatarUI(dataUrl) {
-    const hav = document.getElementById('headerAvatar');
-    if (hav) {
-        hav.innerHTML = dataUrl
-            ? `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
-            : (state.displayUser || '?')[0].toUpperCase();
-    }
-    const wrap = document.getElementById('profileAvatarWrap');
-    if (wrap) {
-        let img = wrap.querySelector('img');
-        if (dataUrl) {
-            if (!img) { img = document.createElement('img'); wrap.prepend(img); }
-            img.src = dataUrl;
-            const initial = document.getElementById('profileAvatarInitial');
-            if (initial) initial.style.display = 'none';
-        } else {
-            if (img) img.remove();
-            const initial = document.getElementById('profileAvatarInitial');
-            if (initial) { initial.style.display = ''; initial.textContent = (state.displayUser || '?')[0].toUpperCase(); }
-        }
+    } catch (e) {
+        document.getElementById('statCount').textContent = '?';
+        document.getElementById('statTotalCorrect').textContent = '—';
     }
 }
 
-function initAvatarUI() {
-    const av = localStorage.getItem('nerd_avatar');
-    updateAvatarUI(av || null);
-    if (!av) {
-        const hav = document.getElementById('headerAvatar');
-        if (hav) hav.textContent = (state.displayUser || '?')[0].toUpperCase();
-    }
+function closeProfile() {
+    const modal = document.getElementById('profileModal');
+    modal.classList.add('closing');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('closing');
+        document.getElementById('avatarMenu').classList.add('hidden');
+    }, 220);
 }
 
 function toggleEditField(field) {
@@ -1718,12 +1914,15 @@ function saveFieldEdit(field) {
     if (field === 'name') {
         const val = sanitizeText(document.getElementById('profileNameInput').value, 120);
         if (!val || val.length < 2) return;
-        state.displayUser = val; state.user = val;
+        if (!state.avatarKey) state.avatarKey = sanitizeText(state.user, 120);
+        state.displayUser = val;
         document.getElementById('profileNameDisplay').textContent = val;
+        const titleEl = document.getElementById('profileNameTitle');
+        if (titleEl) titleEl.textContent = val;
         document.getElementById('nameField').classList.remove('hidden');
         document.getElementById('nameEditField').classList.add('hidden');
         document.getElementById('userTag').textContent = val + ' // ' + state.userClass;
-        updateAvatarUI(localStorage.getItem('nerd_avatar') || null);
+        loadUserAvatar();
     } else {
         const val = sanitizeText(document.getElementById('profileClassInput').value, 20);
         if (!val) return;
@@ -1733,9 +1932,15 @@ function saveFieldEdit(field) {
         document.getElementById('classEditField').classList.add('hidden');
         document.getElementById('userTag').textContent = state.displayUser + ' // ' + val;
     }
+    if (!state.avatarKey) state.avatarKey = sanitizeText(state.user, 120);
     localStorage.setItem('nerd_session', JSON.stringify({
-        user: state.user, displayUser: state.displayUser, userClass: state.userClass
+        user: state.user,
+        displayUser: state.displayUser,
+        userClass: state.userClass,
+        isAdmin: state.isAdmin,
+        avatarKey: state.avatarKey
     }));
+    loadUserAvatar(); // Đảm bảo ảnh không bị mất khi đổi tên
 }
 
 function showProfileHistory() {
@@ -1770,6 +1975,340 @@ function toggleHistoryDetail(i) { const el = document.getElementById('hd-'+i); i
 function toggleTheme() {
     document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? '' : 'light');
 }
+// ================= AVATAR SYSTEM V2 =================
+let avatarEditor = {
+    dragging: false,
+    lastX: 0,
+    lastY: 0,
+    minScale: 0.6,
+    maxScale: 5,
+    rafId: 0,
+    initialized: false,
+    baseScale: 1
+};
+
+function getAvatarCropCircle(canvas) {
+    const c = canvas || document.getElementById('avatarCanvas');
+    const radius = c.width * 0.4; // match CSS inset: 10%
+    return { cx: c.width / 2, cy: c.height / 2, r: radius, diameter: radius * 2 };
+}
+
+function sliderToScale(v) {
+    const pct = Math.max(-100, Math.min(100, Number(v)));
+    if (pct <= 0) {
+        const t = (pct + 100) / 100; // [-100..0] => [0..1]
+        return avatarEditor.minScale + (avatarEditor.baseScale - avatarEditor.minScale) * t;
+    }
+    const t = pct / 100; // [0..100] => [0..1]
+    return avatarEditor.baseScale + (avatarEditor.maxScale - avatarEditor.baseScale) * t;
+}
+
+function scaleToSlider(scale) {
+    const s = Number(scale);
+    if (s <= avatarEditor.baseScale) {
+        const span = avatarEditor.baseScale - avatarEditor.minScale;
+        if (span <= 0) return 0;
+        return Math.round(-100 + ((s - avatarEditor.minScale) / span) * 100);
+    }
+    const spanUp = avatarEditor.maxScale - avatarEditor.baseScale || 1;
+    return Math.round(((s - avatarEditor.baseScale) / spanUp) * 100);
+}
+
+function getAvatarKey() {
+    const key = (state.avatarKey || state.user || state.displayUser || 'guest').trim();
+    return key || 'guest';
+}
+
+function profileHistoryNameFilters() {
+    return [...new Set(
+        [state.avatarKey, state.user, state.displayUser]
+            .map(s => sanitizeText(s, 120))
+            .filter(Boolean)
+    )];
+}
+
+function toggleAvatarMenu() {
+    document.getElementById('avatarMenu').classList.toggle('hidden');
+}
+
+function setHeaderAvatarInitial() {
+    const headerBtn = document.getElementById('headerAvatar');
+    const initial = (state.displayUser || '?').charAt(0).toUpperCase();
+    headerBtn.classList.remove('has-image');
+    headerBtn.textContent = initial;
+}
+
+function loadUserAvatar() {
+    const key = getAvatarKey();
+    const savedData = localStorage.getItem(`nerd_avatar_${key}`);
+    const imgEl = document.getElementById('userAvatar');
+    const initEl = document.getElementById('profileAvatarInitial');
+    const headerBtn = document.getElementById('headerAvatar');
+    const wrap = document.getElementById('profileAvatarWrap');
+
+    if (savedData && savedData.startsWith('data:image')) {
+        imgEl.src = savedData;
+        imgEl.classList.remove('hidden');
+        initEl.classList.add('hidden');
+        wrap.classList.add('has-image');
+        headerBtn.classList.add('has-image');
+        headerBtn.innerHTML = `<img src="${savedData}" alt="avatar">`;
+    } else {
+        imgEl.src = '';
+        imgEl.classList.add('hidden');
+        initEl.classList.remove('hidden');
+        wrap.classList.remove('has-image');
+        headerBtn.classList.remove('has-image');
+        const initial = (state.displayUser || '?').charAt(0).toUpperCase();
+        initEl.textContent = initial;
+        setHeaderAvatarInitial();
+    }
+    const nameTitle = document.getElementById('profileNameTitle');
+    const classTitle = document.getElementById('profileClassTitle');
+    if (nameTitle) nameTitle.textContent = state.displayUser || 'Người dùng';
+    if (classTitle) classTitle.textContent = 'Lớp ' + (state.userClass || '—');
+}
+
+function viewAvatar() {
+    const key = getAvatarKey();
+    const src = localStorage.getItem(`nerd_avatar_orig_${key}`) || localStorage.getItem(`nerd_avatar_${key}`);
+    if (src && src.startsWith('data:image')) {
+        document.getElementById('avatarFullImage').src = src;
+        document.getElementById('avatarViewModal').style.display = 'flex';
+    } else {
+        showToast('Chưa có ảnh đại diện!', 'error');
+    }
+    document.getElementById('avatarMenu').classList.add('hidden');
+}
+
+function closeAvatarView() { document.getElementById('avatarViewModal').style.display = 'none'; }
+
+function downloadAvatar() {
+    const key = getAvatarKey();
+    const src = localStorage.getItem(`nerd_avatar_${key}`);
+    if (!src || !src.startsWith('data:image')) {
+        showToast('Chưa có ảnh đại diện!', 'error');
+        return;
+    }
+    const a = document.createElement('a');
+    a.href = src; a.download = `avatar-${key}.png`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    document.getElementById('avatarMenu').classList.add('hidden');
+}
+
+function startAvatarUpload() {
+    document.getElementById('avatarInput').click();
+    document.getElementById('avatarMenu').classList.add('hidden');
+}
+
+function handleAvatarFile(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    if (!file.type.startsWith('image/')) {
+        showToast('File không phải ảnh!', 'error');
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        state.tempOrigData = e.target.result;
+        const img = new Image();
+        img.onload = () => {
+            state.avatarFile = img;
+            const canvas = document.getElementById('avatarCanvas');
+            const crop = getAvatarCropCircle(canvas);
+            const fitScale = Math.max(crop.diameter / img.width, crop.diameter / img.height);
+            // Giữa thanh (-/+) = vừa khít vòng avatar; trái = thu nhỏ (ảnh trong tròn, viền tối), phải = phóng to.
+            avatarEditor.baseScale = fitScale;
+            avatarEditor.minScale = Math.max(fitScale * 0.45, crop.diameter / Math.max(img.width, img.height) * 0.35);
+            state.avatarScale = fitScale;
+            state.avatarPos = { x: 0, y: 0 };
+            const zoom = document.getElementById('avatarZoom');
+            zoom.value = String(scaleToSlider(state.avatarScale));
+            showAvatarEditor();
+            input.value = '';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function showAvatarEditor() {
+    document.getElementById('profileModal').style.display = 'none';
+    document.getElementById('avatarEditorModal').style.display = 'flex';
+    const canvas = document.getElementById('avatarCanvas');
+    canvas.setAttribute('tabindex', '-1');
+    requestAnimationFrame(() => { try { canvas.focus({ preventScroll: true }); } catch (_) { canvas.focus(); } });
+    renderAvatarCanvas();
+}
+
+function closeAvatarEditor() {
+    document.getElementById('avatarEditorModal').style.display = 'none';
+    document.getElementById('profileModal').style.display = 'flex';
+}
+
+function clampAvatarPos() {
+    const canvas = document.getElementById('avatarCanvas');
+    const img = state.avatarFile;
+    if (!img) return;
+    const crop = getAvatarCropCircle(canvas);
+    const drawW = img.width * state.avatarScale;
+    const drawH = img.height * state.avatarScale;
+    // Khi ảnh lớn hơn ô tròn: pan giới hạn để không hở. Khi nhỏ hơn: vẫn cho kéo trái/phải trong phạm vi vòng crop.
+    const maxPanX = Math.abs(drawW - crop.diameter) / 2;
+    const maxPanY = Math.abs(drawH - crop.diameter) / 2;
+    state.avatarPos.x = Math.min(maxPanX, Math.max(-maxPanX, state.avatarPos.x));
+    state.avatarPos.y = Math.min(maxPanY, Math.max(-maxPanY, state.avatarPos.y));
+}
+
+function requestRenderAvatar() {
+    cancelAnimationFrame(avatarEditor.rafId);
+    avatarEditor.rafId = requestAnimationFrame(renderAvatarCanvas);
+}
+
+function renderAvatarCanvas() {
+    const canvas = document.getElementById('avatarCanvas');
+    const ctx = canvas.getContext('2d');
+    const img = state.avatarFile;
+    if (!img) return;
+    const crop = getAvatarCropCircle(canvas);
+    clampAvatarPos();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const w = img.width * state.avatarScale;
+    const h = img.height * state.avatarScale;
+    const x = (canvas.width - w) / 2 + state.avatarPos.x;
+    const y = (canvas.height - h) / 2 + state.avatarPos.y;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, x, y, w, h);
+
+    // Darken area outside crop circle so preview matches output.
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.58)';
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.moveTo(crop.cx + crop.r, crop.cy);
+    ctx.arc(crop.cx, crop.cy, crop.r, 0, Math.PI * 2, true);
+    ctx.fill('evenodd');
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(crop.cx, crop.cy, crop.r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.26)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+}
+
+function initEditorEvents() {
+    if (avatarEditor.initialized) return;
+    avatarEditor.initialized = true;
+    const canvas = document.getElementById('avatarCanvas');
+    const zoom = document.getElementById('avatarZoom');
+    function editorVisible() {
+        return document.getElementById('avatarEditorModal').style.display === 'flex';
+    }
+    function panByClientDelta(clientDx, clientDy) {
+        const rect = canvas.getBoundingClientRect();
+        const ratioX = canvas.width / rect.width;
+        const ratioY = canvas.height / rect.height;
+        state.avatarPos.x += clientDx * ratioX;
+        state.avatarPos.y += clientDy * ratioY;
+        requestRenderAvatar();
+    }
+    canvas.addEventListener('pointerdown', (e) => {
+        if (!editorVisible()) return;
+        if (e.button !== undefined && e.button !== 0) return;
+        avatarEditor.dragging = true;
+        avatarEditor.lastX = e.clientX;
+        avatarEditor.lastY = e.clientY;
+        canvas.classList.add('dragging');
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    canvas.addEventListener('pointermove', (e) => {
+        if (!editorVisible() || !avatarEditor.dragging) return;
+        panByClientDelta(e.clientX - avatarEditor.lastX, e.clientY - avatarEditor.lastY);
+        avatarEditor.lastX = e.clientX;
+        avatarEditor.lastY = e.clientY;
+    });
+    const endDrag = () => {
+        avatarEditor.dragging = false;
+        canvas.classList.remove('dragging');
+    };
+    canvas.addEventListener('pointerup', endDrag);
+    canvas.addEventListener('pointercancel', endDrag);
+    canvas.addEventListener('lostpointercapture', endDrag);
+    zoom.addEventListener('input', () => {
+        state.avatarScale = sliderToScale(zoom.value);
+        requestRenderAvatar();
+    });
+    canvas.addEventListener('wheel', (e) => {
+        if (!editorVisible()) return;
+        e.preventDefault();
+        const next = state.avatarScale + (e.deltaY < 0 ? 0.06 : -0.06);
+        state.avatarScale = Math.min(avatarEditor.maxScale, Math.max(avatarEditor.minScale, next));
+        zoom.value = String(scaleToSlider(state.avatarScale));
+        requestRenderAvatar();
+    }, { passive: false });
+    window.addEventListener('keydown', (e) => {
+        if (!editorVisible()) return;
+        const step = e.shiftKey ? 18 : 8;
+        let moved = false;
+        if (e.key === 'ArrowUp') { state.avatarPos.y -= step; moved = true; }
+        if (e.key === 'ArrowDown') { state.avatarPos.y += step; moved = true; }
+        if (e.key === 'ArrowLeft') { state.avatarPos.x -= step; moved = true; }
+        if (e.key === 'ArrowRight') { state.avatarPos.x += step; moved = true; }
+        if (moved) {
+            e.preventDefault();
+            requestRenderAvatar();
+        }
+    });
+}
+
+function saveAvatar() {
+    const canvas = document.getElementById('avatarCanvas');
+    const crop = getAvatarCropCircle(canvas);
+    const img = state.avatarFile;
+    if (!img) return;
+
+    const previewW = img.width * state.avatarScale;
+    const previewH = img.height * state.avatarScale;
+    const previewX = (canvas.width - previewW) / 2 + state.avatarPos.x;
+    const previewY = (canvas.height - previewH) / 2 + state.avatarPos.y;
+    const ratio = 512 / crop.diameter;
+
+    const out = document.createElement('canvas');
+    out.width = 512;
+    out.height = 512;
+    const outCtx = out.getContext('2d');
+    outCtx.clearRect(0, 0, out.width, out.height);
+    outCtx.imageSmoothingEnabled = true;
+    outCtx.imageSmoothingQuality = 'high';
+    outCtx.save();
+    outCtx.beginPath();
+    outCtx.arc(256, 256, 256, 0, Math.PI * 2);
+    outCtx.clip();
+    outCtx.drawImage(
+        img,
+        (previewX - (crop.cx - crop.r)) * ratio,
+        (previewY - (crop.cy - crop.r)) * ratio,
+        previewW * ratio,
+        previewH * ratio
+    );
+    outCtx.restore();
+
+    const dataUrl = out.toDataURL('image/png', 1);
+    const key = getAvatarKey();
+    localStorage.setItem(`nerd_avatar_${key}`, dataUrl);
+    if (state.tempOrigData) localStorage.setItem(`nerd_avatar_orig_${key}`, state.tempOrigData);
+    loadUserAvatar();
+    closeAvatarEditor();
+    showToast('Đã lưu ảnh đại diện!', 'success');
+}
+
+initEditorEvents();
 </script>
 </body>
 </html>
