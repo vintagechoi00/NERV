@@ -42,7 +42,6 @@
             border-radius: 28px;
         }
 
-        /* ─── ANIMATIONS ─────────────────────────────────────────────────── */
         @keyframes slideUpFade { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes pageIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
         @keyframes pageOut { to{opacity:0;transform:translateY(-10px)} }
@@ -66,23 +65,17 @@
         @keyframes profileModalIn { from{opacity:0;transform:translateY(14px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
         @keyframes profileModalOut { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(10px) scale(0.98)} }
         @keyframes pulseRing { 0%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} 70%{box-shadow:0 0 0 10px rgba(239,68,68,0)} 100%{box-shadow:0 0 0 0 rgba(239,68,68,0)} }
-        @keyframes resultSlideIn { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
-        @keyframes scoreGlow { 0%,100%{text-shadow:0 0 40px rgba(249,115,22,0.3)} 50%{text-shadow:0 0 80px rgba(249,115,22,0.6),0 0 120px rgba(251,191,36,0.3)} }
-        @keyframes statCountUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         @keyframes avatarRingPulse { 0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,0.4),0 18px 34px rgba(249,115,22,0.2)} 50%{box-shadow:0 0 0 8px rgba(249,115,22,0.1),0 18px 34px rgba(249,115,22,0.35)} }
 
-        /* ─── PAGE TRANSITIONS ───────────────────────────────────────────── */
         .page-section { transition: opacity 0.22s ease, transform 0.22s ease; }
         .page-section.entering { animation: pageIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
         .page-section.exiting  { animation: pageOut 0.18s ease forwards; pointer-events: none; }
 
-        /* ─── TIMER ──────────────────────────────────────────────────────── */
         .timer-normal { color: var(--primary) !important; }
         .timer-warn   { color: #fb923c !important; }
         .timer-urgent { color: #ef4444 !important; animation: timerUrgent 0.7s ease-in-out infinite; text-shadow: 0 0 24px rgba(239,68,68,0.5); }
         .sidebar-urgent { animation: pulseRing 1.5s infinite; border-color: rgba(239,68,68,0.4) !important; }
 
-        /* ─── SCORE ──────────────────────────────────────────────────────── */
         .score-animate { animation: scoreReveal 0.9s cubic-bezier(0.16,1,0.3,1) forwards; }
         .score-s  { color: #fbbf24; }
         .score-a  { color: #22c55e; }
@@ -95,14 +88,12 @@
         .result-entrance:nth-child(4) { animation-delay: 0.3s; }
         .result-entrance:nth-child(5) { animation-delay: 0.4s; }
 
-        /* ─── VAULT CARD ─────────────────────────────────────────────────── */
         .vault-card-content { max-height:0; opacity:0; overflow:hidden; transition:max-height 0.58s cubic-bezier(0.4,0,0.2,1),opacity 0.38s ease; }
         .vault-card.expanded .vault-card-content { max-height:1400px; opacity:1; }
         .vault-card { transition:border-color 0.35s ease,box-shadow 0.4s ease; }
         .vault-card.expanded { grid-column:1/-1; box-shadow:0 16px 40px -8px rgba(249,115,22,0.25); border-color:rgba(249,115,22,0.5); animation:vaultExpandPulse 0.5s ease forwards; }
         .animate-vault-card { animation:vaultCardIn 0.55s cubic-bezier(0.16,1,0.3,1) both; }
 
-        /* ─── TOAST ──────────────────────────────────────────────────────── */
         #toast-container { position:fixed;top:28px;left:50%;transform:translateX(-50%);z-index:9999;pointer-events:none;display:flex;flex-direction:column;gap:10px;align-items:center; }
         .toast { background:rgba(12,12,12,0.96);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);color:white;padding:13px 26px;border-radius:20px;font-weight:900;text-transform:uppercase;font-size:10px;letter-spacing:1px;box-shadow:0 20px 40px rgba(0,0,0,0.5);display:flex;align-items:center;gap:12px;animation:toastIn 0.45s cubic-bezier(0.16,1,0.3,1) forwards;pointer-events:auto;position:relative;overflow:hidden; }
         .toast::after { content:'';position:absolute;bottom:0;left:0;height:2px;width:100%;transform-origin:left;animation:toastProgress var(--duration,4s) linear forwards; }
@@ -111,11 +102,9 @@
         .toast.success{ border-bottom:2px solid #00ff88; } .toast.success::after{ background:#00ff88; }
         .toast.normal { border-bottom:2px solid var(--primary); } .toast.normal::after { background:var(--primary); }
 
-        /* ─── RIPPLE ─────────────────────────────────────────────────────── */
         .ripple-host { position:relative;overflow:hidden; }
         .ripple { position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,0.18);animation:rippleAnim 0.55s ease-out;pointer-events:none; }
 
-        /* ─── BUTTONS ────────────────────────────────────────────────────── */
         .btn-premium { background:linear-gradient(135deg,var(--primary),var(--secondary));color:black;font-weight:800;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);box-shadow:0 10px 25px -5px rgba(249,115,22,0.4); }
         .btn-premium:hover { transform:translateY(-2px) scale(1.02);box-shadow:0 16px 32px -6px rgba(249,115,22,0.55); }
         .btn-premium:active { transform:scale(0.96); }
@@ -124,16 +113,13 @@
         [data-theme="light"] .btn-review-custom { background:white; }
         button:disabled { opacity:0.4 !important;cursor:not-allowed !important;transform:none !important;filter:none !important; }
 
-        /* ─── INPUTS ─────────────────────────────────────────────────────── */
         input, textarea { background:var(--input-bg) !important;border:1px solid rgba(249,115,22,0.2) !important;color:var(--text-main) !important;max-width:100%;transition:border-color 0.2s; }
         input:focus, textarea:focus { border-color:rgba(249,115,22,0.6) !important;outline:none !important; }
 
-        /* ─── HEADER ─────────────────────────────────────────────────────── */
         .nerv-logo-img { width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--secondary));color:black;font-size:28px;font-weight:900;border-radius:14px;transform:rotate(-10deg);filter:drop-shadow(0 4px 12px rgba(249,115,22,0.5));cursor:pointer;transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);flex-shrink:0; }
         .nerv-logo-img span { transform:rotate(10deg);display:inline-block; }
         .nerv-logo-img:hover { transform:scale(1.1) rotate(0deg);filter:drop-shadow(0 0 20px var(--primary)); }
 
-        /* ─── MAIN MENU ──────────────────────────────────────────────────── */
         #mainMenu > div { transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275) !important;position:relative;overflow:hidden;cursor:pointer; }
         #mainMenu > div:hover { transform:translateY(-8px) scale(1.02); }
         #mainMenu > div:nth-child(1):hover { box-shadow:0 20px 40px rgba(249,115,22,0.25); }
@@ -144,7 +130,6 @@
         #mainMenu > div:nth-child(2) .menu-card-inner { animation-delay:0.12s; }
         #mainMenu > div:nth-child(3) .menu-card-inner { animation-delay:0.19s; }
 
-        /* ─── EXAM ───────────────────────────────────────────────────────── */
         .opt-card { background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.06);padding:18px 24px;border-radius:18px;cursor:pointer;transition:all 0.22s cubic-bezier(0.4,0,0.2,1);word-wrap:break-word;position:relative; }
         [data-theme="light"] .opt-card { background:rgba(0,0,0,0.03); }
         .opt-card:hover { background:rgba(249,115,22,0.1);border-color:rgba(249,115,22,0.4);transform:translateX(4px); }
@@ -159,14 +144,11 @@
         .nav-dot:hover { transform:scale(1.1);background:rgba(249,115,22,0.15); }
         .nav-dot.answered { background:var(--primary);color:black; }
 
-        /* ─── SKELETON ───────────────────────────────────────────────────── */
         .skeleton { background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:14px; }
 
-        /* ─── ADMIN ──────────────────────────────────────────────────────── */
         #shufflePills button { transition:all 0.2s;cursor:pointer; }
         #shufflePills button.active-pill { border-color:var(--primary) !important;background:rgba(249,115,22,0.2) !important;color:var(--primary) !important;opacity:1 !important; }
 
-        /* ─── THEME SWITCH ───────────────────────────────────────────────── */
         .switch-container { display:flex;align-items:center;gap:8px; }
         .theme-switch { position:relative;width:44px;height:22px;cursor:pointer; }
         .theme-switch input { opacity:0;width:0;height:0; }
@@ -177,17 +159,12 @@
 
         #topProgressBar { position:fixed;top:0;left:0;height:3px;z-index:1000;background:var(--primary);transition:width 1s linear; }
 
-        /* ─── GUARDS ─────────────────────────────────────────────────────── */
         #cheatGuard { position:fixed;inset:0;background:rgba(220,38,38,0.95);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(20px);text-align:center; }
         #devtoolsGuard { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:99999;align-items:center;justify-content:center;text-align:center;backdrop-filter:blur(20px); }
 
-        /* ─── MODALS ─────────────────────────────────────────────────────── */
         .confirm-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px; }
         #profileModal { z-index:10001; }
 
-        /* ══════════════════════════════════════════════════════════
-           ─── REDESIGNED PROFILE MODAL (2-column, image 1 style) ─
-           ══════════════════════════════════════════════════════════ */
         .profile-modal-panel {
             animation: profileModalIn .4s cubic-bezier(0.16,1,0.3,1);
             transform-origin: top center;
@@ -200,7 +177,6 @@
         }
         .confirm-overlay.closing .profile-modal-panel { animation: profileModalOut .24s ease forwards; }
 
-        /* Header bar */
         .pm-header {
             padding: 22px 32px 18px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -216,11 +192,9 @@
             font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: var(--primary);
         }
 
-        /* Body 2-col */
         .pm-body { display: grid; grid-template-columns: 1fr 1fr; min-height: 420px; }
         @media (max-width: 600px) { .pm-body { grid-template-columns: 1fr; } }
 
-        /* LEFT PANEL */
         .pm-left {
             padding: 36px 32px;
             border-right: 1px solid rgba(255,255,255,0.05);
@@ -236,7 +210,6 @@
             pointer-events: none;
         }
 
-        /* Avatar */
         .profile-avatar-wrap {
             width: 110px; height: 110px; border-radius: 50%;
             position: relative; cursor: pointer; overflow: hidden;
@@ -253,7 +226,6 @@
         .profile-avatar-wrap.has-image { background: #000 !important; border: none !important; }
         .profile-avatar-wrap img { width:100%; height:100%; object-fit:cover; position:absolute; border-radius:50%; }
 
-        /* Camera button overlay */
         .avatar-camera-btn {
             position: absolute; bottom: 3px; right: 3px;
             width: 30px; height: 30px; border-radius: 50%;
@@ -267,28 +239,23 @@
         .pm-name { font-size: 22px; font-weight: 900; text-align: center; margin-top: 8px; letter-spacing: -0.02em; }
         .pm-class { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; color: var(--primary); margin-top: 2px; margin-bottom: 20px; }
 
-        /* Stats row */
         .pm-stats-row { display: flex; gap: 0; width: 100%; border: 1px solid rgba(255,255,255,0.07); border-radius: 18px; overflow: hidden; margin-bottom: 16px; }
         .pm-stat { flex: 1; padding: 14px 8px; text-align: center; background: rgba(255,255,255,0.02); position: relative; }
         .pm-stat + .pm-stat { border-left: 1px solid rgba(255,255,255,0.07); }
         .pm-stat-val { font-size: 20px; font-weight: 900; line-height: 1; }
         .pm-stat-lbl { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.35; margin-top: 4px; }
 
-        /* Meta grid */
         .pm-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
         .pm-meta-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; }
         .pm-meta-item p:first-child { font-size: 8px; opacity: .4; text-transform: uppercase; letter-spacing: .12em; font-weight: 800; margin-bottom: 3px; }
         .pm-meta-item p:last-child { font-size: 11px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* History */
         .history-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
         .history-item:hover { border-color: var(--primary); background: rgba(249,115,22,0.05); }
 
-        /* RIGHT PANEL */
         .pm-right { padding: 36px 32px; display: flex; flex-direction: column; gap: 0; }
         .pm-right-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; opacity: 0.3; margin-bottom: 22px; }
 
-        /* Edit fields */
         .pm-field-label { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.35; margin-bottom: 6px; }
         .pm-field-wrap { position: relative; margin-bottom: 18px; }
         .pm-field-input {
@@ -296,18 +263,15 @@
             background: #1a1a1a !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
             border-radius: 14px !important;
-            padding: 14px 18px 14px 18px !important;
+            padding: 14px 18px !important;
             font-size: 14px !important;
             font-weight: 700 !important;
             color: var(--text-main) !important;
             transition: border-color 0.2s, box-shadow 0.2s !important;
-            cursor: default;
+            cursor: text;
         }
-        .pm-field-input:focus { border-color: rgba(249,115,22,0.6) !important; box-shadow: 0 0 0 3px rgba(249,115,22,0.1) !important; cursor: text; }
-        .pm-field-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: 0.3; cursor: pointer; transition: 0.2s; background: none; border: none; color: var(--text-main); padding: 4px; }
-        .pm-field-icon:hover { opacity: 0.8; color: var(--primary); }
+        .pm-field-input:focus { border-color: rgba(249,115,22,0.6) !important; box-shadow: 0 0 0 3px rgba(249,115,22,0.1) !important; }
 
-        /* Save button */
         .pm-save-btn {
             width: 100%; padding: 16px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -323,17 +287,14 @@
         .pm-save-btn:active { transform: scale(0.97); }
         .pm-save-btn .material-icons { font-size: 18px; }
 
-        /* History section in right panel */
         .pm-history-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 4px; transition: 0.2s; }
         .pm-history-toggle:hover { color: var(--primary); }
         .pm-history-toggle span { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.4; transition: 0.2s; }
         .pm-history-toggle:hover span { opacity: 1; }
 
-        /* Logout */
         .pm-logout-btn { margin-top: auto; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; cursor: pointer; transition: 0.2s; }
         .pm-logout-btn:hover { background: rgba(239,68,68,0.15); }
 
-        /* ── AVATAR STUFF ── */
         .avatar-btn { width:42px;height:42px;border-radius:999px;cursor:pointer;overflow:hidden;flex-shrink:0;display:grid;place-items:center;font-weight:900;font-size:14px;color:#0b0b0b;background:linear-gradient(135deg,var(--primary),var(--secondary));border:1px solid rgba(249,115,22,0.25) !important;box-shadow:0 0 0 1px rgba(255,255,255,0.04) inset,0 8px 20px rgba(249,115,22,0.2);transition:transform .22s ease,box-shadow .25s ease; }
         .avatar-btn:hover { transform:translateY(-1px) scale(1.05);box-shadow:0 0 0 2px rgba(249,115,22,0.3),0 12px 24px rgba(249,115,22,0.3); }
         .avatar-btn img { width:100%;height:100%;object-fit:cover;border-radius:50%;display:block; }
@@ -352,115 +313,29 @@
         .zoom-ctrl input[type=range] { flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:linear-gradient(90deg,rgba(249,115,22,.8),rgba(251,191,36,.75)); }
         .zoom-ctrl input[type=range]::-webkit-slider-thumb { -webkit-appearance:none;width:18px;height:18px;background:#fff;border:3px solid var(--primary);border-radius:50%;box-shadow:0 0 14px rgba(249,115,22,.65); }
 
-        /* ══════════════════════════════════════════════════════════
-           ─── REDESIGNED RESULT PAGE (image 3 style, more polish) ─
-           ══════════════════════════════════════════════════════════ */
-        #resultPage {
-            padding: 40px 20px 80px;
-        }
-        .result-container {
-            max-width: 680px;
-            margin: 0 auto;
-        }
-        /* Top label */
-        .result-complete-label {
-            text-align: center;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.4em;
-            color: var(--primary);
-            opacity: 0.7;
-            margin-bottom: 16px;
-        }
-        /* Score display */
-        .result-score-wrap {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .result-score-number {
-            font-size: clamp(100px, 18vw, 160px);
-            font-weight: 900;
-            font-style: italic;
-            line-height: 0.9;
-            letter-spacing: -0.04em;
-        }
-        .result-label-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 20px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 24px;
-        }
-        /* Stats card */
-        .result-stats-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px;
-            padding: 24px 28px;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0;
-            margin-bottom: 20px;
-        }
+        #resultPage { padding: 40px 20px 80px; }
+        .result-container { max-width: 680px; margin: 0 auto; }
+        .result-complete-label { text-align: center; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4em; color: var(--primary); opacity: 0.7; margin-bottom: 16px; }
+        .result-score-wrap { text-align: center; margin-bottom: 8px; }
+        .result-score-number { font-size: clamp(100px, 18vw, 160px); font-weight: 900; font-style: italic; line-height: 0.9; letter-spacing: -0.04em; }
+        .result-label-pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; border-radius: 999px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; }
+        .result-stats-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-bottom: 20px; }
         .result-stat-item { text-align: center; padding: 0 8px; }
         .result-stat-item + .result-stat-item { border-left: 1px solid rgba(255,255,255,0.06); }
         .result-stat-val { font-size: 28px; font-weight: 900; line-height: 1.1; }
         .result-stat-lbl { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.35; margin-top: 4px; }
-        /* Detail row */
-        .result-detail-row {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 14px 20px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            opacity: 0.5;
-            text-align: center;
-            margin-bottom: 28px;
-        }
-        /* Buttons */
-        .result-btn-primary {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: black;
-            font-weight: 900; font-size: 14px;
-            text-transform: uppercase; letter-spacing: 0.12em;
-            border-radius: 16px; border: none; cursor: pointer;
-            transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 12px 28px -6px rgba(249,115,22,0.45);
-            margin-bottom: 10px;
-        }
+        .result-detail-row { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 14px 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; text-align: center; margin-bottom: 28px; }
+        .result-btn-primary { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: black; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; border-radius: 16px; border: none; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 12px 28px -6px rgba(249,115,22,0.45); margin-bottom: 10px; }
         .result-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -8px rgba(249,115,22,0.6); }
-        .result-btn-secondary {
-            width: 100%;
-            padding: 16px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(249,115,22,0.3);
-            color: var(--primary);
-            font-weight: 900; font-size: 13px;
-            text-transform: uppercase; letter-spacing: 0.1em;
-            border-radius: 16px; cursor: pointer;
-            transition: all 0.3s;
-        }
+        .result-btn-secondary { width: 100%; padding: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(249,115,22,0.3); color: var(--primary); font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 16px; cursor: pointer; transition: all 0.3s; }
         .result-btn-secondary:hover { background: rgba(249,115,22,0.1); transform: translateY(-1px); }
 
-        /* Admin login modal */
         .admin-link { color:rgba(249,115,22,0.5);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:color 0.2s;text-decoration:none;display:block;text-align:center;margin-top:16px; }
         .admin-link:hover { color:var(--primary); }
         #adminLoginError { color:#ef4444;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-align:center;min-height:20px;margin-bottom:8px; }
         .btn-google { background:white;color:#334155;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid rgba(0,0,0,0.1);transition:all 0.3s; }
         .btn-google:hover { transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.15); }
 
-        /* File import */
         #fileStatus { display:none;padding:10px 16px;border-radius:14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;text-align:center; }
         #fileStatus.s-ok   { background:rgba(34,197,94,0.12);border:1px solid #22c55e;color:#16a34a;display:block; }
         #fileStatus.s-err  { background:rgba(239,68,68,0.12);border:1px solid #ef4444;color:#dc2626;display:block; }
@@ -482,7 +357,6 @@
 
     <div id="topProgressBar" class="hidden" style="width:100%"></div>
 
-    <!-- DEVTOOLS GUARD -->
     <div id="devtoolsGuard">
         <div style="color:white;padding:40px;">
             <div style="font-size:60px;margin-bottom:20px;">🚫</div>
@@ -504,13 +378,10 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════
-         REDESIGNED PROFILE MODAL - 2 COLUMN LAYOUT (Image 1)
-         ═══════════════════════════════════════════════════════ -->
+    <!-- PROFILE MODAL -->
     <div id="profileModal" class="confirm-overlay" onclick="closeProfile()">
         <div class="profile-modal-panel" onclick="event.stopPropagation()">
 
-            <!-- Header bar -->
             <div class="pm-header">
                 <span class="pm-header-title">Hồ Sơ Cá Nhân</span>
                 <div style="display:flex;align-items:center;gap:12px;">
@@ -522,15 +393,12 @@
                 </div>
             </div>
 
-            <!-- Divider -->
             <div style="height:1px;background:rgba(255,255,255,0.04);"></div>
 
-            <!-- Body: 2 columns -->
             <div class="pm-body">
 
                 <!-- LEFT: Avatar + Stats -->
                 <div class="pm-left">
-                    <!-- Avatar with camera button -->
                     <div style="position:relative;margin-bottom:4px;">
                         <div class="profile-avatar-wrap" id="profileAvatarWrap" onclick="toggleAvatarMenu()">
                             <img id="userAvatar" src="" class="hidden" style="border-radius:50%;">
@@ -539,7 +407,6 @@
                         <div class="avatar-camera-btn" onclick="startAvatarUpload()" title="Đổi ảnh">
                             <span class="material-icons">photo_camera</span>
                         </div>
-                        <!-- Avatar dropdown menu -->
                         <div id="avatarMenu" class="hidden" style="position:absolute;top:115%;left:50%;transform:translateX(-50%);width:170px;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;padding:8px;box-shadow:0 20px 40px rgba(0,0,0,0.7);z-index:100;">
                             <div class="avatar-menu-item" onclick="startAvatarUpload()"><span class="material-icons text-base">upload</span> Upload photo</div>
                             <div class="avatar-menu-item" onclick="viewAvatar()"><span class="material-icons text-base">visibility</span> View photo</div>
@@ -551,7 +418,6 @@
                     <p class="pm-name" id="profileNameTitle">—</p>
                     <p class="pm-class" id="profileClassTitle">LỚP —</p>
 
-                    <!-- Stats row -->
                     <div class="pm-stats-row">
                         <div class="pm-stat">
                             <div id="statCount" class="pm-stat-val" style="color:var(--text-main);">—</div>
@@ -567,7 +433,6 @@
                         </div>
                     </div>
 
-                    <!-- Meta grid -->
                     <div class="pm-meta-grid">
                         <div class="pm-meta-item"><p>Tổng đúng</p><p id="statTotalCorrect">—</p></div>
                         <div class="pm-meta-item"><p>Thời gian TB</p><p id="statAvgTime">—</p></div>
@@ -577,7 +442,6 @@
 
                     <p id="profileJoined" class="text-[9px] opacity-25 uppercase tracking-widest text-center mt-3"></p>
 
-                    <!-- History list (hidden by default) -->
                     <div id="profileHistoryList" class="hidden mt-4 w-full">
                         <p class="text-[9px] font-black uppercase tracking-widest text-orange-500 mb-3">📋 Lịch sử làm bài</p>
                         <div id="profileHistoryItems" style="max-height:200px;overflow-y:auto;"></div>
@@ -585,39 +449,27 @@
                     </div>
                 </div>
 
-                <!-- RIGHT: Settings form -->
+                <!-- RIGHT: Settings -->
                 <div class="pm-right">
                     <p class="pm-right-title">Cài Đặt Thông Tin</p>
 
-                    <!-- Name field -->
+                    <!-- Name field - directly editable, no toggle -->
                     <div class="pm-field-label">Họ và Tên</div>
-                    <div class="pm-field-wrap" id="nameField">
-                        <input type="text" class="pm-field-input" id="profileNameDisplay" readonly>
-                        <button class="pm-field-icon" onclick="toggleEditField('name')" title="Sửa tên">✏️</button>
-                    </div>
-                    <div class="pm-field-wrap hidden" id="nameEditField">
-                        <input type="text" class="pm-field-input" id="profileNameInput" maxlength="120" placeholder="Tên..." onkeydown="if(event.key==='Enter') saveFieldEdit('name')">
-                        <button class="pm-field-icon" onclick="saveFieldEdit('name')" title="Lưu">✅</button>
+                    <div class="pm-field-wrap">
+                        <input type="text" class="pm-field-input" id="profileNameInput" maxlength="120" placeholder="Tên...">
                     </div>
 
-                    <!-- Class field -->
+                    <!-- Class field - directly editable, no toggle -->
                     <div class="pm-field-label">Lớp</div>
-                    <div class="pm-field-wrap" id="classField">
-                        <input type="text" class="pm-field-input" id="profileClassDisplay" readonly>
-                        <button class="pm-field-icon" onclick="toggleEditField('class')" title="Sửa lớp">✏️</button>
-                    </div>
-                    <div class="pm-field-wrap hidden" id="classEditField">
-                        <input type="text" class="pm-field-input" id="profileClassInput" maxlength="20" placeholder="Lớp..." onkeydown="if(event.key==='Enter') saveFieldEdit('class')">
-                        <button class="pm-field-icon" onclick="saveFieldEdit('class')" title="Lưu">✅</button>
+                    <div class="pm-field-wrap">
+                        <input type="text" class="pm-field-input" id="profileClassInput" maxlength="20" placeholder="Lớp...">
                     </div>
 
-                    <!-- Save button -->
-                    <button class="pm-save-btn" onclick="showToast('Đã lưu thông tin!','success',2500)">
+                    <button class="pm-save-btn" onclick="saveProfileChanges()">
                         <span class="material-icons">save</span>
                         LƯU THAY ĐỔI
                     </button>
 
-                    <!-- Advanced feature hint -->
                     <div style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.15);border-radius:14px;padding:14px 16px;margin-bottom:16px;">
                         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
                             <span style="font-size:14px;">⚡</span>
@@ -626,14 +478,12 @@
                         <p style="font-size:11px;opacity:0.5;line-height:1.5;">Sử dụng con lăn chuột để zoom và phím mũi tên để nhích ảnh. Dấu chấm chính giữa thanh trượt là mức ảnh gốc 100%.</p>
                     </div>
 
-                    <!-- History toggle -->
                     <div class="pm-history-toggle" onclick="showProfileHistory()">
                         <span class="material-icons" style="font-size:18px;opacity:0.3;">history</span>
                         <span>Xem lịch sử làm bài</span>
                         <span class="material-icons" style="font-size:16px;opacity:0.25;margin-left:auto;">chevron_right</span>
                     </div>
 
-                    <!-- Logout -->
                     <div style="margin-top:auto;padding-top:16px;">
                         <button class="pm-logout-btn" style="width:100%;" onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐĂNG XUẤT?', handleLogout)">
                             ĐĂNG XUẤT
@@ -738,7 +588,7 @@
         </div>
     </div>
 
-    <!-- ─── MAIN APP ─────────────────────────────────────────────────────── -->
+    <!-- MAIN APP -->
     <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
 
         <!-- HEADER -->
@@ -847,26 +697,16 @@
             </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════
-             REDESIGNED RESULT PAGE (Image 3 style)
-             ═══════════════════════════════════════════════════════ -->
+        <!-- RESULT PAGE -->
         <div id="resultPage" class="hidden page-section">
             <div class="result-container">
-
-                <!-- Complete label -->
                 <div class="result-entrance result-complete-label">H O À N &nbsp; T H À N H</div>
-
-                <!-- Score -->
                 <div class="result-entrance result-score-wrap">
                     <div class="result-score-number score-animate" id="finalScoreDisplay">0.0</div>
                 </div>
-
-                <!-- Label pill -->
                 <div class="result-entrance" style="text-align:center;margin-bottom:20px;">
                     <span id="scoreLabel" class="result-label-pill"></span>
                 </div>
-
-                <!-- Stats card -->
                 <div class="result-entrance result-stats-card">
                     <div class="result-stat-item">
                         <div class="result-stat-val text-green-400" id="resultCorrect">0</div>
@@ -881,13 +721,9 @@
                         <div class="result-stat-lbl">Tổng</div>
                     </div>
                 </div>
-
-                <!-- Time + cheat detail -->
                 <div class="result-entrance result-detail-row" id="timeFinish">
                     Hoàn thành trong 0:00 | Rời tab: 0 lần
                 </div>
-
-                <!-- Buttons -->
                 <div class="result-entrance">
                     <button onclick="showSection('mainMenu')" class="result-btn-primary">
                         <span class="material-icons">home</span>
@@ -1034,9 +870,34 @@ function esc(s) {
 }
 function sanitizeText(s, maxLen) { return String(s || '').replace(/[<>"'`]/g,'').substring(0, maxLen).trim(); }
 function getAvatarKey() { return (state.avatarKey || state.user || state.displayUser || 'guest').trim() || 'guest'; }
-function profileHistoryNameFilters() {
-    return [...new Set([state.avatarKey, state.user, state.displayUser].map(s => sanitizeText(s, 120)).filter(Boolean))];
+
+/* ═══ FIX: Known names persistence for profile stats ════════════════════ */
+function _namesStorageKey() {
+    const base = (state.user || state.avatarKey || '').trim();
+    return base ? `nerd_names_${base}` : null;
 }
+function getAllKnownNames() {
+    const key = _namesStorageKey();
+    if (!key) return [];
+    try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(_) { return []; }
+}
+function recordCurrentName() {
+    const key = _namesStorageKey();
+    if (!key) return;
+    const names = getAllKnownNames();
+    const toAdd = [state.user, state.displayUser, state.avatarKey].filter(n => n && n.trim() && n.length > 0);
+    let changed = false;
+    toAdd.forEach(n => { const s = sanitizeText(n, 120); if (s && !names.includes(s)) { names.push(s); changed = true; } });
+    if (changed) { try { localStorage.setItem(key, JSON.stringify(names)); } catch(_) {} }
+}
+
+function profileHistoryNameFilters() {
+    // Always include all known past names to handle name changes & reloads
+    const known = getAllKnownNames();
+    const current = [state.avatarKey, state.user, state.displayUser].map(s => sanitizeText(s, 120)).filter(Boolean);
+    return [...new Set([...known, ...current])];
+}
+
 function shuffleArr(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -1227,6 +1088,7 @@ async function handleAdminLogin() {
     state.userClass   = savedSession.userClass   || 'ADMIN';
     state.avatarKey   = sanitizeText(state.user, 120);
     localStorage.setItem('nerd_session', JSON.stringify({ user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: true, avatarKey: state.avatarKey }));
+    recordCurrentName(); // FIX: record names on login
     setupUI();
     showSection('adminPage');
     showToast('Đã đăng nhập Admin!', 'success');
@@ -1248,6 +1110,7 @@ async function handleLogin() {
     state.avatarKey   = state.user;
     localStorage.setItem('nerd_session', JSON.stringify({ user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: false, avatarKey: state.avatarKey }));
     btn.disabled = false; btn.textContent = 'ĐĂNG NHẬP';
+    recordCurrentName(); // FIX: record names on login
     setupUI();
 }
 
@@ -1276,6 +1139,7 @@ async function checkOAuthSession() {
                 state.user        = d.user; state.displayUser = d.displayUser || d.user;
                 state.userClass   = d.userClass; state.avatarKey = sanitizeText(d.avatarKey || d.user, 120);
                 state.isAdmin     = state.isAdmin || !!d.isAdmin || ADMIN_EMAILS.includes(d.user);
+                recordCurrentName();
                 setupUI(); return;
             }
         }
@@ -1300,6 +1164,7 @@ function saveGoogleProfile() {
     if (!localStorage.getItem('nerd_joined')) localStorage.setItem('nerd_joined', new Date().toLocaleDateString('vi-VN'));
     localStorage.setItem('nerd_session', JSON.stringify({ user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: state.isAdmin, avatarKey: state.avatarKey }));
     document.getElementById('googleNameModal').style.display = 'none';
+    recordCurrentName();
     setupUI();
 }
 
@@ -1381,8 +1246,18 @@ function startExam(id) {
     const ex = state.exams.find(e => e.id === id);
     if (!ex) return;
     state.currentExam = JSON.parse(JSON.stringify(ex));
-    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'q'))    shuffleArr(state.currentExam.questions);
-    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'opts')) state.currentExam.questions.forEach(q => shuffleArr(q.opts));
+
+    // FIX: Annotate original indices BEFORE shuffling so we can map back later
+    state.currentExam.questions.forEach((q, qi) => {
+        q._origQIdx = qi;
+        q.opts.forEach((o, oi) => { o._origOptIdx = oi; });
+    });
+
+    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'opts'))
+        state.currentExam.questions.forEach(q => shuffleArr(q.opts));
+    if (shuffleEnabled && (shuffleMode === 'both' || shuffleMode === 'q'))
+        shuffleArr(state.currentExam.questions);
+
     state.userAns   = new Array(state.currentExam.questions.length).fill(null);
     state.submitted = false; state.cheatCount = 0; state.startTime = Date.now(); _submitting = false;
     const saved = restoreAnswersFromSession(id);
@@ -1502,30 +1377,58 @@ async function submitExam() {
     const bar = document.getElementById('topProgressBar');
     if (bar) bar.classList.add('hidden');
 
-    let correct = 0, wrong = 0;
     const total = state.currentExam.questions.length;
 
+    // FIX: Always compute score locally using the shuffled array (which has the correct .c flag)
+    let correct = 0, wrong = 0;
+    state.currentExam.questions.forEach((q, i) => {
+        const ua = state.userAns[i];
+        if (ua !== null && ua >= 0 && q.opts[ua]?.c) correct++;
+    });
+    wrong = total - correct - state.userAns.filter(a => a === null).length;
+    if (wrong < 0) wrong = 0;
+    state.finalScore = total > 0 ? parseFloat(((correct / total) * 10).toFixed(1)) : 0;
+
+    // FIX: Convert shuffled answers back to original order for RPC/DB
+    const originalAnswers = new Array(total).fill(-1);
+    state.currentExam.questions.forEach((q, shuffledQIdx) => {
+        const ua = state.userAns[shuffledQIdx];
+        if (ua !== null && ua >= 0) {
+            const origQIdx   = (q._origQIdx   !== undefined) ? q._origQIdx   : shuffledQIdx;
+            const origOptIdx = (q.opts[ua]?._origOptIdx !== undefined) ? q.opts[ua]._origOptIdx : ua;
+            originalAnswers[origQIdx] = origOptIdx;
+        }
+    });
+
     try {
+        // Try RPC first (sends original-order answers so server can score correctly)
         const { data: result, error: rpcErr } = await _sb.rpc('submit_exam', {
             p_name: state.displayUser, p_user_class: state.userClass, p_exam_id: state.currentExam.id,
-            p_user_answers: state.userAns.map(a => a === null ? -1 : a),
+            p_user_answers: originalAnswers,
             p_ip_address: state.userIP, p_cheat_count: state.cheatCount, p_time_used: timeUsed
         });
-        if (!rpcErr && result && !result.error) {
+        // If RPC returns a score, use it (server is authoritative), else keep local score
+        if (!rpcErr && result && !result.error && result.score !== undefined) {
             state.finalScore = parseFloat(result.score);
-            correct = result.correct; wrong = result.wrong;
-        } else throw new Error(rpcErr?.message || 'RPC failed');
+            correct = result.correct ?? correct;
+            wrong   = result.wrong   ?? wrong;
+        } else {
+            // RPC failed or missing — fallback: save to history directly with locally computed score
+            throw new Error(rpcErr?.message || 'RPC no score');
+        }
     } catch (e) {
-        state.currentExam.questions.forEach((q, i) => { if (state.userAns[i] !== null && q.opts[state.userAns[i]]?.c) correct++; });
-        wrong = total - correct;
-        state.finalScore = total > 0 ? (correct / total) * 10 : 0;
+        // Fallback: direct insert with local score
         try {
-            const mm = Math.floor(timeUsed / 60), ss = timeUsed % 60;
-            await _sb.from('history').insert([{ name: state.displayUser, user_class: state.userClass, exam: state.currentExam.title, score: state.finalScore, correct_count: correct, wrong_count: wrong, ip_address: state.userIP, cheat_count: state.cheatCount, time_used: timeUsed, date: new Date().toLocaleDateString('vi-VN'), submit_time: new Date().toLocaleTimeString('vi-VN') }]);
+            await _sb.from('history').insert([{
+                name: state.displayUser, user_class: state.userClass, exam: state.currentExam.title,
+                score: state.finalScore, correct_count: correct, wrong_count: wrong,
+                ip_address: state.userIP, cheat_count: state.cheatCount, time_used: timeUsed,
+                date: new Date().toLocaleDateString('vi-VN'), submit_time: new Date().toLocaleTimeString('vi-VN')
+            }]);
         } catch(_) { showToast('Lỗi lưu kết quả — kiểm tra kết nối mạng!', 'error'); }
     }
 
-    /* ─ Update REDESIGNED result page ─ */
+    /* Update result page */
     const scoreEl = document.getElementById('finalScoreDisplay');
     const info    = getScoreInfo(state.finalScore);
     scoreEl.className = `result-score-number score-animate ${info.cls}`;
@@ -1534,15 +1437,13 @@ async function submitExam() {
     const labelEl = document.getElementById('scoreLabel');
     if (labelEl) {
         labelEl.textContent = info.label;
-        // Color the pill background to match score
-        const pillBgs = { 'score-s':'rgba(251,191,36,0.15)', 'score-a':'rgba(34,197,94,0.15)', 'score-b':'rgba(59,130,246,0.15)', 'score-c':'rgba(249,115,22,0.15)', 'score-f':'rgba(239,68,68,0.15)' };
-        const pillBorders = { 'score-s':'rgba(251,191,36,0.4)', 'score-a':'rgba(34,197,94,0.4)', 'score-b':'rgba(59,130,246,0.4)', 'score-c':'rgba(249,115,22,0.4)', 'score-f':'rgba(239,68,68,0.4)' };
+        const pillBgs     = { 'score-s':'rgba(251,191,36,0.15)', 'score-a':'rgba(34,197,94,0.15)', 'score-b':'rgba(59,130,246,0.15)', 'score-c':'rgba(249,115,22,0.15)', 'score-f':'rgba(239,68,68,0.15)' };
+        const pillBorders = { 'score-s':'rgba(251,191,36,0.4)',  'score-a':'rgba(34,197,94,0.4)',  'score-b':'rgba(59,130,246,0.4)',  'score-c':'rgba(249,115,22,0.4)',  'score-f':'rgba(239,68,68,0.4)'  };
         labelEl.className = `result-label-pill ${info.cls}`;
-        labelEl.style.background = pillBgs[info.cls] || 'rgba(249,115,22,0.15)';
-        labelEl.style.border = `1px solid ${pillBorders[info.cls] || 'rgba(249,115,22,0.3)'}`;
+        labelEl.style.background = pillBgs[info.cls]     || 'rgba(249,115,22,0.15)';
+        labelEl.style.border     = `1px solid ${pillBorders[info.cls] || 'rgba(249,115,22,0.3)'}`;
     }
 
-    // Update stats
     const rcEl = document.getElementById('resultCorrect');
     const rwEl = document.getElementById('resultWrong');
     const rtEl = document.getElementById('resultTotal');
@@ -1827,9 +1728,9 @@ async function openProfile() {
     loadUserAvatar();
     document.getElementById('profileNameTitle').textContent   = state.displayUser || 'Người dùng';
     document.getElementById('profileClassTitle').textContent  = 'LỚP ' + (state.userClass || '—');
-    // Set field values (readonly by default)
-    document.getElementById('profileNameDisplay').value  = state.displayUser || '';
-    document.getElementById('profileClassDisplay').value = state.userClass || '';
+    // FIX: Set directly editable inputs
+    document.getElementById('profileNameInput').value  = state.displayUser || '';
+    document.getElementById('profileClassInput').value = state.userClass || '';
     const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
     document.getElementById('profileJoined').textContent = '🗓 Tham gia: ' + joined;
     ['statTotalCorrect','statAvgTime','statLatestSubmit','statLatestExam'].forEach(id => { document.getElementById(id).textContent = '—'; });
@@ -1838,7 +1739,7 @@ async function openProfile() {
     modal.classList.remove('closing'); modal.style.display = 'flex';
 
     try {
-        const names = profileHistoryNameFilters();
+        const names = profileHistoryNameFilters(); // FIX: uses all known names
         if (!names.length && state.displayUser) names.push(sanitizeText(state.displayUser, 120));
         let q = _sb.from('history').select('score,correct_count,wrong_count,time_used,exam,date,submit_time').eq('user_class', state.userClass);
         q = names.length <= 1 ? q.eq('name', names[0]) : q.in('name', names);
@@ -1872,37 +1773,24 @@ function closeProfile() {
     setTimeout(() => { modal.style.display = 'none'; modal.classList.remove('closing'); document.getElementById('avatarMenu').classList.add('hidden'); }, 220);
 }
 
-function toggleEditField(field) {
-    const isName = field === 'name';
-    document.getElementById(isName ? 'nameField' : 'classField').classList.toggle('hidden');
-    document.getElementById(isName ? 'nameEditField' : 'classEditField').classList.toggle('hidden');
-    const input = document.getElementById(isName ? 'profileNameInput' : 'profileClassInput');
-    input.value = isName ? (state.displayUser || '') : (state.userClass || '');
-    input.focus();
-}
-
-function saveFieldEdit(field) {
-    if (field === 'name') {
-        const val = sanitizeText(document.getElementById('profileNameInput').value, 120);
-        if (!val || val.length < 2) return;
-        state.displayUser = val;
-        document.getElementById('profileNameDisplay').value = val;
-        document.getElementById('profileNameTitle').textContent = val;
-        document.getElementById('nameField').classList.remove('hidden');
-        document.getElementById('nameEditField').classList.add('hidden');
-        document.getElementById('userTag').textContent = val + ' // ' + state.userClass;
-    } else {
-        const val = sanitizeText(document.getElementById('profileClassInput').value, 20);
-        if (!val) return;
-        state.userClass = val;
-        document.getElementById('profileClassDisplay').value = val;
-        document.getElementById('profileClassTitle').textContent = 'LỚP ' + val;
-        document.getElementById('classField').classList.remove('hidden');
-        document.getElementById('classEditField').classList.add('hidden');
-        document.getElementById('userTag').textContent = state.displayUser + ' // ' + val;
-    }
-    localStorage.setItem('nerd_session', JSON.stringify({ user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: state.isAdmin, avatarKey: state.avatarKey }));
+/* ═══ FIX: Unified save profile (replaces toggleEditField/saveFieldEdit) ═ */
+function saveProfileChanges() {
+    const nameVal = sanitizeText(document.getElementById('profileNameInput').value, 120);
+    const clsVal  = sanitizeText(document.getElementById('profileClassInput').value, 20);
+    if (!nameVal || nameVal.length < 2) { showToast('Tên phải có ít nhất 2 ký tự!', 'error'); return; }
+    if (!clsVal) { showToast('Vui lòng nhập lớp!', 'error'); return; }
+    state.displayUser = nameVal;
+    state.userClass   = clsVal;
+    document.getElementById('profileNameTitle').textContent  = nameVal;
+    document.getElementById('profileClassTitle').textContent = 'LỚP ' + clsVal;
+    document.getElementById('userTag').textContent = nameVal + ' // ' + clsVal;
+    recordCurrentName(); // FIX: Always save the new name so future queries find it
+    localStorage.setItem('nerd_session', JSON.stringify({
+        user: state.user, displayUser: state.displayUser, userClass: state.userClass,
+        isAdmin: state.isAdmin, avatarKey: state.avatarKey
+    }));
     loadUserAvatar();
+    showToast('Đã lưu thông tin!', 'success', 2500);
 }
 
 function showProfileHistory() {
@@ -2134,6 +2022,7 @@ window.onload = async () => {
                     state.user        = sanitizeText(d.user, 120); state.displayUser = sanitizeText(d.displayUser || d.user, 120);
                     state.userClass   = sanitizeText(d.userClass, 20); state.avatarKey = sanitizeText(d.avatarKey || d.user, 120);
                     state.isAdmin     = state.isAdmin || !!d.isAdmin || ADMIN_EMAILS.includes(d.user);
+                    recordCurrentName(); // FIX: ensure names are recorded on restore
                     setupUI();
                 }
             }
