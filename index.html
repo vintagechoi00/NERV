@@ -453,13 +453,11 @@
                 <div class="pm-right">
                     <p class="pm-right-title">Cài Đặt Thông Tin</p>
 
-                    <!-- Name field - directly editable, no toggle -->
                     <div class="pm-field-label">Họ và Tên</div>
                     <div class="pm-field-wrap">
                         <input type="text" class="pm-field-input" id="profileNameInput" maxlength="120" placeholder="Tên...">
                     </div>
 
-                    <!-- Class field - directly editable, no toggle -->
                     <div class="pm-field-label">Lớp</div>
                     <div class="pm-field-wrap">
                         <input type="text" class="pm-field-input" id="profileClassInput" maxlength="20" placeholder="Lớp...">
@@ -871,7 +869,6 @@ function esc(s) {
 function sanitizeText(s, maxLen) { return String(s || '').replace(/[<>"'`]/g,'').substring(0, maxLen).trim(); }
 function getAvatarKey() { return (state.avatarKey || state.user || state.displayUser || 'guest').trim() || 'guest'; }
 
-/* ═══ FIX: Known names persistence for profile stats ════════════════════ */
 function _namesStorageKey() {
     const base = (state.user || state.avatarKey || '').trim();
     return base ? `nerd_names_${base}` : null;
@@ -892,7 +889,6 @@ function recordCurrentName() {
 }
 
 function profileHistoryNameFilters() {
-    // Always include all known past names to handle name changes & reloads
     const known = getAllKnownNames();
     const current = [state.avatarKey, state.user, state.displayUser].map(s => sanitizeText(s, 120)).filter(Boolean);
     return [...new Set([...known, ...current])];
@@ -1088,7 +1084,7 @@ async function handleAdminLogin() {
     state.userClass   = savedSession.userClass   || 'ADMIN';
     state.avatarKey   = sanitizeText(state.user, 120);
     localStorage.setItem('nerd_session', JSON.stringify({ user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: true, avatarKey: state.avatarKey }));
-    recordCurrentName(); // FIX: record names on login
+    recordCurrentName();
     setupUI();
     showSection('adminPage');
     showToast('Đã đăng nhập Admin!', 'success');
@@ -1110,7 +1106,7 @@ async function handleLogin() {
     state.avatarKey   = state.user;
     localStorage.setItem('nerd_session', JSON.stringify({ user: state.user, displayUser: state.displayUser, userClass: state.userClass, isAdmin: false, avatarKey: state.avatarKey }));
     btn.disabled = false; btn.textContent = 'ĐĂNG NHẬP';
-    recordCurrentName(); // FIX: record names on login
+    recordCurrentName();
     setupUI();
 }
 
@@ -1247,7 +1243,6 @@ function startExam(id) {
     if (!ex) return;
     state.currentExam = JSON.parse(JSON.stringify(ex));
 
-    // FIX: Annotate original indices BEFORE shuffling so we can map back later
     state.currentExam.questions.forEach((q, qi) => {
         q._origQIdx = qi;
         q.opts.forEach((o, oi) => { o._origOptIdx = oi; });
@@ -1379,7 +1374,6 @@ async function submitExam() {
 
     const total = state.currentExam.questions.length;
 
-    // FIX: Always compute score locally using the shuffled array (which has the correct .c flag)
     let correct = 0, wrong = 0;
     state.currentExam.questions.forEach((q, i) => {
         const ua = state.userAns[i];
@@ -1389,7 +1383,6 @@ async function submitExam() {
     if (wrong < 0) wrong = 0;
     state.finalScore = total > 0 ? parseFloat(((correct / total) * 10).toFixed(1)) : 0;
 
-    // FIX: Convert shuffled answers back to original order for RPC/DB
     const originalAnswers = new Array(total).fill(-1);
     state.currentExam.questions.forEach((q, shuffledQIdx) => {
         const ua = state.userAns[shuffledQIdx];
@@ -1401,23 +1394,19 @@ async function submitExam() {
     });
 
     try {
-        // Try RPC first (sends original-order answers so server can score correctly)
         const { data: result, error: rpcErr } = await _sb.rpc('submit_exam', {
             p_name: state.displayUser, p_user_class: state.userClass, p_exam_id: state.currentExam.id,
             p_user_answers: originalAnswers,
             p_ip_address: state.userIP, p_cheat_count: state.cheatCount, p_time_used: timeUsed
         });
-        // If RPC returns a score, use it (server is authoritative), else keep local score
         if (!rpcErr && result && !result.error && result.score !== undefined) {
             state.finalScore = parseFloat(result.score);
             correct = result.correct ?? correct;
             wrong   = result.wrong   ?? wrong;
         } else {
-            // RPC failed or missing — fallback: save to history directly with locally computed score
             throw new Error(rpcErr?.message || 'RPC no score');
         }
     } catch (e) {
-        // Fallback: direct insert with local score
         try {
             await _sb.from('history').insert([{
                 name: state.displayUser, user_class: state.userClass, exam: state.currentExam.title,
@@ -1428,7 +1417,6 @@ async function submitExam() {
         } catch(_) { showToast('Lỗi lưu kết quả — kiểm tra kết nối mạng!', 'error'); }
     }
 
-    /* Update result page */
     const scoreEl = document.getElementById('finalScoreDisplay');
     const info    = getScoreInfo(state.finalScore);
     scoreEl.className = `result-score-number score-animate ${info.cls}`;
@@ -1650,7 +1638,7 @@ async function deleteExam(id) {
     await fetchExams(); await renderAdminList();
 }
 
-/* ═══ PARSE INPUT ════════════════════════════════════════════════════════ */
+/* ═══ PARSE INPUT — hỗ trợ cả có và không có A. B. C. D. ════════════════ */
 function parseInput(txt) {
     if (!txt?.trim()) return [];
     const blocks = txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]])/im);
@@ -1659,7 +1647,9 @@ function parseInput(txt) {
         const lines = block.replace(/^(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]]\s*/im, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if (!lines.length) return null;
         const optRegex = /^[A-Da-d]\s*[.)：:]\s*\S/;
-        const optStartIdx = lines.findIndex(l => optRegex.test(l));
+        let optStartIdx = lines.findIndex(l => optRegex.test(l));
+        // Fallback: nếu không có A. B. C. D. thì coi dòng 2 trở đi là đáp án
+        if (optStartIdx < 0) optStartIdx = 1;
         if (optStartIdx <= 0) return null;
         const q    = lines.slice(0, optStartIdx).join(' ').trim();
         const opts = lines.slice(optStartIdx).map(l => ({ t: l.replace(/@t\s*/g,'').replace(/^[A-Da-d]\s*[.)：:]\s*/,'').trim(), c: l.includes('@t') })).filter(o => o.t.length > 0);
@@ -1728,7 +1718,6 @@ async function openProfile() {
     loadUserAvatar();
     document.getElementById('profileNameTitle').textContent   = state.displayUser || 'Người dùng';
     document.getElementById('profileClassTitle').textContent  = 'LỚP ' + (state.userClass || '—');
-    // FIX: Set directly editable inputs
     document.getElementById('profileNameInput').value  = state.displayUser || '';
     document.getElementById('profileClassInput').value = state.userClass || '';
     const joined = localStorage.getItem('nerd_joined') || new Date().toLocaleDateString('vi-VN');
@@ -1739,7 +1728,7 @@ async function openProfile() {
     modal.classList.remove('closing'); modal.style.display = 'flex';
 
     try {
-        const names = profileHistoryNameFilters(); // FIX: uses all known names
+        const names = profileHistoryNameFilters();
         if (!names.length && state.displayUser) names.push(sanitizeText(state.displayUser, 120));
         let q = _sb.from('history').select('score,correct_count,wrong_count,time_used,exam,date,submit_time').eq('user_class', state.userClass);
         q = names.length <= 1 ? q.eq('name', names[0]) : q.in('name', names);
@@ -1773,7 +1762,6 @@ function closeProfile() {
     setTimeout(() => { modal.style.display = 'none'; modal.classList.remove('closing'); document.getElementById('avatarMenu').classList.add('hidden'); }, 220);
 }
 
-/* ═══ FIX: Unified save profile (replaces toggleEditField/saveFieldEdit) ═ */
 function saveProfileChanges() {
     const nameVal = sanitizeText(document.getElementById('profileNameInput').value, 120);
     const clsVal  = sanitizeText(document.getElementById('profileClassInput').value, 20);
@@ -1784,7 +1772,7 @@ function saveProfileChanges() {
     document.getElementById('profileNameTitle').textContent  = nameVal;
     document.getElementById('profileClassTitle').textContent = 'LỚP ' + clsVal;
     document.getElementById('userTag').textContent = nameVal + ' // ' + clsVal;
-    recordCurrentName(); // FIX: Always save the new name so future queries find it
+    recordCurrentName();
     localStorage.setItem('nerd_session', JSON.stringify({
         user: state.user, displayUser: state.displayUser, userClass: state.userClass,
         isAdmin: state.isAdmin, avatarKey: state.avatarKey
@@ -2022,7 +2010,7 @@ window.onload = async () => {
                     state.user        = sanitizeText(d.user, 120); state.displayUser = sanitizeText(d.displayUser || d.user, 120);
                     state.userClass   = sanitizeText(d.userClass, 20); state.avatarKey = sanitizeText(d.avatarKey || d.user, 120);
                     state.isAdmin     = state.isAdmin || !!d.isAdmin || ADMIN_EMAILS.includes(d.user);
-                    recordCurrentName(); // FIX: ensure names are recorded on restore
+                    recordCurrentName();
                     setupUI();
                 }
             }
