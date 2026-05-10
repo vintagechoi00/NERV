@@ -116,7 +116,6 @@ input:focus,textarea:focus{border-color:rgba(249,115,22,.6)!important;outline:no
 .opt-review{padding:14px 20px;border-radius:14px;margin-bottom:8px;font-weight:600;border:1px solid rgba(255,255,255,.05)}
 .opt-correct{background:rgba(34,197,94,.2)!important;border-color:#22c55e!important;color:#16a34a}
 .opt-wrong{background:rgba(239,68,68,.2)!important;border-color:#ef4444!important;color:#dc2626}
-/* Practice mode opts */
 .opt-practice-correct{animation:practiceCorrect .4s ease;background:rgba(34,197,94,.25)!important;border-color:#22c55e!important;transform:translateX(4px)}
 .opt-practice-wrong{animation:practiceWrong .4s ease;background:rgba(239,68,68,.2)!important;border-color:#ef4444!important}
 .opt-practice-dim{opacity:.35}
@@ -150,29 +149,56 @@ input:checked+.slider:before{transform:translateX(22px)}
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
 #profileModal{z-index:10001}
 
-.profile-modal-panel{animation:profileModalIn .4s cubic-bezier(.16,1,.3,1);transform-origin:top center;width:min(900px,96vw);background:#111;border:1px solid rgba(249,115,22,.25);border-radius:28px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03)}
+/* ── PROFILE MODAL ── */
+.profile-modal-panel{
+  animation:profileModalIn .4s cubic-bezier(.16,1,.3,1);
+  transform-origin:top center;
+  width:min(900px,96vw);
+  /* FIX: max-height + scroll cho mobile */
+  max-height:calc(100dvh - 32px);
+  overflow-y:auto;
+  background:#111;
+  border:1px solid rgba(249,115,22,.25);
+  border-radius:28px;
+  overflow-x:hidden;
+  box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03);
+  scrollbar-width:none;
+}
+.profile-modal-panel::-webkit-scrollbar{display:none}
 .confirm-overlay.closing .profile-modal-panel{animation:profileModalOut .24s ease forwards}
-.pm-header{padding:22px 32px 18px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center}
+.pm-header{padding:18px 24px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;background:#111}
 .pm-header-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.2em;opacity:.35}
 .pm-header-badge{display:flex;align-items:center;gap:6px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);border-radius:20px;padding:5px 14px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--primary)}
 .pm-body{display:grid;grid-template-columns:1fr 1fr;min-height:420px}
-@media(max-width:600px){.pm-body{grid-template-columns:1fr}}
-.pm-left{padding:36px 32px;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.01);position:relative;overflow:hidden}
+@media(max-width:640px){
+  .pm-body{grid-template-columns:1fr;min-height:auto}
+  .pm-left{border-right:none!important;border-bottom:1px solid rgba(255,255,255,.05)!important;padding:28px 20px!important}
+  .pm-right{padding:24px 20px!important}
+  .pm-header{padding:14px 18px 12px}
+  .pm-header-badge{display:none}
+  .profile-avatar-wrap{width:88px!important;height:88px!important;font-size:30px!important}
+  .pm-name{font-size:18px!important}
+  .pm-stats-row{margin-bottom:12px!important}
+  .pm-stat-val{font-size:17px!important}
+  .pm-meta-grid{gap:6px!important}
+  .pm-meta-item{padding:8px 10px!important}
+}
+.pm-left{padding:32px 28px;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.01);position:relative;overflow:hidden}
 .pm-left::before{content:'';position:absolute;top:-60px;left:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(249,115,22,.12),transparent 70%);pointer-events:none}
-.profile-avatar-wrap{width:110px;height:110px;border-radius:50%;position:relative;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:900;color:#0b0b0b;transition:transform .25s ease,box-shadow .25s ease;border:2.5px solid var(--primary);box-shadow:0 0 0 6px rgba(249,115,22,.08),0 18px 34px rgba(249,115,22,.2);animation:avatarRingPulse 3s ease-in-out infinite;margin-bottom:6px}
+.profile-avatar-wrap{width:100px;height:100px;border-radius:50%;position:relative;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#0b0b0b;transition:transform .25s ease,box-shadow .25s ease;border:2.5px solid var(--primary);box-shadow:0 0 0 6px rgba(249,115,22,.08),0 18px 34px rgba(249,115,22,.2);animation:avatarRingPulse 3s ease-in-out infinite;margin-bottom:6px}
 .profile-avatar-wrap:hover{transform:scale(1.04)}
 .profile-avatar-wrap:not(.has-image){background:linear-gradient(135deg,var(--primary),var(--secondary))}
 .profile-avatar-wrap.has-image{background:#000!important;border:none!important}
 .profile-avatar-wrap img{width:100%;height:100%;object-fit:cover;position:absolute;border-radius:50%}
-.avatar-camera-btn{position:absolute;bottom:3px;right:3px;width:30px;height:30px;border-radius:50%;background:rgba(10,10,10,.9);border:2px solid rgba(249,115,22,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;z-index:2}
+.avatar-camera-btn{position:absolute;bottom:3px;right:3px;width:28px;height:28px;border-radius:50%;background:rgba(10,10,10,.9);border:2px solid rgba(249,115,22,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;z-index:2}
 .avatar-camera-btn:hover{background:var(--primary)}
-.avatar-camera-btn .material-icons{font-size:14px;color:white}
-.pm-name{font-size:22px;font-weight:900;text-align:center;margin-top:8px;letter-spacing:-.02em}
-.pm-class{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.2em;color:var(--primary);margin-top:2px;margin-bottom:20px}
-.pm-stats-row{display:flex;gap:0;width:100%;border:1px solid rgba(255,255,255,.07);border-radius:18px;overflow:hidden;margin-bottom:16px}
-.pm-stat{flex:1;padding:14px 8px;text-align:center;background:rgba(255,255,255,.02);position:relative}
+.avatar-camera-btn .material-icons{font-size:13px;color:white}
+.pm-name{font-size:20px;font-weight:900;text-align:center;margin-top:8px;letter-spacing:-.02em}
+.pm-class{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.2em;color:var(--primary);margin-top:2px;margin-bottom:16px}
+.pm-stats-row{display:flex;gap:0;width:100%;border:1px solid rgba(255,255,255,.07);border-radius:18px;overflow:hidden;margin-bottom:14px}
+.pm-stat{flex:1;padding:12px 8px;text-align:center;background:rgba(255,255,255,.02);position:relative}
 .pm-stat+.pm-stat{border-left:1px solid rgba(255,255,255,.07)}
-.pm-stat-val{font-size:20px;font-weight:900;line-height:1}
+.pm-stat-val{font-size:18px;font-weight:900;line-height:1}
 .pm-stat-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;opacity:.35;margin-top:4px}
 .pm-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
 .pm-meta-item{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 12px}
@@ -180,10 +206,10 @@ input:checked+.slider:before{transform:translateX(22px)}
 .pm-meta-item p:last-child{font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .history-item{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:.2s}
 .history-item:hover{border-color:var(--primary);background:rgba(249,115,22,.05)}
-.pm-right{padding:36px 32px;display:flex;flex-direction:column;gap:0}
-.pm-right-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.2em;opacity:.3;margin-bottom:22px}
+.pm-right{padding:32px 28px;display:flex;flex-direction:column;gap:0}
+.pm-right-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.2em;opacity:.3;margin-bottom:20px}
 .pm-field-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.14em;opacity:.35;margin-bottom:6px}
-.pm-field-wrap{position:relative;margin-bottom:18px}
+.pm-field-wrap{position:relative;margin-bottom:16px}
 .pm-field-input{width:100%;background:#1a1a1a!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;padding:14px 18px!important;font-size:14px!important;font-weight:700!important;color:var(--text-main)!important;transition:border-color .2s,box-shadow .2s!important;cursor:text}
 .pm-field-input:focus{border-color:rgba(249,115,22,.6)!important;box-shadow:0 0 0 3px rgba(249,115,22,.1)!important}
 .pm-save-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:black;font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.1em;border-radius:14px;border:none;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 10px 25px -5px rgba(249,115,22,.4);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;margin-bottom:14px}
@@ -349,7 +375,6 @@ input:checked+.slider:before{transform:translateX(22px)}
           <div class="pm-meta-item"><p>Nộp gần nhất</p><p id="statLatestSubmit">—</p></div>
           <div class="pm-meta-item"><p>Bài gần nhất</p><p id="statLatestExam">—</p></div>
         </div>
-        <!-- Score mini chart -->
         <div id="scoreChartWrap" class="hidden w-full mt-3">
           <p class="text-[8px] opacity-30 font-black uppercase tracking-widest mb-1">Điểm 10 bài gần nhất</p>
           <div id="scoreChart" class="score-chart"></div>
@@ -585,7 +610,6 @@ input:checked+.slider:before{transform:translateX(22px)}
               <div id="answeredCount" class="text-[8px] opacity-40 uppercase tracking-widest mt-0.5">0/0</div>
             </div>
           </div>
-          <!-- Live cheat count -->
           <div id="cheatCountBadge" class="hidden mb-2 text-[9px] font-black uppercase tracking-widest text-red-400">⚠ Rời tab: <span id="cheatCountNum">0</span> lần</div>
           <button id="submitBtn" onclick="customConfirm('BẠN CÓ CHẮC MUỐN NỘP BÀI KHÔNG?',submitExam)" class="w-full py-4 bg-red-600 rounded-2xl font-black text-white mt-2 hover:bg-red-500 transition">NỘP BÀI</button>
           <button onclick="scrollToFirstUnanswered()" class="w-full mt-2 glass py-2 rounded-xl text-[10px] font-bold text-orange-500 hover:bg-orange-500/10 transition">⬇ CÂU CHƯA TRẢ LỜI</button>
@@ -680,7 +704,6 @@ input:checked+.slider:before{transform:translateX(22px)}
   <!-- LEADERBOARD -->
   <div id="leaderboard" class="hidden page-section max-w-4xl mx-auto glass p-6 md:p-10">
     <h2 class="text-3xl md:text-4xl font-black mb-6 text-center italic uppercase">Bảng <span class="text-orange-500">Xếp Hạng</span></h2>
-    <!-- Filters -->
     <div class="flex gap-3 mb-6 flex-wrap items-center">
       <div class="relative flex-1 min-w-[140px]">
         <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-sm opacity-30">search</span>
@@ -729,7 +752,6 @@ input:checked+.slider:before{transform:translateX(22px)}
 })();
 
 /* ═══ CONFIG & STATE ═══════════════════════════════════════════════════ */
-// NOTE: Supabase anon key is public by design. Secure your data using Row Level Security (RLS) policies in Supabase dashboard.
 const SB_URL='https://fzlbtemrspagisfjvaxs.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
 const _sb=supabase.createClient(SB_URL,SB_KEY);
@@ -805,7 +827,6 @@ function setSelectMode(mode){
 /* ═══ TOAST ══════════════════════════════════════════════════════════ */
 function showToast(msg,type='normal',duration=4000){
   const container=document.getElementById('toast-container');
-  // Limit to 3 toasts
   while(container.children.length>=3)container.removeChild(container.firstChild);
   const t=document.createElement('div');
   t.className=`toast ${type}`;
@@ -878,7 +899,7 @@ function animateScore(el,target,duration=1300){
   requestAnimationFrame(step);
 }
 
-/* ═══ THEME (with persistence) ══════════════════════════════════════ */
+/* ═══ THEME ══════════════════════════════════════════════════════════ */
 function initTheme(){
   const saved=localStorage.getItem('nerd_theme');
   if(saved==='light'){
@@ -947,7 +968,6 @@ document.addEventListener('keydown',e=>{
     });
     if(document.getElementById('profileModal')?.style.display==='flex')closeProfile();
   }
-  // Block devtools shortcuts
   if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','K'].includes(e.key.toUpperCase()))||(e.ctrlKey&&e.key.toUpperCase()==='U')||(e.metaKey&&e.altKey&&['I','J','C'].includes(e.key.toUpperCase()))){
     if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();e.stopPropagation();return false}
   }
@@ -959,7 +979,6 @@ window.addEventListener('beforeunload',e=>{
 
 /* ═══ KEYBOARD SHORTCUTS FOR EXAM ════════════════════════════════════ */
 function initExamKeyboard(){
-  // IntersectionObserver to track which question is in view
   let _observer=null;
   function setupObserver(){
     if(_observer)_observer.disconnect();
@@ -988,7 +1007,6 @@ function initExamKeyboard(){
       const q=state.currentExam.questions[state.activeQIdx];
       if(q&&optIdx<q.opts.length){
         pick(state.activeQIdx,optIdx);
-        // Visual feedback on nav dot
         const dot=document.querySelectorAll('.nav-dot')[state.activeQIdx];
         if(dot){dot.style.transform='scale(1.3)';setTimeout(()=>dot.style.transform='',200)}
         e.preventDefault();
@@ -1036,7 +1054,7 @@ async function handleAdminLogin(){
   recordCurrentName();setupUI();showSection('adminPage');showToast('Đã đăng nhập Admin!','success');
 }
 
-/* ═══ LOGIN / AUTH ═══════════════════════════════════════════████ */
+/* ═══ LOGIN / AUTH ═══════════════════════════════════════████ */
 async function handleLogin(){
   const name=document.getElementById('username').value.trim();
   const cls=document.getElementById('userClass').value.trim();
@@ -1110,7 +1128,6 @@ async function setupUI(){
   loadUserAvatar();
   showSection('mainMenu');
   await fetchExams();
-  // Populate exam filter in leaderboard
   populateLbExamFilter();
 }
 
@@ -1205,14 +1222,12 @@ function startExam(id){
   const cheatBadge=document.getElementById('cheatCountBadge');
   if(cheatBadge)cheatBadge.classList.add('hidden');
   startTimer();startCheatGuard();addWatermark();updateProgress();
-  // Show keyboard hint
   document.getElementById('kbHint').style.display='block';
   setTimeout(()=>{document.getElementById('kbHint').style.display='none'},5000);
   if(saved){
     state.userAns.forEach((a,qi)=>{if(a!==null){const el=document.getElementById(`opt-${qi}-${a}`);if(el)el.classList.add('selected')}});
     renderMap();
   }
-  // Setup IntersectionObserver after DOM is ready
   setTimeout(()=>{if(window._setupExamObserver)window._setupExamObserver()},300);
 }
 
@@ -1308,7 +1323,6 @@ function pickPractice(oi){
   const q=ps.questions[ps.qIdx];
   const isCorrect=q.opts[oi]?.c;
   if(isCorrect)ps.correctCount++;
-  // Reveal all opts
   q.opts.forEach((o,i)=>{
     const el=document.getElementById(`popt-${i}`);if(!el)return;
     el.onclick=null;el.style.cursor='default';
@@ -1407,10 +1421,9 @@ function addWatermark(){
 }
 function removeWatermark(){document.getElementById('examWatermark')?.remove()}
 
-/* ═══ SUBMIT EXAM (Security: server-side first) ══════════════████ */
+/* ═══ SUBMIT EXAM ══════════════════════════════════════████ */
 async function submitExam(){
   if(_submitting||state.submitted)return;
-  // Rate limiting: 15s cooldown
   const lastSub=localStorage.getItem('nerd_last_submit');
   if(lastSub&&Date.now()-parseInt(lastSub)<15000){showToast('Vui lòng đợi 15 giây giữa các lần nộp!','error');return}
   localStorage.setItem('nerd_last_submit',String(Date.now()));
@@ -1425,7 +1438,6 @@ async function submitExam(){
   const bar=document.getElementById('topProgressBar');if(bar)bar.classList.add('hidden');
 
   const total=state.currentExam.questions.length;
-  // Client-side score for display (NOT trusted for storage — server RPC is authoritative)
   let correct=0;
   state.currentExam.questions.forEach((q,i)=>{
     const ua=state.userAns[i];
@@ -1434,7 +1446,6 @@ async function submitExam(){
   let wrong=Math.max(0,total-correct-state.userAns.filter(a=>a===null).length);
   state.finalScore=total>0?parseFloat(((correct/total)*10).toFixed(1)):0;
 
-  // Map shuffled answers back to original indices
   const originalAnswers=new Array(total).fill(-1);
   state.currentExam.questions.forEach((q,shuffledQIdx)=>{
     const ua=state.userAns[shuffledQIdx];
@@ -1445,7 +1456,6 @@ async function submitExam(){
     }
   });
 
-  let submitOk=false;
   try{
     const{data:result,error:rpcErr}=await _sb.rpc('submit_exam',{
       p_name:state.displayUser,p_user_class:state.userClass,p_exam_id:state.currentExam.id,
@@ -1453,17 +1463,13 @@ async function submitExam(){
       p_ip_address:state.userIP,p_cheat_count:state.cheatCount,p_time_used:timeUsed
     });
     if(!rpcErr&&result&&!result.error&&result.score!==undefined){
-      // Trust server score
       state.finalScore=parseFloat(result.score);
       correct=result.correct??correct;
       wrong=result.wrong??wrong;
-      submitOk=true;
     }else{
       throw new Error(rpcErr?.message||'RPC no score');
     }
   }catch(e){
-    // SECURITY: Fallback insert with client score — scores are still validated server-side by RLS + RPC
-    // If RPC is available, it will override. This fallback is for network resilience only.
     try{
       await _sb.from('history').insert([{
         name:state.displayUser,user_class:state.userClass,exam:state.currentExam.title,
@@ -1522,7 +1528,7 @@ function renderReview(){
   }).join('');
 }
 
-/* ═══ LEADERBOARD (with search + exam filter) ════════════████ */
+/* ═══ LEADERBOARD ════════════════════════════████ */
 let _lbPage=0,_lbSearchTimer=null;
 const _LB_SIZE=20;
 
@@ -1580,7 +1586,6 @@ async function renderLeaderboard(page){
   }
   c.innerHTML=html;
 
-  // Event delegation for admin details (safer than inline onclick)
   c.querySelectorAll('[data-action="details"]').forEach(el=>{
     el.addEventListener('click',()=>{const i=parseInt(el.dataset.idx);showDetails(i)});
   });
@@ -1606,7 +1611,6 @@ function showDetails(i){
       <p class="opacity-40">Ngày: <span>${esc(h.date)} | ${esc(h.submit_time)}</span></p>
     </div>`;
   document.getElementById('detailsModal').style.display='flex';
-  // Safe IP copy via event listener (not inline onclick)
   document.getElementById('copyIpBtn')?.addEventListener('click',()=>{
     navigator.clipboard.writeText(h.ip_address||'').then(()=>showToast('Đã copy IP!','success',2000));
   });
@@ -1667,7 +1671,6 @@ async function renderAdminList(){
     let difficulty='CHƯA RÕ',diffColor='text-gray-400';
     if(attemptCount){if(avgScore>=8){difficulty='DỄ';diffColor='text-green-400'}else if(avgScore>=5){difficulty='TB';diffColor='text-yellow-400'}else{difficulty='KHÓ';diffColor='text-red-400'}}
     const blockedBadge=isBlocked(ex)?'<span class="text-[8px] px-2 py-1 bg-red-500/20 text-red-500 rounded-lg font-black uppercase border border-red-500/20">ĐÃ ẨN</span>':'';
-    // Use data attributes instead of inline onclick with string interpolation (security improvement)
     return`<div id="vault-card-${ex.id}" class="vault-card glass rounded-3xl border border-white/5 overflow-hidden animate-vault-card" data-exam-id="${ex.id}" data-exam-title="${esc(ex.title).replace(/"/g,'&quot;')}" style="animation-delay:${idx*.04}s">
       <div class="p-6 flex justify-between items-center cursor-pointer group vault-toggle">
         <div class="flex items-center gap-5 flex-1 min-w-0">
@@ -1708,37 +1711,24 @@ async function renderAdminList(){
     </div>`;
   }).join('');
 
-  // Event delegation (secure, no inline onclick with string data)
-  c.addEventListener('click',_adminListClick,{once:true});
-  c.addEventListener('click',_adminListClick); // re-attach on each render via delegation
+  /* ▼ FIX: chỉ attach 1 listener, remove trước khi add để tránh nhân đôi ▼ */
+  c.removeEventListener('click',_adminListClick);
+  c.addEventListener('click',_adminListClick);
 }
 
-// One-time admin click handler — replaced on each renderAdminList via re-attachment
 function _adminListClick(e){
   const card=e.target.closest('[data-exam-id]');if(!card)return;
   const id=Number(card.dataset.examId);
-  const title=card.dataset.examTitle;
-  const toggle=e.target.closest('.vault-toggle');
   const action=e.target.closest('[data-action]');
+  const toggle=e.target.closest('.vault-toggle');
   if(action){
+    e.stopPropagation();
     const act=action.dataset.action;
     if(act==='edit')editExam(id);
-    else if(act==='toggle-hide')blockAndHide(id,title);
+    else if(act==='toggle-hide')blockAndHide(id,card.dataset.examTitle);
     else if(act==='delete')customConfirm('XÓA VĨNH VIỄN ĐỀ NÀY?',()=>deleteExam(id));
   }else if(toggle){
     toggleExpand(id);
-  }
-}
-
-// Prevent duplicate listener — attach only once on the container
-let _adminListenerAttached=false;
-const _origRenderAdminList=renderAdminList;
-async function _patchedRenderAdminList(){
-  await _origRenderAdminList();
-  const c=document.getElementById('adminExamList');
-  if(!_adminListenerAttached&&c){
-    // Remove old, attach fresh each time (re-renders clear innerHTML so listener survives)
-    _adminListenerAttached=false; // allow re-attach
   }
 }
 
@@ -1905,6 +1895,9 @@ async function openProfile(){
   hideProfileHistory();
   const modal=document.getElementById('profileModal');
   modal.classList.remove('closing');modal.style.display='flex';
+  // Scroll panel to top on open
+  const panel=modal.querySelector('.profile-modal-panel');
+  if(panel)panel.scrollTop=0;
   try{
     const names=profileHistoryNameFilters();
     if(!names.length&&state.displayUser)names.push(sanitizeText(state.displayUser,120));
@@ -1926,7 +1919,6 @@ async function openProfile(){
       document.getElementById('statAvgTime').textContent=`${mm}p${String(ss).padStart(2,'0')}s`;
       document.getElementById('statLatestSubmit').textContent=`${latest.submit_time||'—'} ${latest.date||''}`.trim();
       document.getElementById('statLatestExam').textContent=latest.exam||'—';
-      // Render mini chart (last 10 scores)
       renderScoreChart(rows.slice(0,10).reverse());
     }else{
       document.getElementById('statAvgScore').textContent='—';
