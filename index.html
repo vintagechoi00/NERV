@@ -35,6 +35,15 @@ body{
 #app{width:100%;max-width:100vw;overflow-x:hidden}
 .glass{background:var(--glass-bg);backdrop-filter:blur(15px);border:1px solid var(--glass-border);border-radius:28px}
 
+@keyframes authFadeIn{from{opacity:0;transform:translateY(30px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes authFadeOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-20px) scale(0.96)}}
+@keyframes inputSlide{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tabSlideRight{from{transform:translateX(-10px)}to{transform:translateX(0)}}
+@keyframes tabSlideLeft{from{transform:translateX(10px)}to{transform:translateX(0)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(249,115,22,.2)}50%{box-shadow:0 0 40px rgba(249,115,22,.5),0 0 80px rgba(249,115,22,.15)}}
+@keyframes logoShake{0%,100%{transform:rotate(-10deg) scale(1)}20%{transform:rotate(-8deg) scale(1.05)}40%{transform:rotate(-12deg) scale(.98)}60%{transform:rotate(-6deg) scale(1.03)}80%{transform:rotate(-11deg) scale(1)}}
+@keyframes checkmark{0%{stroke-dashoffset:50}100%{stroke-dashoffset:0}}
+@keyframes errorShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 @keyframes slideUpFade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pageIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pageOut{to{opacity:0;transform:translateY(-10px)}}
@@ -56,7 +65,196 @@ body{
 @keyframes avatarEditorIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes orangeGlow{0%,100%{box-shadow:0 0 30px rgba(249,115,22,0.2),0 0 0 4px rgba(249,115,22,0.5)}50%{box-shadow:0 0 50px rgba(249,115,22,0.4),0 0 0 4px rgba(249,115,22,0.8)}}
 @keyframes aePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+@keyframes orbFloat1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-20px) scale(1.1)}}
+@keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-20px,30px) scale(0.9)}}
+@keyframes orbFloat3{0%,100%{transform:translate(0,0)}33%{transform:translate(15px,15px)}66%{transform:translate(-10px,-5px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
+/* ═══ LOGIN PASSWORD REVEAL ═══ */
+@keyframes pwdReveal{
+  from{opacity:0;transform:translateY(-10px) scaleY(0.7);transform-origin:top}
+  to{opacity:1;transform:translateY(0) scaleY(1);transform-origin:top}
+}
+.login-pwd-field{
+  animation:pwdReveal .38s cubic-bezier(.16,1,.3,1) forwards;
+  transform-origin:top;
+}
+
+/* ═══ AUTH PAGE ═══ */
+#authPage{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:20px;
+}
+.auth-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
+.auth-orb-1{width:400px;height:400px;background:radial-gradient(circle,rgba(249,115,22,.18),transparent 70%);top:-100px;right:-100px;animation:orbFloat1 9s ease-in-out infinite}
+.auth-orb-2{width:300px;height:300px;background:radial-gradient(circle,rgba(251,191,36,.1),transparent 70%);bottom:-80px;left:-80px;animation:orbFloat2 12s ease-in-out infinite}
+.auth-orb-3{width:200px;height:200px;background:radial-gradient(circle,rgba(249,115,22,.08),transparent 70%);top:40%;left:20%;animation:orbFloat3 15s ease-in-out infinite}
+
+.auth-card{
+  width:min(460px,100%);
+  background:rgba(10,10,10,.92);
+  backdrop-filter:blur(40px);
+  border:1px solid rgba(249,115,22,.2);
+  border-radius:36px;
+  overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03);
+  animation:authFadeIn .6s cubic-bezier(.16,1,.3,1) forwards;
+  position:relative;z-index:10;
+}
+.auth-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(249,115,22,.5),transparent);
+}
+
+.auth-tabs{display:flex;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);position:relative;margin:0 36px}
+.auth-tab-btn{flex:1;padding:18px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.18em;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;transition:color .3s;position:relative}
+.auth-tab-btn.active{color:#f97316}
+.auth-tab-indicator{position:absolute;bottom:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--secondary));transition:all .35s cubic-bezier(.4,0,.2,1);border-radius:2px 2px 0 0}
+
+.auth-body{padding:36px 36px 40px}
+@media(max-width:480px){.auth-body{padding:28px 24px 32px}}
+
+.auth-logo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:32px;animation:authFadeIn .5s .1s both}
+.auth-logo{
+  width:52px;height:52px;border-radius:16px;
+  background:linear-gradient(135deg,#f97316,#fbbf24);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:900;color:#000;
+  transform:rotate(-10deg);
+  box-shadow:0 8px 24px rgba(249,115,22,.4);
+  cursor:pointer;
+  transition:all .4s cubic-bezier(.175,.885,.32,1.275);flex-shrink:0;
+}
+.auth-logo:hover{transform:rotate(0deg) scale(1.1);box-shadow:0 12px 32px rgba(249,115,22,.6)}
+.auth-logo-text h1{font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1}
+.auth-logo-text h1 span{color:#f97316;font-style:italic}
+.auth-logo-text p{font-size:9px;opacity:.35;text-transform:uppercase;letter-spacing:.2em;margin-top:3px}
+
+.auth-field{margin-bottom:14px;animation:inputSlide .4s both}
+.auth-field:nth-child(1){animation-delay:.05s}
+.auth-field:nth-child(2){animation-delay:.1s}
+.auth-field:nth-child(3){animation-delay:.15s}
+.auth-field:nth-child(4){animation-delay:.2s}
+.auth-field:nth-child(5){animation-delay:.25s}
+.auth-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.18em;opacity:.4;margin-bottom:7px;display:block}
+.auth-input-wrap{position:relative}
+.auth-input-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);font-size:18px;pointer-events:none;transition:color .2s}
+.auth-input{
+  width:100%;padding:15px 16px 15px 48px;
+  background:rgba(255,255,255,.04)!important;
+  border:1.5px solid rgba(255,255,255,.07)!important;
+  border-radius:16px!important;
+  font-size:14px!important;font-weight:600!important;
+  color:var(--text-main)!important;
+  transition:border-color .2s,box-shadow .2s,background .2s!important;
+  outline:none!important;
+}
+.auth-input::placeholder{opacity:.3;font-weight:500}
+.auth-input:focus{
+  border-color:rgba(249,115,22,.5)!important;
+  box-shadow:0 0 0 4px rgba(249,115,22,.08)!important;
+  background:rgba(255,255,255,.06)!important;
+}
+.auth-input-wrap:focus-within .auth-input-icon{color:rgba(249,115,22,.6)}
+
+.auth-pwd-toggle{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;
+  padding:4px;border-radius:8px;transition:color .2s;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+.auth-pwd-toggle:hover{color:rgba(255,255,255,.6)}
+
+.pwd-strength-bar{display:flex;gap:4px;margin-top:8px}
+.pwd-strength-seg{height:3px;flex:1;border-radius:3px;background:rgba(255,255,255,.08);transition:background .3s}
+.pwd-strength-seg.active-weak{background:#ef4444}
+.pwd-strength-seg.active-fair{background:#f59e0b}
+.pwd-strength-seg.active-good{background:#3b82f6}
+.pwd-strength-seg.active-strong{background:#22c55e}
+.pwd-strength-label{font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;margin-top:5px;transition:color .3s;min-height:12px}
+
+.auth-error{
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+  color:#fca5a5;border-radius:12px;padding:10px 14px;
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;
+  margin-bottom:14px;display:none;
+}
+.auth-error.show{display:flex;align-items:center;gap:8px}
+
+.auth-submit{
+  width:100%;padding:17px;margin-top:6px;
+  background:linear-gradient(135deg,#f97316,#fbbf24);
+  color:#000;font-weight:900;font-size:13px;
+  text-transform:uppercase;letter-spacing:.15em;
+  border:none;border-radius:18px;cursor:pointer;
+  box-shadow:0 12px 30px rgba(249,115,22,.35);
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  position:relative;overflow:hidden;
+}
+.auth-submit::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);opacity:0;transition:opacity .3s}
+.auth-submit:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(249,115,22,.5)}
+.auth-submit:hover::after{opacity:1}
+.auth-submit:active{transform:scale(.97)}
+.auth-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.auth-spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;display:none}
+
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.auth-divider hr{flex:1;border:none;border-top:1px solid rgba(255,255,255,.07)}
+.auth-divider span{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.2em;opacity:.25}
+
+.auth-google{
+  width:100%;padding:15px;
+  background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--text-main);transition:all .3s;
+}
+.auth-google:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.auth-google svg{width:18px;height:18px;flex-shrink:0}
+
+.auth-terms{font-size:9px;opacity:.25;text-align:center;margin-top:16px;letter-spacing:.04em;line-height:1.6}
+
+.auth-panel{transition:opacity .25s ease,transform .25s ease}
+.auth-panel.slide-in-right{animation:tabSlideRight .3s ease forwards}
+.auth-panel.slide-in-left{animation:tabSlideLeft .3s ease forwards}
+
+.reg-features{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.reg-feature-badge{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.15);
+  border-radius:20px;padding:6px 12px;
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(249,115,22,.8);
+}
+
+.auth-success-overlay{
+  position:absolute;inset:0;background:rgba(10,10,10,.95);
+  display:none;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;z-index:100;border-radius:36px;
+  animation:authFadeIn .4s ease forwards;
+}
+.success-circle{
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(34,197,94,.1);border:2px solid #22c55e;
+  display:flex;align-items:center;justify-content:center;
+  animation:glowPulse 1.5s ease-in-out 3;
+}
+.success-checkmark{stroke-dasharray:50;stroke-dashoffset:50;animation:checkmark .5s .3s ease forwards}
+
+/* ═══ EMAIL HINT BADGE ═══ */
+#loginEmailHint{
+  font-size:9px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.12em;color:rgba(249,115,22,.75);
+  margin-top:-8px;margin-bottom:10px;padding-left:2px;
+  display:flex;align-items:center;gap:5px;
+  opacity:0;transform:translateY(-4px);
+  transition:opacity .25s ease,transform .25s ease;
+}
+#loginEmailHint.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ REST ═══ */
 .page-section{transition:opacity .22s ease,transform .22s ease}
 .page-section.entering{animation:pageIn .4s cubic-bezier(.16,1,.3,1) forwards}
 .page-section.exiting{animation:pageOut .18s ease forwards;pointer-events:none}
@@ -151,7 +349,6 @@ input:checked+.slider:before{transform:translateX(22px)}
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
 #profileModal{z-index:10001}
 
-/* ── PROFILE MODAL ── */
 .profile-modal-panel{animation:profileModalIn .4s cubic-bezier(.16,1,.3,1);transform-origin:top center;width:min(900px,96vw);max-height:calc(100dvh - 32px);overflow-y:auto;background:#111;border:1px solid rgba(249,115,22,.25);border-radius:28px;overflow-x:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03);scrollbar-width:none}
 .profile-modal-panel::-webkit-scrollbar{display:none}
 .confirm-overlay.closing .profile-modal-panel{animation:profileModalOut .24s ease forwards}
@@ -222,31 +419,11 @@ input:checked+.slider:before{transform:translateX(22px)}
 .avatar-btn:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 0 0 2px rgba(249,115,22,.3),0 12px 24px rgba(249,115,22,.3)}
 .avatar-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 .avatar-btn.has-image{background:rgba(0,0,0,.65);color:transparent}
-#avatarMenu{position:absolute;top:120%;left:50%;transform:translateX(-50%);width:165px;background:rgba(10,10,10,.93);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;padding:8px;box-shadow:0 20px 40px rgba(0,0,0,.6);z-index:100}
-.avatar-menu-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;font-size:10px;font-weight:800;text-transform:uppercase;color:white;cursor:pointer;transition:.2s}
-.avatar-menu-item:hover{background:rgba(249,115,22,.2);color:var(--primary)}
 
-/* ════════════════════════════════════════════
-   AVATAR EDITOR v5 — Canvas-based
-   ════════════════════════════════════════════ */
 #avatarEditorModal{z-index:10005}
-
-.ae-panel{
-  animation:avatarEditorIn .4s cubic-bezier(.16,1,.3,1);
-  width:min(480px,96vw);
-  max-height:calc(100dvh - 32px);
-  overflow-y:auto;
-  background:#0d0d0d;
-  border:1px solid rgba(249,115,22,.25);
-  border-radius:40px;
-  padding:32px 36px 36px;
-  box-shadow:0 40px 80px rgba(0,0,0,.9),0 0 80px rgba(249,115,22,.05);
-  scrollbar-width:none;
-  position:relative;
-}
+.ae-panel{animation:avatarEditorIn .4s cubic-bezier(.16,1,.3,1);width:min(480px,96vw);max-height:calc(100dvh - 32px);overflow-y:auto;background:#0d0d0d;border:1px solid rgba(249,115,22,.25);border-radius:40px;padding:32px 36px 36px;box-shadow:0 40px 80px rgba(0,0,0,.9),0 0 80px rgba(249,115,22,.05);scrollbar-width:none;position:relative}
 .ae-panel::-webkit-scrollbar{display:none}
 @media(max-width:480px){.ae-panel{border-radius:28px;padding:24px 20px 28px}}
-
 .ae-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
 .ae-title-main{font-size:22px;font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.03em;color:white;line-height:1}
 .ae-title-accent{color:#f97316}
@@ -256,51 +433,10 @@ input:checked+.slider:before{transform:translateX(22px)}
 .ae-close-btn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.5);transition:all .2s;flex-shrink:0}
 .ae-close-btn:hover{background:rgba(255,255,255,.08);color:white}
 .ae-close-btn svg{width:20px;height:20px}
-
-/* Canvas preview wrap — FIX: use explicit sizing to prevent oval */
-.ae-preview-wrap{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:32px;
-  /* FIXED: ensure perfect square container */
-  width:264px;
-  height:264px;
-  margin-left:auto;
-  margin-right:auto;
-}
-.ae-outer-ring{
-  position:absolute;
-  inset:-12px;
-  border-radius:50%;
-  border:4px solid #f97316;
-  box-shadow:0 0 30px rgba(249,115,22,.25),inset 0 0 30px rgba(249,115,22,.05);
-  animation:orangeGlow 3s ease-in-out infinite;
-  pointer-events:none;
-  z-index:2;
-}
-
-/* FIX: Canvas must have explicit width+height matching its attribute values.
-   Do NOT set width/height in CSS differently from the canvas attributes.
-   border-radius clips the visual display. */
-#aeCanvas{
-  width:240px !important;
-  height:240px !important;
-  border-radius:50%;
-  display:block;
-  cursor:grab;
-  /* FIX: touch-action:none prevents scroll hijacking and allows drag */
-  touch-action:none;
-  position:relative;
-  z-index:1;
-  /* FIX: image-rendering for crisp display */
-  image-rendering:auto;
-  /* FIX: prevent any CSS transforms from squishing the canvas */
-  flex-shrink:0;
-}
+.ae-preview-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:32px;width:264px;height:264px;margin-left:auto;margin-right:auto}
+.ae-outer-ring{position:absolute;inset:-12px;border-radius:50%;border:4px solid #f97316;box-shadow:0 0 30px rgba(249,115,22,.25),inset 0 0 30px rgba(249,115,22,.05);animation:orangeGlow 3s ease-in-out infinite;pointer-events:none;z-index:2}
+#aeCanvas{width:240px!important;height:240px!important;border-radius:50%;display:block;cursor:grab;touch-action:none;position:relative;z-index:1;image-rendering:auto;flex-shrink:0}
 #aeCanvas:active{cursor:grabbing}
-
 .ae-zoom-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:28px;padding:20px 24px;margin-bottom:28px}
 .ae-zoom-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .ae-zoom-label{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.5)}
@@ -310,71 +446,20 @@ input:checked+.slider:before{transform:translateX(22px)}
 .ae-reset-btn:hover{opacity:.7;background:rgba(249,115,22,.1)}
 .ae-reset-btn svg{width:14px;height:14px;transition:transform .3s}
 .ae-reset-btn:hover svg{transform:rotate(-180deg)}
-
 .ae-slider-row{display:flex;align-items:center;gap:14px}
 .ae-slider-icon{width:20px;height:20px;color:rgba(255,255,255,.3);flex-shrink:0}
 .ae-slider-wrap{flex:1;position:relative;height:44px;display:flex;align-items:center}
-
-.ae-slider{
-  width:100%;
-  -webkit-appearance:none;
-  appearance:none;
-  height:6px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.08);
-  outline:none;
-  cursor:pointer;
-  background:linear-gradient(90deg,rgba(249,115,22,.3) 0%,rgba(249,115,22,.3) var(--ae-fill,50%),rgba(255,255,255,.06) var(--ae-fill,50%),rgba(255,255,255,.06) 100%);
-}
-.ae-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:22px;height:22px;
-  border-radius:50%;
-  background:#f97316;
-  box-shadow:0 0 0 4px rgba(249,115,22,.2),0 4px 12px rgba(249,115,22,.4);
-  cursor:pointer;
-  transition:box-shadow .2s,transform .15s;
-}
-.ae-slider::-webkit-slider-thumb:hover{
-  box-shadow:0 0 0 6px rgba(249,115,22,.3),0 4px 16px rgba(249,115,22,.6);
-  transform:scale(1.1);
-}
-.ae-slider::-moz-range-thumb{
-  width:22px;height:22px;
-  border-radius:50%;
-  background:#f97316;
-  border:none;
-  box-shadow:0 0 0 4px rgba(249,115,22,.2);
-  cursor:pointer;
-}
-
+.ae-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;border:1px solid rgba(255,255,255,.08);outline:none;cursor:pointer;background:linear-gradient(90deg,rgba(249,115,22,.3) 0%,rgba(249,115,22,.3) var(--ae-fill,50%),rgba(255,255,255,.06) var(--ae-fill,50%),rgba(255,255,255,.06) 100%)}
+.ae-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#f97316;box-shadow:0 0 0 4px rgba(249,115,22,.2),0 4px 12px rgba(249,115,22,.4);cursor:pointer;transition:box-shadow .2s,transform .15s}
+.ae-slider::-webkit-slider-thumb:hover{box-shadow:0 0 0 6px rgba(249,115,22,.3),0 4px 16px rgba(249,115,22,.6);transform:scale(1.1)}
+.ae-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#f97316;border:none;box-shadow:0 0 0 4px rgba(249,115,22,.2);cursor:pointer}
 .ae-actions{display:flex;gap:12px;width:100%}
-.ae-cancel-btn{
-  flex:1;padding:18px;
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:20px;
-  color:rgba(255,255,255,.5);
-  font-weight:700;font-size:11px;
-  text-transform:uppercase;letter-spacing:.12em;
-  cursor:pointer;transition:all .2s;
-}
+.ae-cancel-btn{flex:1;padding:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;color:rgba(255,255,255,.5);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s}
 .ae-cancel-btn:hover{background:rgba(255,255,255,.1);color:white}
-.ae-confirm-btn{
-  flex:2;padding:18px;
-  background:#f97316;border:none;
-  border-radius:20px;color:black;
-  font-weight:900;font-size:11px;
-  text-transform:uppercase;letter-spacing:.12em;
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  box-shadow:0 10px 40px rgba(249,115,22,.35);
-  transition:all .3s cubic-bezier(.4,0,.2,1);
-}
+.ae-confirm-btn{flex:2;padding:18px;background:#f97316;border:none;border-radius:20px;color:black;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 40px rgba(249,115,22,.35);transition:all .3s cubic-bezier(.4,0,.2,1)}
 .ae-confirm-btn:hover{background:#fb923c;box-shadow:0 14px 50px rgba(249,115,22,.55);transform:translateY(-1px)}
 .ae-confirm-btn:active{transform:scale(.97)}
 .ae-confirm-btn svg{width:18px;height:18px}
-/* ════════════════════════════════════════════ */
 
 #resultPage{padding:40px 20px 80px}
 .result-container{max-width:680px;margin:0 auto}
@@ -393,11 +478,7 @@ input:checked+.slider:before{transform:translateX(22px)}
 .result-btn-secondary{width:100%;padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(249,115,22,.3);color:var(--primary);font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.1em;border-radius:16px;cursor:pointer;transition:all .3s}
 .result-btn-secondary:hover{background:rgba(249,115,22,.1);transform:translateY(-1px)}
 
-.admin-link{color:rgba(249,115,22,.5);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:color .2s;text-decoration:none;display:block;text-align:center;margin-top:16px}
-.admin-link:hover{color:var(--primary)}
 #adminLoginError{color:#ef4444;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;text-align:center;min-height:20px;margin-bottom:8px}
-.btn-google{background:white;color:#334155;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid rgba(0,0,0,.1);transition:all .3s}
-.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.15)}
 #fileStatus{display:none;padding:10px 16px;border-radius:14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;text-align:center}
 #fileStatus.s-ok{background:rgba(34,197,94,.12);border:1px solid #22c55e;color:#16a34a;display:block}
 #fileStatus.s-err{background:rgba(239,68,68,.12);border:1px solid #ef4444;color:#dc2626;display:block}
@@ -429,6 +510,17 @@ input:checked+.slider:before{transform:translateX(22px)}
   header{flex-direction:column;gap:16px;text-align:center}
   .nerv-logo-img{margin:0 auto}
 }
+
+.admin-login-modal-panel{
+  background:#111;border:1px solid rgba(249,115,22,.25);border-radius:28px;
+  padding:40px 36px;max-width:400px;width:100%;
+  animation:authFadeIn .4s cubic-bezier(.16,1,.3,1);
+  position:relative;overflow:hidden;
+}
+.admin-login-modal-panel::before{
+  content:'🔐';font-size:80px;position:absolute;top:-10px;right:-10px;
+  opacity:.04;transform:rotate(15deg);pointer-events:none;
+}
 </style>
 </head>
 
@@ -444,10 +536,218 @@ input:checked+.slider:before{transform:translateX(22px)}
   </div>
 </div>
 
+<!-- AUTH PAGE -->
+<div id="authPage">
+  <div class="auth-orb auth-orb-1"></div>
+  <div class="auth-orb auth-orb-2"></div>
+  <div class="auth-orb auth-orb-3"></div>
+
+  <div class="auth-card" id="authCard">
+    <div class="auth-success-overlay" id="authSuccessOverlay">
+      <div class="success-circle">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <polyline points="7,18 15,26 29,10" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="success-checkmark" style="stroke-dasharray:50;stroke-dashoffset:50"/>
+        </svg>
+      </div>
+      <p id="successMsg" style="font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#22c55e">Thành công!</p>
+      <p id="successSub" style="font-size:10px;opacity:.4;text-transform:uppercase;letter-spacing:.15em">Đang chuyển hướng...</p>
+    </div>
+
+    <div class="auth-body" style="padding-bottom:0">
+      <div class="auth-logo-wrap">
+        <div class="auth-logo" id="authLogo" onclick="triggerAdminLogin()" title="Click để đăng nhập Admin">
+          <span style="transform:rotate(10deg);display:inline-block">N</span>
+        </div>
+        <div class="auth-logo-text">
+          <h1>NERD <span>V6.0</span></h1>
+          <p>Hệ thống học tập Lớp 8A7</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-tabs" id="authTabs">
+      <button class="auth-tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Đăng nhập</button>
+      <button class="auth-tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Đăng ký</button>
+      <div class="auth-tab-indicator" id="tabIndicator" style="left:0;width:50%"></div>
+    </div>
+
+    <!-- ═══ LOGIN PANEL (PATCHED) ═══ -->
+    <div class="auth-body" id="loginPanel">
+      <div class="auth-error" id="loginError">
+        <span class="material-icons" style="font-size:14px;flex-shrink:0">error_outline</span>
+        <span id="loginErrorText">Lỗi</span>
+      </div>
+
+      <!-- Ô Họ Tên / Email -->
+      <div class="auth-field">
+        <label class="auth-label" id="loginNameLabel">Họ và Tên / Email</label>
+        <div class="auth-input-wrap">
+          <span class="material-icons auth-input-icon" id="loginNameIcon">person</span>
+          <input
+            type="text"
+            class="auth-input"
+            id="loginName"
+            placeholder="Tên của bạn hoặc email@..."
+            maxlength="120"
+            autocomplete="off"
+            onfocus="onLoginNameFocus()"
+            oninput="onLoginNameInput(this.value)"
+            onkeydown="if(event.key==='Enter')handleLoginSubmit()"
+          >
+        </div>
+      </div>
+
+      <!-- Email hint badge -->
+      <div id="loginEmailHint">
+        <span class="material-icons" style="font-size:12px">email</span>
+        <span>Đăng nhập bằng tài khoản đã đăng ký</span>
+      </div>
+
+      <!-- Ô mật khẩu xuất hiện khi focus (hidden ban đầu) -->
+      <div id="loginPasswordWrap" style="
+        overflow:hidden;
+        max-height:0;
+        opacity:0;
+        transform:translateY(-10px);
+        transition:
+          max-height .42s cubic-bezier(.4,0,.2,1),
+          opacity .32s cubic-bezier(.4,0,.2,1) .06s,
+          transform .32s cubic-bezier(.4,0,.2,1) .06s;
+        will-change:max-height,opacity,transform;
+      ">
+        <div class="auth-field login-pwd-field" style="margin-bottom:0;animation:none">
+          <label class="auth-label" id="loginPwdLabel">Mật khẩu tài khoản</label>
+          <div class="auth-input-wrap">
+            <span class="material-icons auth-input-icon">lock</span>
+            <input
+              type="password"
+              class="auth-input"
+              id="loginPassword"
+              placeholder="Nhập mật khẩu (nếu có)..."
+              autocomplete="current-password"
+              onkeydown="if(event.key==='Enter')handleLoginSubmit()"
+            >
+            <button type="button" class="auth-pwd-toggle" onclick="togglePwd('loginPassword',this)">
+              <span class="material-icons" style="font-size:18px">visibility</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ô Lớp -->
+      <div class="auth-field" id="loginClassWrap" style="margin-top:14px;transition:opacity .3s ease">
+        <label class="auth-label">Lớp</label>
+        <div class="auth-input-wrap">
+          <span class="material-icons auth-input-icon">class</span>
+          <input
+            type="text"
+            class="auth-input"
+            id="loginClass"
+            placeholder="VD: 8A7..."
+            maxlength="20"
+            autocomplete="off"
+            onkeydown="if(event.key==='Enter')handleLoginSubmit()"
+          >
+        </div>
+      </div>
+
+      <button class="auth-submit" id="loginBtn" onclick="handleLoginSubmit()">
+        <div class="auth-spinner" id="loginSpinner"></div>
+        <span id="loginBtnText">ĐĂNG NHẬP</span>
+        <span class="material-icons" style="font-size:18px" id="loginBtnIcon">arrow_forward</span>
+      </button>
+
+      <div class="auth-divider"><hr><span>Hoặc</span><hr></div>
+
+      <button class="auth-google" onclick="handleGoogleLogin()">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Tiếp tục với Google
+      </button>
+
+      <p class="auth-terms">Bằng cách đăng nhập, bạn đồng ý với các quy định của lớp 8A7.</p>
+    </div>
+    <!-- ═══ END LOGIN PANEL ═══ -->
+
+    <!-- REGISTER PANEL -->
+    <div class="auth-body hidden" id="registerPanel" style="position:relative">
+      <div class="reg-features">
+        <div class="reg-feature-badge">📊 Lưu lịch sử</div>
+        <div class="reg-feature-badge">🏆 Xếp hạng</div>
+        <div class="reg-feature-badge">👤 Profile</div>
+      </div>
+
+      <div class="auth-error" id="registerError">
+        <span class="material-icons" style="font-size:14px;flex-shrink:0">error_outline</span>
+        <span id="registerErrorText">Lỗi</span>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Họ và Tên</label>
+        <div class="auth-input-wrap">
+          <span class="material-icons auth-input-icon">badge</span>
+          <input type="text" class="auth-input" id="regName" placeholder="Nguyễn Văn A..." maxlength="120" autocomplete="name">
+        </div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Lớp</label>
+        <div class="auth-input-wrap">
+          <span class="material-icons auth-input-icon">school</span>
+          <input type="text" class="auth-input" id="regClass" placeholder="VD: 8A7..." maxlength="20" autocomplete="off">
+        </div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <div class="auth-input-wrap">
+          <span class="material-icons auth-input-icon">email</span>
+          <input type="email" class="auth-input" id="regEmail" placeholder="email@example.com..." autocomplete="email">
+        </div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Mật khẩu</label>
+        <div class="auth-input-wrap">
+          <span class="material-icons auth-input-icon">lock</span>
+          <input type="password" class="auth-input" id="regPassword" placeholder="Tối thiểu 6 ký tự..." autocomplete="new-password" oninput="updatePwdStrength(this.value)">
+          <button type="button" class="auth-pwd-toggle" onclick="togglePwd('regPassword',this)">
+            <span class="material-icons" style="font-size:18px">visibility</span>
+          </button>
+        </div>
+        <div class="pwd-strength-bar">
+          <div class="pwd-strength-seg" id="ps0"></div>
+          <div class="pwd-strength-seg" id="ps1"></div>
+          <div class="pwd-strength-seg" id="ps2"></div>
+          <div class="pwd-strength-seg" id="ps3"></div>
+        </div>
+        <p class="pwd-strength-label" id="pwdStrengthLabel" style="color:rgba(255,255,255,.3)"></p>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Xác nhận mật khẩu</label>
+        <div class="auth-input-wrap">
+          <span class="material-icons auth-input-icon">lock_clock</span>
+          <input type="password" class="auth-input" id="regPasswordConfirm" placeholder="Nhập lại mật khẩu..." autocomplete="new-password" onkeydown="if(event.key==='Enter')handleRegisterSubmit()">
+          <button type="button" class="auth-pwd-toggle" onclick="togglePwd('regPasswordConfirm',this)">
+            <span class="material-icons" style="font-size:18px">visibility</span>
+          </button>
+        </div>
+      </div>
+      <button class="auth-submit" id="registerBtn" onclick="handleRegisterSubmit()">
+        <div class="auth-spinner" id="registerSpinner"></div>
+        <span id="registerBtnText">TẠO TÀI KHOẢN</span>
+        <span class="material-icons" style="font-size:18px" id="registerBtnIcon">how_to_reg</span>
+      </button>
+      <div class="auth-divider"><hr><span>Hoặc</span><hr></div>
+      <button class="auth-google" onclick="handleGoogleLogin()">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Đăng ký với Google
+      </button>
+      <p class="auth-terms">Tài khoản đã đăng ký sẽ có đầy đủ tính năng: lịch sử làm bài, profile, ảnh đại diện và xếp hạng cá nhân.</p>
+    </div>
+  </div>
+</div>
+
 <!-- GOOGLE NAME MODAL -->
 <div id="googleNameModal" class="confirm-overlay">
-  <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 text-center">
-    <div class="text-4xl mb-3">👋</div>
+  <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 text-center" style="animation:authFadeIn .4s ease">
+    <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f97316,#fbbf24);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;font-weight:900;color:#000">G</div>
     <h3 class="text-xl font-black text-orange-500 mb-1 italic uppercase">Chào mừng!</h3>
     <p class="text-[9px] opacity-40 uppercase tracking-widest mb-6">Nhập thông tin để tiếp tục</p>
     <input type="text" id="googleName" placeholder="Tên của bạn..." maxlength="120" autocomplete="off" class="w-full p-4 rounded-2xl outline-none mb-3">
@@ -463,7 +763,7 @@ input:checked+.slider:before{transform:translateX(22px)}
     <div class="pm-header">
       <span class="pm-header-title">Hồ Sơ Cá Nhân</span>
       <div style="display:flex;align-items:center;gap:12px">
-        <div class="pm-header-badge"><span class="material-icons" style="font-size:12px">verified</span>NERD V5.0</div>
+        <div class="pm-header-badge"><span class="material-icons" style="font-size:12px">verified</span>NERD V6.0</div>
         <button onclick="closeProfile()" style="background:none;border:none;cursor:pointer;font-size:22px;font-weight:900;color:var(--primary);padding:2px 6px;opacity:.7;transition:.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">×</button>
       </div>
     </div>
@@ -477,9 +777,9 @@ input:checked+.slider:before{transform:translateX(22px)}
           </div>
           <div class="avatar-camera-btn" onclick="startAvatarUpload()" title="Đổi ảnh"><span class="material-icons">photo_camera</span></div>
           <div id="avatarMenu" class="hidden" style="position:absolute;top:115%;left:50%;transform:translateX(-50%);width:170px;background:rgba(10,10,10,.95);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;padding:8px;box-shadow:0 20px 40px rgba(0,0,0,.7);z-index:100">
-            <div class="avatar-menu-item" onclick="startAvatarUpload()"><span class="material-icons text-base">upload</span>Upload photo</div>
-            <div class="avatar-menu-item" onclick="viewAvatar()"><span class="material-icons text-base">visibility</span>View photo</div>
-            <div class="avatar-menu-item" onclick="downloadAvatar()"><span class="material-icons text-base">download</span>Download</div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;font-size:10px;font-weight:800;text-transform:uppercase;color:white;cursor:pointer;transition:.2s" onmouseenter="this.style.background='rgba(249,115,22,.2)'" onmouseleave="this.style.background=''" onclick="startAvatarUpload()"><span class="material-icons text-base">upload</span>Upload photo</div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;font-size:10px;font-weight:800;text-transform:uppercase;color:white;cursor:pointer;transition:.2s" onmouseenter="this.style.background='rgba(249,115,22,.2)'" onmouseleave="this.style.background=''" onclick="viewAvatar()"><span class="material-icons text-base">visibility</span>View photo</div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;font-size:10px;font-weight:800;text-transform:uppercase;color:white;cursor:pointer;transition:.2s" onmouseenter="this.style.background='rgba(249,115,22,.2)'" onmouseleave="this.style.background=''" onclick="downloadAvatar()"><span class="material-icons text-base">download</span>Download</div>
           </div>
         </div>
         <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleAvatarFile(this)">
@@ -577,22 +877,37 @@ input:checked+.slider:before{transform:translateX(22px)}
   </div>
 </div>
 
-<!-- ADMIN LOGIN -->
+<!-- ADMIN LOGIN MODAL -->
 <div id="adminLoginModal" class="confirm-overlay">
-  <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 text-center">
-    <h3 class="text-xl font-black text-orange-500 mb-2 italic uppercase">🔐 Admin Login</h3>
-    <p class="text-[9px] opacity-40 uppercase tracking-widest mb-6">Chỉ dành cho giáo viên / quản trị viên</p>
-    <input type="email" id="adminEmail" placeholder="Email admin..." class="w-full p-4 rounded-2xl outline-none mb-3" onkeydown="if(event.key==='Enter')handleAdminLogin()">
-    <input type="password" id="adminPassword" placeholder="Mật khẩu..." class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter')handleAdminLogin()">
-    <div id="adminLoginError" class="mt-3"></div>
-    <div class="flex gap-4 mt-2">
-      <button id="adminLoginBtn" onclick="handleAdminLogin()" class="flex-1 btn-premium py-4 rounded-xl font-black uppercase text-xs">ĐĂNG NHẬP</button>
-      <button onclick="closeAdminLoginModal()" class="flex-1 glass py-4 rounded-xl font-bold uppercase text-xs">HỦY</button>
+  <div class="admin-login-modal-panel" onclick="event.stopPropagation()">
+    <button onclick="closeAdminLoginModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;cursor:pointer;font-size:22px;color:rgba(255,255,255,.3);transition:color .2s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,.3)'">×</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);display:flex;align-items:center;justify-content:center;font-size:20px">🔐</div>
+      <div>
+        <h3 style="font-size:18px;font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.02em;color:white">Admin Portal</h3>
+        <p style="font-size:9px;opacity:.3;text-transform:uppercase;letter-spacing:.2em;margin-top:2px">Chỉ dành cho giáo viên</p>
+      </div>
     </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.18em;opacity:.4;display:block;margin-bottom:7px">Email Admin</label>
+      <div style="position:relative">
+        <span class="material-icons" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);font-size:18px">admin_panel_settings</span>
+        <input type="email" id="adminEmail" placeholder="admin@email.com" style="width:100%;padding:14px 14px 14px 44px;background:rgba(255,255,255,.04)!important;border:1.5px solid rgba(255,255,255,.07)!important;border-radius:14px!important;font-size:13px!important;font-weight:600!important;color:white!important;outline:none!important" onkeydown="if(event.key==='Enter')document.getElementById('adminPassword').focus()">
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.18em;opacity:.4;display:block;margin-bottom:7px">Mật khẩu</label>
+      <div style="position:relative">
+        <span class="material-icons" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);font-size:18px">lock</span>
+        <input type="password" id="adminPassword" placeholder="••••••••" style="width:100%;padding:14px 14px 14px 44px;background:rgba(255,255,255,.04)!important;border:1.5px solid rgba(255,255,255,.07)!important;border-radius:14px!important;font-size:13px!important;font-weight:600!important;color:white!important;outline:none!important" onkeydown="if(event.key==='Enter')handleAdminLogin()">
+      </div>
+    </div>
+    <div id="adminLoginError" class="mt-2 mb-3 text-center min-h-[20px]"></div>
+    <button id="adminLoginBtn" onclick="handleAdminLogin()" style="width:100%;padding:16px;background:linear-gradient(135deg,#f97316,#fbbf24);color:#000;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.15em;border:none;border-radius:14px;cursor:pointer;transition:all .3s;box-shadow:0 10px 25px rgba(249,115,22,.35)">ĐĂNG NHẬP ADMIN</button>
   </div>
 </div>
 
-<!-- AVATAR EDITOR MODAL v5 -->
+<!-- AVATAR EDITOR MODAL -->
 <div id="avatarEditorModal" class="confirm-overlay" style="align-items:center;justify-content:center;padding:16px">
   <div class="ae-panel" onclick="event.stopPropagation()">
     <div class="ae-header">
@@ -609,49 +924,32 @@ input:checked+.slider:before{transform:translateX(22px)}
         </svg>
       </button>
     </div>
-
     <div class="ae-preview-wrap">
       <div class="ae-outer-ring"></div>
       <canvas id="aeCanvas" width="240" height="240"></canvas>
     </div>
-
     <div class="ae-zoom-card">
       <div class="ae-zoom-top">
         <div style="display:flex;align-items:center;gap:10px">
-          <svg class="ae-zoom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-          </svg>
+          <svg class="ae-zoom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           <span class="ae-zoom-label">Zoom</span>
           <span class="ae-zoom-pct" id="aeZoomPct">100%</span>
         </div>
-        <button class="ae-reset-btn" id="aeResetBtn" title="Reset về mặc định">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-            <path d="M3 3v5h5"/>
-          </svg>
+        <button class="ae-reset-btn" id="aeResetBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           Reset
         </button>
       </div>
       <div class="ae-slider-row">
-        <svg class="ae-slider-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
-        </svg>
-        <div class="ae-slider-wrap">
-          <input type="range" class="ae-slider" id="aeSlider" min="0" max="100" step="1" value="50">
-        </div>
-        <svg class="ae-slider-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color:#f97316">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-        </svg>
+        <svg class="ae-slider-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        <div class="ae-slider-wrap"><input type="range" class="ae-slider" id="aeSlider" min="0" max="100" step="1" value="50"></div>
+        <svg class="ae-slider-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color:#f97316"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
       </div>
     </div>
-
     <div class="ae-actions">
       <button class="ae-cancel-btn" onclick="closeAvatarEditor()">HỦY BỎ</button>
       <button class="ae-confirm-btn" id="aeConfirmBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         XÁC NHẬN LƯU
       </button>
     </div>
@@ -677,7 +975,7 @@ input:checked+.slider:before{transform:translateX(22px)}
   </div>
 </nav>
 
-<div id="app" class="p-4 md:p-10 max-w-7xl mx-auto">
+<div id="app" class="p-4 md:p-10 max-w-7xl mx-auto" style="display:none">
   <header id="header" class="hidden flex flex-wrap justify-between items-center mb-8 md:mb-12 gap-4">
     <div class="flex items-center gap-4">
       <div class="nerv-logo-img" onclick="showSection('mainMenu')"><span>N</span></div>
@@ -695,27 +993,6 @@ input:checked+.slider:before{transform:translateX(22px)}
       </div>
     </div>
   </header>
-
-  <div id="loginPage" class="page-section max-w-md mx-auto mt-10 md:mt-20 glass p-6 md:p-10 shadow-2xl">
-    <div class="text-center mb-10">
-      <h2 class="text-4xl font-black mb-2 tracking-tighter italic">NERD <span class="text-orange-500">V5.0</span></h2>
-      <p class="opacity-60 text-sm">Hệ thống học tập Lớp 8A7</p>
-    </div>
-    <div class="space-y-5">
-      <input type="text" id="username" placeholder="Tên của bạn..." class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter')handleLogin()" maxlength="120" autocomplete="off">
-      <input type="text" id="userClass" placeholder="Lớp (VD: 8A7)..." class="w-full p-4 rounded-2xl outline-none" onkeydown="if(event.key==='Enter')handleLogin()" maxlength="20" autocomplete="off">
-      <div id="loginError" class="text-red-400 text-[10px] font-black uppercase tracking-widest text-center hidden"></div>
-      <button id="loginBtn" onclick="handleLogin()" class="w-full btn-premium py-5 rounded-2xl text-lg mt-4 uppercase tracking-widest">ĐĂNG NHẬP</button>
-    </div>
-    <div class="flex items-center gap-4 my-6 opacity-30">
-      <hr class="flex-1 border-white/30"><span class="text-xs font-bold">HOẶC</span><hr class="flex-1 border-white/30">
-    </div>
-    <button onclick="handleGoogleLogin()" class="w-full py-4 rounded-2xl font-bold transition btn-google">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-      <span>TIẾP TỤC VỚI GOOGLE</span>
-    </button>
-    <a class="admin-link" onclick="openAdminLoginModal()">🔐 Đăng nhập Admin</a>
-  </div>
 
   <div id="mainMenu" class="hidden page-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
     <div onclick="setSelectMode('exam');showSection('selectExamPage')" class="glass p-8 md:p-12 flex flex-col items-center border-b-4 border-orange-500">
@@ -875,7 +1152,7 @@ input:checked+.slider:before{transform:translateX(22px)}
 <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:99990;display:none"></canvas>
 
 <script>
-/* ═══ SECURITY ═══════════════════════════════════════════════════════════ */
+/* ═══ SECURITY ═══ */
 (function(){
   const noop=()=>{};
   ['log','warn','error','info','debug','table','dir','trace','group','groupEnd','time','timeEnd','assert','count','clear']
@@ -903,7 +1180,7 @@ input:checked+.slider:before{transform:translateX(22px)}
   },500);
 })();
 
-/* ═══ CONFIG & STATE ═══════════════════════════════════════════════════ */
+/* ═══ CONFIG ═══ */
 const SB_URL='https://fzlbtemrspagisfjvaxs.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bGJ0ZW1yc3BhZ2lzZmp2YXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzUzNjQsImV4cCI6MjA4OTQxMTM2NH0.-LXJQxRZKZOFgQO9NhURTQC3nztcKQ0Ir62kHuup1ek';
 const _sb=supabase.createClient(SB_URL,SB_KEY);
@@ -917,12 +1194,284 @@ const state={
   timer:null,time:900,startTime:null,editingId:null,finalScore:0,
   historyData:[],isAdmin:false,userIP:'Unknown',submitted:false,
   cheatCount:0,wordParsed:null,adminSortAZ:true,adminHiddenOnly:false,
-  avatarFile:null,tempOrigData:null,selectMode:'exam',activeQIdx:0
+  avatarFile:null,tempOrigData:null,selectMode:'exam',activeQIdx:0,
+  isRegistered:false
 };
 window._state=state;
 let _submitting=false;
 
-/* ═══ UTILITY ══════════════════════════════════════════════════════════ */
+/* ═══ LOGIN PASSWORD REVEAL LOGIC ═══ */
+let _pwdExpanded=false;
+
+function _isEmail(val){
+  return val.includes('@')&&val.includes('.');
+}
+
+function onLoginNameFocus(){
+  if(_pwdExpanded)return;
+  _pwdExpanded=true;
+  const wrap=document.getElementById('loginPasswordWrap');
+  if(!wrap)return;
+  // Kích hoạt animation trượt xuống mượt mà
+  wrap.style.maxHeight='120px';
+  wrap.style.opacity='1';
+  wrap.style.transform='translateY(0)';
+  // Focus vào ô mật khẩu sau khi animation xong (nếu user dùng keyboard)
+}
+
+function onLoginNameInput(val){
+  const isEmail=_isEmail(val);
+  const icon=document.getElementById('loginNameIcon');
+  const hint=document.getElementById('loginEmailHint');
+  const clsWrap=document.getElementById('loginClassWrap');
+  const pwdLabel=document.getElementById('loginPwdLabel');
+
+  // Đổi icon
+  if(icon)icon.textContent=isEmail?'email':'person';
+
+  // Hiện/ẩn hint badge
+  if(hint){
+    if(isEmail)hint.classList.add('visible');
+    else hint.classList.remove('visible');
+  }
+
+  // Mờ ô lớp nếu nhập email (không bắt buộc khi login bằng email)
+  if(clsWrap)clsWrap.style.opacity=isEmail?'0.45':'1';
+
+  // Đổi label mật khẩu
+  if(pwdLabel)pwdLabel.textContent=isEmail?'Mật khẩu tài khoản':'Mật khẩu (nếu có)';
+}
+
+function _resetLoginPwd(){
+  _pwdExpanded=false;
+  const wrap=document.getElementById('loginPasswordWrap');
+  if(!wrap)return;
+  wrap.style.maxHeight='0';
+  wrap.style.opacity='0';
+  wrap.style.transform='translateY(-10px)';
+  // Reset hint và icon
+  const hint=document.getElementById('loginEmailHint');
+  if(hint)hint.classList.remove('visible');
+  const icon=document.getElementById('loginNameIcon');
+  if(icon)icon.textContent='person';
+  const clsWrap=document.getElementById('loginClassWrap');
+  if(clsWrap)clsWrap.style.opacity='1';
+  const pwdLabel=document.getElementById('loginPwdLabel');
+  if(pwdLabel)pwdLabel.textContent='Mật khẩu tài khoản';
+  const pwdInput=document.getElementById('loginPassword');
+  if(pwdInput)pwdInput.value='';
+  const nameInput=document.getElementById('loginName');
+  if(nameInput)nameInput.value='';
+  const clsInput=document.getElementById('loginClass');
+  if(clsInput)clsInput.value='';
+}
+
+/* ═══ AUTH TAB SYSTEM ═══ */
+let _currentTab='login';
+function switchAuthTab(tab){
+  if(_currentTab===tab)return;
+  _currentTab=tab;
+  const indicator=document.getElementById('tabIndicator');
+  const loginPanel=document.getElementById('loginPanel');
+  const registerPanel=document.getElementById('registerPanel');
+  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
+  indicator.style.left=tab==='login'?'0':'50%';
+  if(tab==='login'){
+    registerPanel.classList.add('hidden');
+    loginPanel.classList.remove('hidden');
+    loginPanel.style.animation='tabSlideRight .3s ease';
+    setTimeout(()=>loginPanel.style.animation='',300);
+    _resetLoginPwd();
+  }else{
+    loginPanel.classList.add('hidden');
+    registerPanel.classList.remove('hidden');
+    registerPanel.style.animation='tabSlideLeft .3s ease';
+    setTimeout(()=>registerPanel.style.animation='',300);
+  }
+  clearAuthErrors();
+}
+
+function clearAuthErrors(){
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('registerError').classList.remove('show');
+}
+
+function showAuthError(panelId,msg){
+  const el=document.getElementById(panelId);
+  const textEl=document.getElementById(panelId+'Text');
+  if(textEl)textEl.textContent=msg;
+  el.classList.add('show');
+  el.style.animation='none';
+  setTimeout(()=>el.style.animation='errorShake .4s ease',10);
+}
+
+function togglePwd(inputId,btn){
+  const input=document.getElementById(inputId);
+  const icon=btn.querySelector('.material-icons');
+  if(input.type==='password'){input.type='text';icon.textContent='visibility_off'}
+  else{input.type='password';icon.textContent='visibility'}
+}
+
+function updatePwdStrength(val){
+  const segs=[document.getElementById('ps0'),document.getElementById('ps1'),document.getElementById('ps2'),document.getElementById('ps3')];
+  const label=document.getElementById('pwdStrengthLabel');
+  let strength=0;
+  if(val.length>=6)strength++;
+  if(val.length>=10)strength++;
+  if(/[0-9]/.test(val)&&/[a-zA-Z]/.test(val))strength++;
+  if(/[^a-zA-Z0-9]/.test(val)||val.length>=14)strength++;
+  const levels=[
+    {cls:'active-weak',color:'#ef4444',label:'Yếu'},
+    {cls:'active-fair',color:'#f59e0b',label:'Trung bình'},
+    {cls:'active-good',color:'#3b82f6',label:'Khá'},
+    {cls:'active-strong',color:'#22c55e',label:'Mạnh'},
+  ];
+  segs.forEach((s,i)=>{s.className='pwd-strength-seg';if(i<strength)s.classList.add(levels[strength-1]?.cls||'')});
+  if(val.length===0){label.textContent='';return}
+  const lv=levels[strength-1];
+  if(lv){label.textContent=lv.label;label.style.color=lv.color}
+  else{label.textContent='';label.style.color=''}
+}
+
+function showAuthSuccess(msg,sub){
+  const overlay=document.getElementById('authSuccessOverlay');
+  document.getElementById('successMsg').textContent=msg;
+  document.getElementById('successSub').textContent=sub||'Đang chuyển hướng...';
+  overlay.style.display='flex';
+}
+
+function setBtnLoading(btnId,spinnerId,iconId,loading){
+  const btn=document.getElementById(btnId);
+  const spinner=document.getElementById(spinnerId);
+  const icon=document.getElementById(iconId);
+  if(!btn)return;
+  btn.disabled=loading;
+  if(spinner)spinner.style.display=loading?'block':'none';
+  if(icon)icon.style.display=loading?'none':'inline';
+}
+
+/* ═══ ADMIN LOGIN TRIGGER ═══ */
+function triggerAdminLogin(){
+  const logo=document.getElementById('authLogo');
+  logo.style.animation='logoShake .5s ease';
+  setTimeout(()=>logo.style.animation='',500);
+  document.getElementById('adminEmail').value='';
+  document.getElementById('adminPassword').value='';
+  document.getElementById('adminLoginError').textContent='';
+  document.getElementById('adminLoginModal').style.display='flex';
+  setTimeout(()=>document.getElementById('adminEmail').focus(),300);
+}
+
+/* ═══ LOGIN HANDLER (PATCHED) ═══ */
+async function handleLoginSubmit(){
+  const nameOrEmail=(document.getElementById('loginName').value||'').trim();
+  const cls=(document.getElementById('loginClass').value||'').trim();
+  const pass=(document.getElementById('loginPassword').value||'').trim();
+
+  if(!nameOrEmail||nameOrEmail.length<2){
+    showAuthError('loginError','Nhập tên hoặc email của bạn!');return;
+  }
+
+  const isEmail=_isEmail(nameOrEmail);
+
+  /* ── ĐĂNG NHẬP BẰNG EMAIL (tài khoản đã đăng ký) ── */
+  if(isEmail){
+    if(!pass){showAuthError('loginError','Vui lòng nhập mật khẩu!');return}
+    setBtnLoading('loginBtn','loginSpinner','loginBtnIcon',true);
+
+    const{data,error}=await _sb.auth.signInWithPassword({email:nameOrEmail,password:pass});
+    setBtnLoading('loginBtn','loginSpinner','loginBtnIcon',false);
+
+    if(error){
+      if(error.message.includes('Invalid login'))showAuthError('loginError','Sai email hoặc mật khẩu!');
+      else showAuthError('loginError','Đăng nhập thất bại. Thử lại!');
+      return;
+    }
+
+    // Lấy display name từ registered_users
+    const{data:regData}=await _sb.from('registered_users')
+      .select('display_name,user_class').eq('email',nameOrEmail.toLowerCase()).maybeSingle();
+
+    state.user=sanitizeText(regData?.display_name||nameOrEmail,120);
+    state.displayUser=state.user;
+    state.userClass=sanitizeText(regData?.user_class||'8A7',20);
+    state.avatarKey=state.user;
+    state.isRegistered=true;
+
+    if(!localStorage.getItem('nerd_joined'))
+      localStorage.setItem('nerd_joined',new Date().toLocaleDateString('vi-VN'));
+    localStorage.setItem('nerd_session',JSON.stringify({
+      user:state.user,displayUser:state.displayUser,
+      userClass:state.userClass,isAdmin:false,
+      avatarKey:state.avatarKey,isRegistered:true
+    }));
+    showAuthSuccess('Đăng nhập thành công!','Đang vào hệ thống...');
+    setTimeout(()=>{recordCurrentName();setupUI()},1200);
+    return;
+  }
+
+  /* ── ĐĂNG NHẬP KHÁCH (tên thường + lớp) ── */
+  if(!cls){showAuthError('loginError','Vui lòng nhập lớp!');return}
+
+  setBtnLoading('loginBtn','loginSpinner','loginBtnIcon',true);
+  await new Promise(r=>setTimeout(r,280));
+  setBtnLoading('loginBtn','loginSpinner','loginBtnIcon',false);
+
+  state.user=sanitizeText(nameOrEmail,120);
+  state.displayUser=sanitizeText(nameOrEmail,120);
+  state.userClass=sanitizeText(cls,20);
+  state.avatarKey=state.user;
+  state.isRegistered=false;
+
+  if(!localStorage.getItem('nerd_joined'))
+    localStorage.setItem('nerd_joined',new Date().toLocaleDateString('vi-VN'));
+  localStorage.setItem('nerd_session',JSON.stringify({
+    user:state.user,displayUser:state.displayUser,
+    userClass:state.userClass,isAdmin:false,
+    avatarKey:state.avatarKey,isRegistered:false
+  }));
+  showAuthSuccess('Chào mừng, '+state.displayUser+'!','Đang vào hệ thống...');
+  setTimeout(()=>{recordCurrentName();setupUI()},1200);
+}
+
+/* ═══ REGISTER HANDLER ═══ */
+async function handleRegisterSubmit(){
+  const name=(document.getElementById('regName').value||'').trim();
+  const cls=(document.getElementById('regClass').value||'').trim();
+  const email=(document.getElementById('regEmail').value||'').trim();
+  const pass=(document.getElementById('regPassword').value||'');
+  const passConfirm=(document.getElementById('regPasswordConfirm').value||'');
+
+  if(!name||name.length<2){showAuthError('registerError','Tên phải có ít nhất 2 ký tự!');return}
+  if(!cls){showAuthError('registerError','Vui lòng nhập lớp!');return}
+  if(!email||!email.includes('@')){showAuthError('registerError','Email không hợp lệ!');return}
+  if(pass.length<6){showAuthError('registerError','Mật khẩu phải có ít nhất 6 ký tự!');return}
+  if(pass!==passConfirm){showAuthError('registerError','Mật khẩu xác nhận không khớp!');return}
+
+  setBtnLoading('registerBtn','registerSpinner','registerBtnIcon',true);
+  const{data,error}=await _sb.auth.signUp({email,password:pass,options:{data:{full_name:name,user_class:cls}}});
+  if(error){
+    setBtnLoading('registerBtn','registerSpinner','registerBtnIcon',false);
+    if(error.message.includes('already registered'))showAuthError('registerError','Email này đã được đăng ký rồi!');
+    else showAuthError('registerError',error.message||'Lỗi đăng ký. Thử lại sau!');
+    return;
+  }
+
+  try{
+    await _sb.from('registered_users').upsert([{email:email.toLowerCase(),display_name:name,user_class:cls}],{onConflict:'email'});
+  }catch(_){}
+
+  setBtnLoading('registerBtn','registerSpinner','registerBtnIcon',false);
+  state.user=sanitizeText(name,120);state.displayUser=sanitizeText(name,120);
+  state.userClass=sanitizeText(cls,20);state.avatarKey=state.user;state.isRegistered=true;
+  if(!localStorage.getItem('nerd_joined'))localStorage.setItem('nerd_joined',new Date().toLocaleDateString('vi-VN'));
+  localStorage.setItem('nerd_session',JSON.stringify({user:state.user,displayUser:state.displayUser,userClass:state.userClass,isAdmin:false,avatarKey:state.avatarKey,isRegistered:true}));
+  showAuthSuccess('Đăng ký thành công! 🎉','Kiểm tra email xác nhận nếu cần...');
+  setTimeout(()=>{recordCurrentName();setupUI()},1500);
+}
+
+/* ═══ UTILITY ═══ */
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;').replace(/\//g,'&#x2F;')}
 function sanitizeText(s,maxLen){return String(s||'').replace(/[<>"'`]/g,'').substring(0,maxLen).trim()}
 function getAvatarKey(){return(state.avatarKey||state.user||state.displayUser||'guest').trim()||'guest'}
@@ -962,7 +1511,7 @@ function setSelectMode(mode){
   }
 }
 
-/* ═══ TOAST ═════════════════════════════════════════════════════════════ */
+/* ═══ TOAST ═══ */
 function showToast(msg,type='normal',duration=4000){
   const container=document.getElementById('toast-container');
   while(container.children.length>=3)container.removeChild(container.firstChild);
@@ -977,7 +1526,7 @@ function showToast(msg,type='normal',duration=4000){
   t.onclick=()=>{clearTimeout(timer);t.remove()};
 }
 
-/* ═══ RIPPLE ════════════════════════════════════════════════════════════ */
+/* ═══ RIPPLE ═══ */
 document.addEventListener('click',e=>{
   const btn=e.target.closest('button,.opt-card,.btn-premium');
   if(!btn||btn.disabled)return;
@@ -990,7 +1539,7 @@ document.addEventListener('click',e=>{
   r.addEventListener('animationend',()=>r.remove());
 });
 
-/* ═══ CONFETTI ══════════════════════════════════════════════════════════ */
+/* ═══ CONFETTI ═══ */
 function launchConfetti(){
   const canvas=document.getElementById('confettiCanvas');
   canvas.width=window.innerWidth;canvas.height=window.innerHeight;canvas.style.display='block';
@@ -1020,7 +1569,6 @@ function launchConfetti(){
   requestAnimationFrame(draw);
 }
 
-/* ═══ SCORE ANIMATION ════════════════════════════════════════════════ */
 function animateScore(el,target,duration=1300){
   const start=performance.now();
   function step(now){
@@ -1033,10 +1581,9 @@ function animateScore(el,target,duration=1300){
   requestAnimationFrame(step);
 }
 
-/* ═══ THEME ══════════════════════════════════════════════════════════ */
 function initTheme(){
   const saved=localStorage.getItem('nerd_theme');
-  if(saved==='light'){document.getElementById('themeToggle').checked=true;document.body.setAttribute('data-theme','light')}
+  if(saved==='light'){const tog=document.getElementById('themeToggle');if(tog)tog.checked=true;document.body.setAttribute('data-theme','light')}
 }
 function toggleTheme(){
   const isLight=document.getElementById('themeToggle').checked;
@@ -1044,8 +1591,7 @@ function toggleTheme(){
   localStorage.setItem('nerd_theme',isLight?'light':'dark');
 }
 
-/* ═══ SECTION TRANSITIONS ════════════════════════════████ */
-const SECTIONS=['loginPage','mainMenu','selectExamPage','examPage','adminPage','leaderboard','resultPage','reviewPage','practicePage'];
+const SECTIONS=['mainMenu','selectExamPage','examPage','adminPage','leaderboard','resultPage','reviewPage','practicePage'];
 function showSection(id){
   if(id==='adminPage'&&!state.isAdmin){showToast('Bạn không có quyền truy cập!','error');return}
   if(id!=='examPage'){
@@ -1076,7 +1622,6 @@ function updateMobileNavActive(id){
   if(activeId)document.getElementById(activeId)?.classList.add('active');
 }
 
-/* ═══ MODAL HELPERS ══════════════════════════════════════════════════ */
 function closeDetails(){document.getElementById('detailsModal').style.display='none'}
 function customConfirm(msg,cb){
   const modal=document.getElementById('confirmModal');
@@ -1103,7 +1648,6 @@ window.addEventListener('beforeunload',e=>{
   if(state.currentExam&&!state.submitted){e.preventDefault();return(e.returnValue='Bạn đang làm bài thi! Rời trang sẽ mất tiến trình.')}
 });
 
-/* ═══ KEYBOARD SHORTCUTS FOR EXAM ════════════════════════════════════ */
 function initExamKeyboard(){
   let _observer=null;
   function setupObserver(){
@@ -1136,18 +1680,12 @@ function initExamKeyboard(){
   });
 }
 
-/* ═══ BLOCKLIST ═══════════════════════════════════════════════════ */
 function getBlocklist(){try{return JSON.parse(localStorage.getItem('nerd_blocklist')||'[]')}catch(_){return[]}}
 function saveBlocklist(list){localStorage.setItem('nerd_blocklist',JSON.stringify(list))}
 function isBlocked(ex){const bl=getBlocklist();return bl.some(b=>b.id===ex.id||(b.title&&b.title.toLowerCase()===String(ex.title||'').toLowerCase()))}
 function blockExam(ex){const bl=getBlocklist();if(!isBlocked(ex)){bl.push({id:ex.id,title:ex.title});saveBlocklist(bl)}}
 
-/* ═══ ADMIN AUTH ═════════════════════════════════════════════════ */
-function openAdminLoginModal(){
-  document.getElementById('adminEmail').value='';document.getElementById('adminPassword').value='';
-  document.getElementById('adminLoginError').textContent='';
-  document.getElementById('adminLoginModal').style.display='flex';
-}
+function openAdminLoginModal(){triggerAdminLogin()}
 function closeAdminLoginModal(){document.getElementById('adminLoginModal').style.display='none'}
 async function handleAdminLogin(){
   const email=(document.getElementById('adminEmail').value||'').trim();
@@ -1157,30 +1695,24 @@ async function handleAdminLogin(){
   if(!ADMIN_EMAILS.includes(email)){errEl.textContent='Email này không có quyền admin!';return}
   const btn=document.getElementById('adminLoginBtn');btn.disabled=true;btn.textContent='ĐANG ĐĂNG NHẬP...';
   const{data,error}=await _sb.auth.signInWithPassword({email,password:pass});
-  btn.disabled=false;btn.textContent='ĐĂNG NHẬP';
+  btn.disabled=false;btn.textContent='ĐĂNG NHẬP ADMIN';
   if(error){errEl.textContent='Sai email hoặc mật khẩu!';return}
   state.isAdmin=true;document.getElementById('adminBtn').classList.remove('hidden');closeAdminLoginModal();
   const savedSession=JSON.parse(localStorage.getItem('nerd_session')||'{}');
   state.user=data.user.email;state.displayUser=savedSession.displayUser||'Admin';
   state.userClass=savedSession.userClass||'ADMIN';state.avatarKey=sanitizeText(state.user,120);
   localStorage.setItem('nerd_session',JSON.stringify({user:state.user,displayUser:state.displayUser,userClass:state.userClass,isAdmin:true,avatarKey:state.avatarKey}));
-  recordCurrentName();setupUI();showSection('adminPage');showToast('Đã đăng nhập Admin!','success');
+  recordCurrentName();
+  if(document.getElementById('app').style.display!=='none'){
+    document.getElementById('adminBtn').classList.remove('hidden');
+    showSection('adminPage');
+    showToast('Đã đăng nhập Admin!','success');
+  }else{
+    showAuthSuccess('Admin đăng nhập thành công!','Đang vào trang quản trị...');
+    setTimeout(()=>{setupUI();setTimeout(()=>showSection('adminPage'),300)},1200);
+  }
 }
 
-/* ═══ LOGIN / AUTH ═══════════════════════════════════════████ */
-async function handleLogin(){
-  const name=document.getElementById('username').value.trim();
-  const cls=document.getElementById('userClass').value.trim();
-  const errEl=document.getElementById('loginError');
-  if(!name||!cls){errEl.textContent='Vui lòng nhập đầy đủ tên và lớp!';errEl.classList.remove('hidden');return}
-  if(name.length<2){errEl.textContent='Tên phải có ít nhất 2 ký tự!';errEl.classList.remove('hidden');return}
-  errEl.classList.add('hidden');
-  const btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='ĐANG VÀO...';
-  state.user=sanitizeText(name,120);state.displayUser=sanitizeText(name,120);
-  state.userClass=sanitizeText(cls,20);state.avatarKey=state.user;
-  localStorage.setItem('nerd_session',JSON.stringify({user:state.user,displayUser:state.displayUser,userClass:state.userClass,isAdmin:false,avatarKey:state.avatarKey}));
-  btn.disabled=false;btn.textContent='ĐĂNG NHẬP';recordCurrentName();setupUI();
-}
 async function handleLogout(){
   stopCheatGuard();try{await _sb.auth.signOut()}catch(_){}
   state.isAdmin=false;localStorage.removeItem('nerd_session');location.reload();
@@ -1191,7 +1723,7 @@ async function handleGoogleLogin(){
 }
 async function checkOAuthSession(){
   const{data:{session}}=await _sb.auth.getSession();if(!session)return;
-  if(ADMIN_EMAILS.includes(session.user.email)){state.isAdmin=true;document.getElementById('adminBtn').classList.remove('hidden')}
+  if(ADMIN_EMAILS.includes(session.user.email)){state.isAdmin=true}
   if(!state.user){
     const saved=localStorage.getItem('nerd_session');
     if(saved){
@@ -1200,6 +1732,7 @@ async function checkOAuthSession(){
         state.user=d.user;state.displayUser=d.displayUser||d.user;
         state.userClass=d.userClass;state.avatarKey=sanitizeText(d.avatarKey||d.user,120);
         state.isAdmin=state.isAdmin||!!d.isAdmin||ADMIN_EMAILS.includes(d.user);
+        state.isRegistered=!!d.isRegistered;
         recordCurrentName();setupUI();return;
       }
     }
@@ -1217,16 +1750,16 @@ function saveGoogleProfile(){
   if(!cls){errEl.textContent='Vui lòng nhập lớp!';return}
   errEl.textContent='';
   state.user=sanitizeText(name,120);state.displayUser=sanitizeText(name,120);
-  state.userClass=sanitizeText(cls,20);state.avatarKey=state.user;
+  state.userClass=sanitizeText(cls,20);state.avatarKey=state.user;state.isRegistered=true;
   if(!localStorage.getItem('nerd_joined'))localStorage.setItem('nerd_joined',new Date().toLocaleDateString('vi-VN'));
-  localStorage.setItem('nerd_session',JSON.stringify({user:state.user,displayUser:state.displayUser,userClass:state.userClass,isAdmin:state.isAdmin,avatarKey:state.avatarKey}));
+  localStorage.setItem('nerd_session',JSON.stringify({user:state.user,displayUser:state.displayUser,userClass:state.userClass,isAdmin:state.isAdmin,avatarKey:state.avatarKey,isRegistered:true}));
   document.getElementById('googleNameModal').style.display='none';recordCurrentName();setupUI();
 }
 
-/* ═══ SETUP UI ════════════════════════════════════════════════════ */
 async function setupUI(){
+  document.getElementById('authPage').style.display='none';
+  document.getElementById('app').style.display='block';
   document.getElementById('userTag').textContent=state.displayUser+' // '+state.userClass;
-  document.getElementById('loginPage').classList.add('hidden');
   document.getElementById('header').classList.replace('hidden','flex');
   document.getElementById('mobileNav').classList.remove('hidden');
   if(state.isAdmin)document.getElementById('adminBtn').classList.remove('hidden');
@@ -1235,7 +1768,6 @@ async function setupUI(){
   loadUserAvatar();showSection('mainMenu');await fetchExams();populateLbExamFilter();
 }
 
-/* ═══ EXAMS ══════════════════════════════════════════════════════ */
 async function fetchExams(){
   const{data}=await _sb.from('exams').select('*').order('id',{ascending:false});
   state.exams=(data||[]).filter(ex=>!isBlocked(ex));populateLbExamFilter();
@@ -1273,7 +1805,6 @@ function setShuffleMode(mode){
   ['both','q','opts'].forEach(m=>{const btn=document.getElementById('sm-'+m);if(!btn)return;if(m===mode)btn.classList.add('active-pill');else btn.classList.remove('active-pill')});
 }
 
-/* ═══ EXAM SESSION ═══════════════════════════════════════████████ */
 function saveAnswersToSession(){
   if(!state.currentExam)return;
   try{sessionStorage.setItem(`nerd_exam_${state.currentExam.id}`,JSON.stringify({answers:state.userAns,timeLeft:state.time,ts:Date.now()}))}catch(_){}
@@ -1288,7 +1819,6 @@ function restoreAnswersFromSession(examId){
   }catch(_){return null}
 }
 
-/* ═══ START EXAM ═════════════════════════════════════════████████ */
 function startExam(id){
   const ex=state.exams.find(e=>e.id===id);if(!ex)return;
   state.currentExam=JSON.parse(JSON.stringify(ex));
@@ -1312,7 +1842,6 @@ function startExam(id){
   setTimeout(()=>{if(window._setupExamObserver)window._setupExamObserver()},300);
 }
 
-/* ═══ RENDER QUESTIONS ══════════════════════════════════════████ */
 const KEY_LABELS=['1','2','3','4'];
 function renderAllQuestions(){
   const area=document.getElementById('questionArea');
@@ -1352,7 +1881,6 @@ function updateProgress(){
   const cnt=document.getElementById('answeredCount');if(cnt)cnt.textContent=`${answered}/${total}`;
 }
 
-/* ═══ PRACTICE MODE ══════════════════════════════════════████████ */
 const ps={exam:null,questions:[],qIdx:0,answers:[],correctCount:0};
 function startPractice(id){
   const ex=state.exams.find(e=>e.id===id);if(!ex)return;
@@ -1419,7 +1947,6 @@ function showPracticeResult(){
   if(parseFloat(score)>=8)setTimeout(launchConfetti,400);
 }
 
-/* ═══ TIMER ══════════════════════════════════════════════████████ */
 function startTimer(){
   if(state.timer)clearInterval(state.timer);
   state.timer=setInterval(()=>{
@@ -1438,7 +1965,6 @@ function startTimer(){
   if(bar){bar.classList.remove('hidden');bar.style.width=(state.time/900*100)+'%'}
 }
 
-/* ═══ CHEAT GUARD ═══════════════════════════════════════████████ */
 function _onVis(){if(document.hidden&&!state.submitted){state.cheatCount++;document.getElementById('cheatGuard').style.display='flex';_updateCheatBadge()}}
 function _onBlur(){if(!state.submitted){state.cheatCount++;document.getElementById('cheatGuard').style.display='flex';_updateCheatBadge()}}
 function _updateCheatBadge(){const badge=document.getElementById('cheatCountBadge');const num=document.getElementById('cheatCountNum');if(badge&&num){num.textContent=state.cheatCount;badge.classList.remove('hidden')}}
@@ -1452,7 +1978,6 @@ function addWatermark(){
 }
 function removeWatermark(){document.getElementById('examWatermark')?.remove()}
 
-/* ═══ SUBMIT EXAM ══════════════════════════════════════████ */
 async function submitExam(){
   if(_submitting||state.submitted)return;
   const lastSub=localStorage.getItem('nerd_last_submit');
@@ -1514,12 +2039,10 @@ async function submitExam(){
   showSection('resultPage');if(state.finalScore>=8)setTimeout(launchConfetti,400);_submitting=false;
 }
 
-/* ═══ REVIEW — FIX: show correct answer explicitly even if unanswered ═══ */
 function renderReview(){
   showSection('reviewPage');
   document.getElementById('reviewContent').innerHTML=state.currentExam.questions.map((q,qi)=>{
     const uc=state.userAns[qi];
-    // FIX: always check each opt's .c property — this is the source of truth after shuffle
     const correctIdx=q.opts.findIndex(o=>o.c);
     const userCorrect=(uc!==null)&&q.opts[uc]?.c;
     return`<div class="glass p-6 md:p-10 border-l-4 ${userCorrect?'border-green-500':'border-red-500'}">
@@ -1531,11 +2054,8 @@ function renderReview(){
       <div class="space-y-3">
         ${q.opts.map((o,oi)=>{
           let cls='';
-          // Green = correct answer (regardless of user pick)
-          if(o.c) cls='opt-correct';
-          // Red = user picked this AND it's wrong
-          else if(uc===oi&&!o.c) cls='opt-wrong';
-          // Label: mark correct answer clearly
+          if(o.c)cls='opt-correct';
+          else if(uc===oi&&!o.c)cls='opt-wrong';
           const suffix=o.c?` <span style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;opacity:.7">✓ ĐÁP ÁN ĐÚNG</span>`:
                         (uc===oi&&!o.c)?` <span style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;opacity:.7">✗ BẠN CHỌN</span>`:'';
           return`<div class="opt-review ${cls}">${esc(o.t)}${suffix}</div>`;
@@ -1546,7 +2066,6 @@ function renderReview(){
   }).join('');
 }
 
-/* ═══ LEADERBOARD ════════════════════════════════████ */
 let _lbPage=0,_lbSearchTimer=null;const _LB_SIZE=20;
 function debouncedLbSearch(){clearTimeout(_lbSearchTimer);_lbSearchTimer=setTimeout(()=>renderLeaderboard(0),300)}
 function resetLbFilters(){document.getElementById('lbSearch').value='';document.getElementById('lbExamFilter').value='';renderLeaderboard(0)}
@@ -1613,7 +2132,6 @@ function showDetails(i){
   document.getElementById('copyIpBtn')?.addEventListener('click',()=>{navigator.clipboard.writeText(h.ip_address||'').then(()=>showToast('Đã copy IP!','success',2000))});
 }
 
-/* ═══ ADMIN PAGE ═════════════════════════════════════████████ */
 function showAdminStatus(msg){const el=document.getElementById('adminStatus');el.textContent=msg;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),4000)}
 function toggleAdminSort(){
   state.adminSortAZ=!state.adminSortAZ;
@@ -1755,7 +2273,6 @@ async function deleteExam(id){
   await fetchExams();await renderAdminList();
 }
 
-/* ═══ PARSE INPUT ════════════════════════════════════████████ */
 function parseInput(txt){
   if(!txt?.trim())return[];
   const blocks=txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]])/im);
@@ -1772,7 +2289,6 @@ function parseInput(txt){
   }).filter(Boolean);
 }
 
-/* ═══ WORD IMPORT ════════════════════════════════════████████ */
 async function handleWordFile(input){
   const file=input.files[0];if(!file)return;input.value='';showFileStatus('s-load','⏳ ĐANG ĐỌC FILE WORD...');
   try{
@@ -1816,7 +2332,6 @@ function showFileStatus(cls,msg){
   if(cls!=='s-load')setTimeout(()=>{el.style.display='none';el.className=''},5000);
 }
 
-/* ═══ PROFILE ════════════════════════════════████████████ */
 function syncProfileLeft(){
   const nameVal=(document.getElementById('profileNameInput')?.value||'').trim();
   const clsVal=(document.getElementById('profileClassInput')?.value||'').trim();
@@ -1902,332 +2417,58 @@ function showProfileHistory(){
 function hideProfileHistory(){document.getElementById('profileHistoryList').classList.add('hidden')}
 function toggleHistoryDetail(i){document.getElementById('hd-'+i)?.classList.toggle('hidden')}
 
-/* ════════════════════════════════════════════════════════════════
-   AVATAR EDITOR v5 — FIXED: no oval, drag works on mouse + touch
-   ════════════════════════════════════════════════════════════════ */
-
-const AE = {
-  DISPLAY: 240,
-  OUTPUT: 512,
-  MIN_SCALE: 0.5,
-  MAX_SCALE: 3.0,
-  img: null,
-  origDataUrl: null,
-  offsetX: 0,
-  offsetY: 0,
-  zoom: 1.0,
-  baseScale: 1,
-  dragging: false,
-  dragStartX: 0,
-  dragStartY: 0,
-  dragOriginX: 0,
-  dragOriginY: 0,
-  sliderVal: 50,
-  rafId: 0,
-};
-
-function aeSliderToZoom(v) {
-  if (v === 50) return 1.0;
-  if (v < 50)  return AE.MIN_SCALE + (v / 50) * (1.0 - AE.MIN_SCALE);
-  return 1.0 + ((v - 50) / 50) * (AE.MAX_SCALE - 1.0);
-}
-
-function aeTotalScale() {
-  return AE.baseScale * AE.zoom;
-}
-
-function aeClamp() {
-  const s    = aeTotalScale();
-  const imgW = AE.img ? AE.img.naturalWidth  * s : 0;
-  const imgH = AE.img ? AE.img.naturalHeight * s : 0;
-  const maxX = Math.max(0, (imgW - AE.DISPLAY) / 2);
-  const maxY = Math.max(0, (imgH - AE.DISPLAY) / 2);
-  AE.offsetX = Math.min(maxX, Math.max(-maxX, AE.offsetX));
-  AE.offsetY = Math.min(maxY, Math.max(-maxY, AE.offsetY));
-}
-
-function aeDraw() {
-  const canvas = document.getElementById('aeCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const D = AE.DISPLAY;
-
-  // FIX: Ensure canvas internal dimensions are always correct before drawing
-  if (canvas.width !== D) canvas.width = D;
-  if (canvas.height !== D) canvas.height = D;
-
-  ctx.clearRect(0, 0, D, D);
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(D / 2, D / 2, D / 2, 0, Math.PI * 2);
-  ctx.clip();
-
-  if (AE.img) {
-    const s  = aeTotalScale();
-    const dw = AE.img.naturalWidth  * s;
-    const dh = AE.img.naturalHeight * s;
-    const dx = (D - dw) / 2 + AE.offsetX;
-    const dy = (D - dh) / 2 + AE.offsetY;
-    ctx.drawImage(AE.img, dx, dy, dw, dh);
-  } else {
-    ctx.fillStyle = '#1a1a1a';
-    ctx.fillRect(0, 0, D, D);
-  }
-
-  ctx.restore();
-
-  // Crosshair
-  ctx.save();
-  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(D/2, 0); ctx.lineTo(D/2, D);
-  ctx.moveTo(0, D/2); ctx.lineTo(D, D/2);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function aeScheduleDraw() {
-  cancelAnimationFrame(AE.rafId);
-  AE.rafId = requestAnimationFrame(() => { aeClamp(); aeDraw(); aeUpdateUI(); });
-}
-
-function aeUpdateUI() {
-  const pct = document.getElementById('aeZoomPct');
-  if (pct) pct.textContent = Math.round(AE.zoom * 100) + '%';
-  const slider = document.getElementById('aeSlider');
-  if (slider) slider.style.setProperty('--ae-fill', AE.sliderVal + '%');
-}
-
-function aeLoadImg(dataUrl) {
-  const img = new Image();
-  img.onload = () => {
-    AE.img = img;
-    // FIX: use Math.max to ensure image COVERS the circle (object-fit: cover behavior)
-    AE.baseScale = Math.max(AE.DISPLAY / img.naturalWidth, AE.DISPLAY / img.naturalHeight);
-    AE.zoom = 1.0;
-    AE.sliderVal = 50;
-    AE.offsetX = 0;
-    AE.offsetY = 0;
-    const slider = document.getElementById('aeSlider');
-    if (slider) { slider.value = '50'; slider.style.setProperty('--ae-fill', '50%'); }
-    aeScheduleDraw();
-  };
-  img.src = dataUrl;
-}
-
-/* ═══ FIX: Single init guard prevents duplicate event listeners ═══ */
-let _aeInitDone = false;
-
-function initAvatarEditor() {
-  if (_aeInitDone) return;
-  _aeInitDone = true;
-
-  const canvas     = document.getElementById('aeCanvas');
-  const slider     = document.getElementById('aeSlider');
-  const resetBtn   = document.getElementById('aeResetBtn');
-  const confirmBtn = document.getElementById('aeConfirmBtn');
-
-  if (!canvas) { _aeInitDone = false; return; }
-
-  // FIX: Set canvas internal resolution explicitly
-  canvas.width  = AE.DISPLAY;
-  canvas.height = AE.DISPLAY;
-
-  // ── DRAG — mouse ──
-  canvas.addEventListener('mousedown', e => {
-    if (e.button !== 0) return;
-    AE.dragging    = true;
-    AE.dragStartX  = e.clientX;
-    AE.dragStartY  = e.clientY;
-    AE.dragOriginX = AE.offsetX;
-    AE.dragOriginY = AE.offsetY;
-    canvas.style.cursor = 'grabbing';
-    e.preventDefault();
-  });
-
-  // FIX: Attach to window so drag continues even if cursor leaves canvas
-  window.addEventListener('mousemove', e => {
-    if (!AE.dragging) return;
-    AE.offsetX = AE.dragOriginX + (e.clientX - AE.dragStartX);
-    AE.offsetY = AE.dragOriginY + (e.clientY - AE.dragStartY);
-    aeScheduleDraw();
-  });
-
-  window.addEventListener('mouseup', e => {
-    if (!AE.dragging) return;
-    AE.dragging = false;
-    canvas.style.cursor = 'grab';
-  });
-
-  // ── DRAG — touch (FIX: e.preventDefault() to stop scroll hijacking) ──
-  canvas.addEventListener('touchstart', e => {
-    if (e.touches.length !== 1) return;
-    // FIX: prevent default to stop page scrolling during drag
-    e.preventDefault();
-    AE.dragging    = true;
-    AE.dragStartX  = e.touches[0].clientX;
-    AE.dragStartY  = e.touches[0].clientY;
-    AE.dragOriginX = AE.offsetX;
-    AE.dragOriginY = AE.offsetY;
-  }, { passive: false });
-
-  window.addEventListener('touchmove', e => {
-    if (!AE.dragging || e.touches.length !== 1) return;
-    AE.offsetX = AE.dragOriginX + (e.touches[0].clientX - AE.dragStartX);
-    AE.offsetY = AE.dragOriginY + (e.touches[0].clientY - AE.dragStartY);
-    aeScheduleDraw();
-    e.preventDefault();
-  }, { passive: false });
-
-  window.addEventListener('touchend', () => { AE.dragging = false; });
-  window.addEventListener('touchcancel', () => { AE.dragging = false; });
-
-  // ── SCROLL WHEEL ZOOM ──
-  canvas.addEventListener('wheel', e => {
-    e.preventDefault();
-    const step = 3;
-    AE.sliderVal = Math.min(100, Math.max(0, AE.sliderVal + (e.deltaY < 0 ? step : -step)));
-    AE.zoom = aeSliderToZoom(AE.sliderVal);
-    if (slider) { slider.value = String(AE.sliderVal); }
-    aeScheduleDraw();
-  }, { passive: false });
-
-  // ── SLIDER ──
-  if (slider) {
-    slider.addEventListener('input', () => {
-      AE.sliderVal = parseInt(slider.value);
-      AE.zoom = aeSliderToZoom(AE.sliderVal);
-      aeScheduleDraw();
-    });
-    slider.style.setProperty('--ae-fill', '50%');
-  }
-
-  // ── RESET ──
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      AE.zoom = 1.0;
-      AE.sliderVal = 50;
-      AE.offsetX = 0;
-      AE.offsetY = 0;
-      if (slider) { slider.value = '50'; }
-      aeScheduleDraw();
-    });
-  }
-
-  // ── ARROW KEYS (FIX: properly scoped to modal open state) ──
-  document.addEventListener('keydown', e => {
-    const modal = document.getElementById('avatarEditorModal');
-    if (!modal || modal.style.display !== 'flex') return;
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    const step = e.shiftKey ? 20 : 6;
-    let moved = false;
-    if (e.key === 'ArrowUp')    { AE.offsetY -= step; moved = true; }
-    if (e.key === 'ArrowDown')  { AE.offsetY += step; moved = true; }
-    if (e.key === 'ArrowLeft')  { AE.offsetX -= step; moved = true; }
-    if (e.key === 'ArrowRight') { AE.offsetX += step; moved = true; }
-    if (moved) { e.preventDefault(); aeScheduleDraw(); }
-  });
-
-  // ── CONFIRM ──
-  if (confirmBtn) confirmBtn.addEventListener('click', aeExportAndSave);
-
+/* ═══ AVATAR EDITOR v5 ═══ */
+const AE={DISPLAY:240,OUTPUT:512,MIN_SCALE:.5,MAX_SCALE:3.0,img:null,origDataUrl:null,offsetX:0,offsetY:0,zoom:1.0,baseScale:1,dragging:false,dragStartX:0,dragStartY:0,dragOriginX:0,dragOriginY:0,sliderVal:50,rafId:0};
+function aeSliderToZoom(v){if(v===50)return 1.0;if(v<50)return AE.MIN_SCALE+(v/50)*(1.0-AE.MIN_SCALE);return 1.0+((v-50)/50)*(AE.MAX_SCALE-1.0)}
+function aeTotalScale(){return AE.baseScale*AE.zoom}
+function aeClamp(){const s=aeTotalScale();const imgW=AE.img?AE.img.naturalWidth*s:0;const imgH=AE.img?AE.img.naturalHeight*s:0;const maxX=Math.max(0,(imgW-AE.DISPLAY)/2);const maxY=Math.max(0,(imgH-AE.DISPLAY)/2);AE.offsetX=Math.min(maxX,Math.max(-maxX,AE.offsetX));AE.offsetY=Math.min(maxY,Math.max(-maxY,AE.offsetY))}
+function aeDraw(){const canvas=document.getElementById('aeCanvas');if(!canvas)return;const ctx=canvas.getContext('2d');const D=AE.DISPLAY;if(canvas.width!==D)canvas.width=D;if(canvas.height!==D)canvas.height=D;ctx.clearRect(0,0,D,D);ctx.save();ctx.beginPath();ctx.arc(D/2,D/2,D/2,0,Math.PI*2);ctx.clip();if(AE.img){const s=aeTotalScale();const dw=AE.img.naturalWidth*s;const dh=AE.img.naturalHeight*s;const dx=(D-dw)/2+AE.offsetX;const dy=(D-dh)/2+AE.offsetY;ctx.drawImage(AE.img,dx,dy,dw,dh)}else{ctx.fillStyle='#1a1a1a';ctx.fillRect(0,0,D,D)}ctx.restore();ctx.save();ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(D/2,0);ctx.lineTo(D/2,D);ctx.moveTo(0,D/2);ctx.lineTo(D,D/2);ctx.stroke();ctx.restore()}
+function aeScheduleDraw(){cancelAnimationFrame(AE.rafId);AE.rafId=requestAnimationFrame(()=>{aeClamp();aeDraw();aeUpdateUI()})}
+function aeUpdateUI(){const pct=document.getElementById('aeZoomPct');if(pct)pct.textContent=Math.round(AE.zoom*100)+'%';const slider=document.getElementById('aeSlider');if(slider)slider.style.setProperty('--ae-fill',AE.sliderVal+'%')}
+function aeLoadImg(dataUrl){const img=new Image();img.onload=()=>{AE.img=img;AE.baseScale=Math.max(AE.DISPLAY/img.naturalWidth,AE.DISPLAY/img.naturalHeight);AE.zoom=1.0;AE.sliderVal=50;AE.offsetX=0;AE.offsetY=0;const slider=document.getElementById('aeSlider');if(slider){slider.value='50';slider.style.setProperty('--ae-fill','50%')}aeScheduleDraw()};img.src=dataUrl}
+let _aeInitDone=false;
+function initAvatarEditor(){
+  if(_aeInitDone)return;_aeInitDone=true;
+  const canvas=document.getElementById('aeCanvas');const slider=document.getElementById('aeSlider');const resetBtn=document.getElementById('aeResetBtn');const confirmBtn=document.getElementById('aeConfirmBtn');
+  if(!canvas){_aeInitDone=false;return}
+  canvas.width=AE.DISPLAY;canvas.height=AE.DISPLAY;
+  canvas.addEventListener('mousedown',e=>{if(e.button!==0)return;AE.dragging=true;AE.dragStartX=e.clientX;AE.dragStartY=e.clientY;AE.dragOriginX=AE.offsetX;AE.dragOriginY=AE.offsetY;canvas.style.cursor='grabbing';e.preventDefault()});
+  window.addEventListener('mousemove',e=>{if(!AE.dragging)return;AE.offsetX=AE.dragOriginX+(e.clientX-AE.dragStartX);AE.offsetY=AE.dragOriginY+(e.clientY-AE.dragStartY);aeScheduleDraw()});
+  window.addEventListener('mouseup',()=>{if(!AE.dragging)return;AE.dragging=false;canvas.style.cursor='grab'});
+  canvas.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;e.preventDefault();AE.dragging=true;AE.dragStartX=e.touches[0].clientX;AE.dragStartY=e.touches[0].clientY;AE.dragOriginX=AE.offsetX;AE.dragOriginY=AE.offsetY},{passive:false});
+  window.addEventListener('touchmove',e=>{if(!AE.dragging||e.touches.length!==1)return;AE.offsetX=AE.dragOriginX+(e.touches[0].clientX-AE.dragStartX);AE.offsetY=AE.dragOriginY+(e.touches[0].clientY-AE.dragStartY);aeScheduleDraw();e.preventDefault()},{passive:false});
+  window.addEventListener('touchend',()=>{AE.dragging=false});window.addEventListener('touchcancel',()=>{AE.dragging=false});
+  canvas.addEventListener('wheel',e=>{e.preventDefault();const step=3;AE.sliderVal=Math.min(100,Math.max(0,AE.sliderVal+(e.deltaY<0?step:-step)));AE.zoom=aeSliderToZoom(AE.sliderVal);if(slider){slider.value=String(AE.sliderVal)}aeScheduleDraw()},{passive:false});
+  if(slider){slider.addEventListener('input',()=>{AE.sliderVal=parseInt(slider.value);AE.zoom=aeSliderToZoom(AE.sliderVal);aeScheduleDraw()});slider.style.setProperty('--ae-fill','50%')}
+  if(resetBtn){resetBtn.addEventListener('click',()=>{AE.zoom=1.0;AE.sliderVal=50;AE.offsetX=0;AE.offsetY=0;if(slider){slider.value='50'}aeScheduleDraw()})}
+  document.addEventListener('keydown',e=>{const modal=document.getElementById('avatarEditorModal');if(!modal||modal.style.display!=='flex')return;if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;const step=e.shiftKey?20:6;let moved=false;if(e.key==='ArrowUp'){AE.offsetY-=step;moved=true}if(e.key==='ArrowDown'){AE.offsetY+=step;moved=true}if(e.key==='ArrowLeft'){AE.offsetX-=step;moved=true}if(e.key==='ArrowRight'){AE.offsetX+=step;moved=true}if(moved){e.preventDefault();aeScheduleDraw()}});
+  if(confirmBtn)confirmBtn.addEventListener('click',aeExportAndSave);
   aeDraw();
 }
-
-/* FIX: showAvatarEditor re-initializes canvas dimensions and redraws */
-function showAvatarEditor() {
-  document.getElementById('profileModal').style.display = 'none';
-  document.getElementById('avatarEditorModal').style.display = 'flex';
-  // FIX: After modal is visible, ensure canvas has correct dimensions and redraw
-  requestAnimationFrame(() => {
-    const canvas = document.getElementById('aeCanvas');
-    if (canvas) {
-      // Force canvas to correct internal resolution (fixes oval on some browsers)
-      canvas.width  = AE.DISPLAY;
-      canvas.height = AE.DISPLAY;
-    }
-    aeDraw();
-  });
+function showAvatarEditor(){
+  document.getElementById('profileModal').style.display='none';document.getElementById('avatarEditorModal').style.display='flex';
+  requestAnimationFrame(()=>{const canvas=document.getElementById('aeCanvas');if(canvas){canvas.width=AE.DISPLAY;canvas.height=AE.DISPLAY}aeDraw()});
 }
-
-/* FIX: closeAvatarEditor resets drag state to prevent stuck drag */
-function closeAvatarEditor() {
-  AE.dragging = false;
-  document.getElementById('avatarEditorModal').style.display = 'none';
-  document.getElementById('profileModal').style.display = 'flex';
+function closeAvatarEditor(){AE.dragging=false;document.getElementById('avatarEditorModal').style.display='none';document.getElementById('profileModal').style.display='flex'}
+function aeExportAndSave(){
+  if(!AE.img){showToast('Chưa có ảnh!','error');return}
+  const OUT=AE.OUTPUT;const ratio=OUT/AE.DISPLAY;const exportCanvas=document.createElement('canvas');exportCanvas.width=OUT;exportCanvas.height=OUT;const ctx=exportCanvas.getContext('2d');
+  ctx.beginPath();ctx.arc(OUT/2,OUT/2,OUT/2,0,Math.PI*2);ctx.clip();
+  const s=aeTotalScale()*ratio;const dw=AE.img.naturalWidth*s;const dh=AE.img.naturalHeight*s;const dx=(OUT-dw)/2+AE.offsetX*ratio;const dy=(OUT-dh)/2+AE.offsetY*ratio;
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(AE.img,dx,dy,dw,dh);
+  const dataUrl=exportCanvas.toDataURL('image/png',1.0);const key=getAvatarKey();
+  try{localStorage.setItem(`nerd_avatar_${key}`,dataUrl);if(AE.origDataUrl){try{localStorage.setItem(`nerd_avatar_orig_${key}`,AE.origDataUrl)}catch(_){}}}
+  catch(err){try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('nerd_avatar_orig_')&&k!==`nerd_avatar_orig_${key}`)localStorage.removeItem(k)}localStorage.setItem(`nerd_avatar_${key}`,dataUrl)}catch(_){showToast('Bộ nhớ đầy, không thể lưu ảnh!','error');return}}
+  loadUserAvatar();closeAvatarEditor();showToast('Đã lưu ảnh đại diện! 🎉','success');
 }
-
-function aeExportAndSave() {
-  if (!AE.img) { showToast('Chưa có ảnh!', 'error'); return; }
-
-  const OUT = AE.OUTPUT;
-  const ratio = OUT / AE.DISPLAY;
-  const exportCanvas = document.createElement('canvas');
-  exportCanvas.width  = OUT;
-  exportCanvas.height = OUT;
-  const ctx = exportCanvas.getContext('2d');
-
-  ctx.beginPath();
-  ctx.arc(OUT / 2, OUT / 2, OUT / 2, 0, Math.PI * 2);
-  ctx.clip();
-
-  const s  = aeTotalScale() * ratio;
-  const dw = AE.img.naturalWidth  * s;
-  const dh = AE.img.naturalHeight * s;
-  const dx = (OUT - dw) / 2 + AE.offsetX * ratio;
-  const dy = (OUT - dh) / 2 + AE.offsetY * ratio;
-
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(AE.img, dx, dy, dw, dh);
-
-  const dataUrl = exportCanvas.toDataURL('image/png', 1.0);
-  const key = getAvatarKey();
-
-  try {
-    localStorage.setItem(`nerd_avatar_${key}`, dataUrl);
-    if (AE.origDataUrl) {
-      try { localStorage.setItem(`nerd_avatar_orig_${key}`, AE.origDataUrl); } catch(_) {}
-    }
-  } catch (err) {
-    try {
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith('nerd_avatar_orig_') && k !== `nerd_avatar_orig_${key}`) {
-          localStorage.removeItem(k);
-        }
-      }
-      localStorage.setItem(`nerd_avatar_${key}`, dataUrl);
-    } catch(_) {
-      showToast('Bộ nhớ đầy, không thể lưu ảnh!', 'error');
-      return;
-    }
-  }
-
-  loadUserAvatar();
-  closeAvatarEditor();
-  showToast('Đã lưu ảnh đại diện! 🎉', 'success');
-}
-
-function handleAvatarFile(input) {
-  if (!input.files?.[0]) return;
-  const file = input.files[0];
-  if (!file.type.startsWith('image/')) { showToast('File không phải ảnh!', 'error'); return; }
-  const reader = new FileReader();
-  reader.onload = ev => {
-    AE.origDataUrl = ev.target.result;
-    aeLoadImg(ev.target.result);
-    showAvatarEditor();
-    input.value = '';
-  };
+function handleAvatarFile(input){
+  if(!input.files?.[0])return;const file=input.files[0];
+  if(!file.type.startsWith('image/')){showToast('File không phải ảnh!','error');return}
+  const reader=new FileReader();
+  reader.onload=ev=>{AE.origDataUrl=ev.target.result;aeLoadImg(ev.target.result);showAvatarEditor();input.value=''};
   reader.readAsDataURL(file);
 }
 
-function saveAvatar() { aeExportAndSave(); }
-
-/* ═══ AVATAR DISPLAY ═══════════════════════════════════ */
 function loadUserAvatar(){
   const key=getAvatarKey();const data=localStorage.getItem(`nerd_avatar_${key}`);
   const imgEl=document.getElementById('userAvatar'),initEl=document.getElementById('profileAvatarInitial');
@@ -2262,7 +2503,7 @@ function downloadAvatar(){
   document.getElementById('avatarMenu').classList.add('hidden');
 }
 
-/* ═══ INIT ═══════════════════════════════████████████████ */
+/* ═══ INIT ═══ */
 initAvatarEditor();
 initExamKeyboard();
 setShuffleMode('both');
@@ -2281,6 +2522,7 @@ window.onload=async()=>{
           state.user=sanitizeText(d.user,120);state.displayUser=sanitizeText(d.displayUser||d.user,120);
           state.userClass=sanitizeText(d.userClass,20);state.avatarKey=sanitizeText(d.avatarKey||d.user,120);
           state.isAdmin=state.isAdmin||!!d.isAdmin||ADMIN_EMAILS.includes(d.user);
+          state.isRegistered=!!d.isRegistered;
           recordCurrentName();setupUI();
         }
       }
