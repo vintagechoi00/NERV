@@ -69,10 +69,92 @@ body{
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-20px,30px) scale(0.9)}}
 @keyframes orbFloat3{0%,100%{transform:translate(0,0)}33%{transform:translate(15px,15px)}66%{transform:translate(-10px,-5px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── FIELD SLIDE ANIMATIONS ── */
+@keyframes fieldSlideDown{
+  from{opacity:0;transform:translateY(-12px) scaleY(0.8);transform-origin:top}
+  to{opacity:1;transform:translateY(0) scaleY(1);transform-origin:top}
+}
+@keyframes fieldSlideUp{
+  from{opacity:1;transform:translateY(0) scaleY(1);transform-origin:top}
+  to{opacity:0;transform:translateY(-12px) scaleY(0.8);transform-origin:top}
+}
+@keyframes fieldFadeIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fieldFadeOut{
+  from{opacity:1;transform:translateY(0)}
+  to{opacity:0;transform:translateY(8px)}
+}
 @keyframes pwdReveal{
   from{opacity:0;transform:translateY(-10px) scaleY(0.7);transform-origin:top}
   to{opacity:1;transform:translateY(0) scaleY(1);transform-origin:top}
 }
+
+/* ── FIELD TRANSITION WRAPPERS ── */
+#loginPasswordWrap{
+  overflow:hidden;
+  max-height:0;opacity:0;
+  transform:translateY(-10px);
+  transition:
+    max-height .42s cubic-bezier(.4,0,.2,1),
+    opacity .32s cubic-bezier(.4,0,.2,1) .06s,
+    transform .32s cubic-bezier(.4,0,.2,1) .06s;
+  will-change:max-height,opacity,transform;
+}
+#loginPasswordWrap.field-visible{
+  max-height:120px;opacity:1;transform:translateY(0);
+}
+
+#loginClassWrap{
+  overflow:hidden;
+  max-height:100px;opacity:1;
+  transform:translateY(0);
+  transition:
+    max-height .38s cubic-bezier(.4,0,.2,1),
+    opacity .28s cubic-bezier(.4,0,.2,1),
+    transform .28s cubic-bezier(.4,0,.2,1),
+    margin .28s ease;
+  will-change:max-height,opacity,transform;
+  margin-top:14px;
+}
+#loginClassWrap.field-hidden{
+  max-height:0;opacity:0;transform:translateY(-8px);margin-top:0;pointer-events:none;
+}
+
+/* ── WARNING BANNER (xóa field không phù hợp) ── */
+.login-field-warn{
+  background:rgba(251,191,36,.08);
+  border:1px solid rgba(251,191,36,.3);
+  color:#fbbf24;
+  border-radius:12px;
+  padding:9px 14px;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  display:none;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+  animation:fieldFadeIn .3s ease forwards;
+}
+.login-field-warn.show{display:flex}
+
+/* ── FIELD TYPE BADGE ── */
+.login-type-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:20px;
+  font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.15em;
+  margin-bottom:10px;
+  transition:all .3s ease;
+  opacity:0;transform:translateY(-4px);
+}
+.login-type-badge.visible{opacity:1;transform:translateY(0)}
+.login-type-badge.guest{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#22c55e}
+.login-type-badge.registered{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);color:#f97316}
+
 .login-pwd-field{animation:pwdReveal .38s cubic-bezier(.16,1,.3,1) forwards;transform-origin:top}
 
 #authPage{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:20px}
@@ -473,6 +555,7 @@ input:checked+.slider:before{transform:translateX(22px)}
 
     <!-- LOGIN PANEL -->
     <div class="auth-body" id="loginPanel">
+
       <div class="auth-info" id="loginInfo">
         <span class="material-icons" style="font-size:14px;flex-shrink:0">mark_email_unread</span>
         <span id="loginInfoText">Đăng nhập thành công!</span>
@@ -483,42 +566,89 @@ input:checked+.slider:before{transform:translateX(22px)}
         <span id="loginErrorText">Lỗi</span>
       </div>
 
+      <!-- WARNING: xóa field không phù hợp -->
+      <div class="login-field-warn" id="loginFieldWarn">
+        <span class="material-icons" style="font-size:14px;flex-shrink:0">warning_amber</span>
+        <span id="loginFieldWarnText">Vui lòng xóa trường này!</span>
+      </div>
+
+      <!-- Type badge -->
+      <div class="login-type-badge" id="loginTypeBadge">
+        <span class="material-icons" style="font-size:10px" id="loginTypeBadgeIcon">person</span>
+        <span id="loginTypeBadgeText">Tài khoản khách</span>
+      </div>
+
+      <!-- Name / Email -->
       <div class="auth-field">
         <label class="auth-label" id="loginNameLabel">Họ và Tên / Email</label>
         <div class="auth-input-wrap">
           <span class="material-icons auth-input-icon" id="loginNameIcon">person</span>
-          <input type="text" class="auth-input" id="loginName" placeholder="Tên của bạn hoặc email@..." maxlength="120" autocomplete="off"
-            onfocus="onLoginNameFocus()" oninput="onLoginNameInput(this.value)" onkeydown="if(event.key==='Enter')handleLoginSubmit()">
+          <input
+            type="text"
+            class="auth-input"
+            id="loginName"
+            placeholder="Tên của bạn hoặc email@..."
+            maxlength="120"
+            autocomplete="off"
+            onfocus="onLoginNameFocus()"
+            onblur="onLoginNameBlur(event)"
+            oninput="onLoginNameInput(this.value)"
+            onkeydown="if(event.key==='Enter')handleLoginSubmit()"
+          >
         </div>
       </div>
 
+      <!-- Email hint -->
       <div id="loginEmailHint">
         <span class="material-icons" style="font-size:12px">email</span>
         <span>Đăng nhập bằng tài khoản đã đăng ký</span>
       </div>
 
-      <div id="loginPasswordWrap" style="overflow:hidden;max-height:0;opacity:0;transform:translateY(-10px);transition:max-height .42s cubic-bezier(.4,0,.2,1),opacity .32s cubic-bezier(.4,0,.2,1) .06s,transform .32s cubic-bezier(.4,0,.2,1) .06s;will-change:max-height,opacity,transform;">
-        <div class="auth-field login-pwd-field" style="margin-bottom:0;animation:none">
-          <label class="auth-label" id="loginPwdLabel">Mật khẩu tài khoản</label>
+      <!-- Password wrap (slide down/up) -->
+      <div id="loginPasswordWrap">
+        <div class="auth-field" style="margin-bottom:0;animation:none">
+          <label class="auth-label" id="loginPwdLabel">Mật khẩu (nếu có)</label>
           <div class="auth-input-wrap">
             <span class="material-icons auth-input-icon">lock</span>
-            <input type="password" class="auth-input" id="loginPassword" placeholder="Nhập mật khẩu..." autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLoginSubmit()">
-            <button type="button" class="auth-pwd-toggle" onclick="togglePwd('loginPassword',this)">
+            <input
+              type="password"
+              class="auth-input"
+              id="loginPassword"
+              placeholder="Nhập mật khẩu..."
+              autocomplete="current-password"
+              onfocus="onPasswordFocus()"
+              onblur="onPasswordBlur(event)"
+              onkeydown="if(event.key==='Enter')handleLoginSubmit()"
+            >
+            <button type="button" class="auth-pwd-toggle" onmousedown="event.preventDefault()" onclick="togglePwd('loginPassword',this)">
               <span class="material-icons" style="font-size:18px">visibility</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div class="auth-field" id="loginClassWrap" style="margin-top:14px;transition:opacity .3s ease">
-        <label class="auth-label">Lớp</label>
-        <div class="auth-input-wrap">
-          <span class="material-icons auth-input-icon">class</span>
-          <input type="text" class="auth-input" id="loginClass" placeholder="VD: 8A7..." maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter')handleLoginSubmit()">
+      <!-- Class wrap (slide up/down) -->
+      <div id="loginClassWrap">
+        <div class="auth-field" style="margin-bottom:0;animation:none">
+          <label class="auth-label">Lớp</label>
+          <div class="auth-input-wrap">
+            <span class="material-icons auth-input-icon">class</span>
+            <input
+              type="text"
+              class="auth-input"
+              id="loginClass"
+              placeholder="VD: 8A7..."
+              maxlength="20"
+              autocomplete="off"
+              onfocus="onClassFocus()"
+              onblur="onClassBlur(event)"
+              onkeydown="if(event.key==='Enter')handleLoginSubmit()"
+            >
+          </div>
         </div>
       </div>
 
-      <button class="auth-submit" id="loginBtn" onclick="handleLoginSubmit()">
+      <button class="auth-submit" id="loginBtn" onclick="handleLoginSubmit()" style="margin-top:18px">
         <div class="auth-spinner" id="loginSpinner"></div>
         <span id="loginBtnText">ĐĂNG NHẬP</span>
         <span class="material-icons" style="font-size:18px" id="loginBtnIcon">arrow_forward</span>
@@ -532,7 +662,7 @@ input:checked+.slider:before{transform:translateX(22px)}
       <p class="auth-terms">Bằng cách đăng nhập, bạn đồng ý với các quy định của lớp 8A7.</p>
     </div>
 
-    <!-- REGISTER PANEL -->
+    <!-- REGISTER PANEL (giữ nguyên) -->
     <div class="auth-body hidden" id="registerPanel" style="position:relative">
       <div class="reg-features">
         <div class="reg-feature-badge">📊 Lưu lịch sử</div>
@@ -603,7 +733,6 @@ input:checked+.slider:before{transform:translateX(22px)}
     </div>
   </div>
 </div>
-
 <!-- GOOGLE NAME MODAL -->
 <div id="googleNameModal" class="confirm-overlay">
   <div class="glass p-8 max-w-sm w-full border-2 border-orange-500/50 text-center" style="animation:authFadeIn .4s ease">
@@ -1021,7 +1150,8 @@ input:checked+.slider:before{transform:translateX(22px)}
   document.addEventListener('keyup',e=>{if(e.key==='PrintScreen'){try{navigator.clipboard.writeText('')}catch(_){}}});
   let devOpen=false;const threshold=160;
   setInterval(()=>{
-    const wDiff=window.outerWidth-window.innerWidth>threshold;const hDiff=window.outerHeight-window.innerHeight>threshold;
+    const wDiff=window.outerWidth-window.innerWidth>threshold;
+    const hDiff=window.outerHeight-window.innerHeight>threshold;
     const guard=document.getElementById('devtoolsGuard');if(!guard)return;
     if((wDiff||hDiff)&&!devOpen){devOpen=true;guard.style.display='flex'}
     else if(!wDiff&&!hDiff&&devOpen){devOpen=false;guard.style.display='none'}
@@ -1036,6 +1166,7 @@ let ADMIN_EMAILS=['concu@gmail.com'];
 async function loadAdminEmails(){
   try{const{data}=await _sb.from('admins').select('email');if(data?.length)ADMIN_EMAILS=data.map(r=>r.email)}catch(_){}
 }
+
 const state={
   user:'',displayUser:'',userClass:'',avatarKey:'',
   exams:[],_allExams:[],currentExam:null,userAns:[],
@@ -1048,37 +1179,193 @@ const state={
 window._state=state;
 let _submitting=false;
 
-/* ═══ LOGIN PASSWORD REVEAL ═══ */
-let _pwdExpanded=false;
-function _isEmail(val){return val.includes('@')&&val.includes('.')}
+/* ═══════════════════════════════════════════════
+   LOGIN FIELD LOGIC MỚI
+   ─────────────────────────────────────────────
+   • Tên không chứa @  → ACC KHÁCH  (hiện Lớp, ẩn Mật khẩu)
+   • Tên chứa @ (email) → ACC ĐĂNG KÝ (hiện Mật khẩu, ẩn Lớp)
+   • Focus vào ô Tên/Email → hiện ô Mật khẩu (slide down)
+   • Blur ra ngoài / focus vào Lớp → ẩn ô Mật khẩu
+   • Focus vào ô Mật khẩu → ẩn ô Lớp
+   • Blur ô Mật khẩu / focus vào Tên → hiện ô Lớp
+   • Nếu là email mà có nhập Lớp → cảnh báo xóa Lớp
+   • Nếu là tên mà có nhập Mật khẩu → cảnh báo xóa Mật khẩu
+   ═══════════════════════════════════════════════ */
 
-function onLoginNameFocus(){
-  if(_pwdExpanded)return;_pwdExpanded=true;
-  const wrap=document.getElementById('loginPasswordWrap');if(!wrap)return;
-  wrap.style.maxHeight='120px';wrap.style.opacity='1';wrap.style.transform='translateY(0)';
+function _isEmail(v){return v.includes('@')&&v.includes('.')}
+
+/* Hiện/ẩn password wrap */
+function _showPwdField(){
+  const w=document.getElementById('loginPasswordWrap');
+  if(w)w.classList.add('field-visible');
 }
+function _hidePwdField(){
+  const w=document.getElementById('loginPasswordWrap');
+  if(w)w.classList.remove('field-visible');
+}
+
+/* Hiện/ẩn class wrap */
+function _showClassField(){
+  const w=document.getElementById('loginClassWrap');
+  if(w)w.classList.remove('field-hidden');
+}
+function _hideClassField(){
+  const w=document.getElementById('loginClassWrap');
+  if(w)w.classList.add('field-hidden');
+}
+
+/* Badge loại tài khoản */
+function _updateTypeBadge(isEmail){
+  const badge=document.getElementById('loginTypeBadge');
+  const icon=document.getElementById('loginTypeBadgeIcon');
+  const text=document.getElementById('loginTypeBadgeText');
+  if(!badge)return;
+  if(isEmail){
+    badge.className='login-type-badge registered visible';
+    if(icon)icon.textContent='verified_user';
+    if(text)text.textContent='Tài khoản đã đăng ký';
+  } else {
+    badge.className='login-type-badge guest visible';
+    if(icon)icon.textContent='person';
+    if(text)text.textContent='Tài khoản khách';
+  }
+}
+function _hideBadge(){
+  const badge=document.getElementById('loginTypeBadge');
+  if(badge)badge.classList.remove('visible');
+}
+
+/* Cảnh báo field không phù hợp */
+function _showWarn(msg){
+  const el=document.getElementById('loginFieldWarn');
+  const txt=document.getElementById('loginFieldWarnText');
+  if(txt)txt.textContent=msg;
+  if(el){el.classList.add('show');el.style.animation='none';setTimeout(()=>el.style.animation='fieldFadeIn .3s ease forwards',10)}
+}
+function _hideWarn(){
+  const el=document.getElementById('loginFieldWarn');
+  if(el)el.classList.remove('show');
+}
+
+/* Cập nhật icon ô tên */
+function _updateNameIcon(isEmail){
+  const icon=document.getElementById('loginNameIcon');
+  if(icon)icon.textContent=isEmail?'email':'person';
+  const hint=document.getElementById('loginEmailHint');
+  if(hint){if(isEmail)hint.classList.add('visible');else hint.classList.remove('visible')}
+  const lbl=document.getElementById('loginPwdLabel');
+  if(lbl)lbl.textContent=isEmail?'Mật khẩu tài khoản':'Mật khẩu (nếu có)';
+}
+
+/* ── EVENT HANDLERS ── */
+
+// Focus vào ô Tên/Email → hiện password
+function onLoginNameFocus(){
+  _showPwdField();
+  const val=(document.getElementById('loginName')?.value||'').trim();
+  const isEmail=_isEmail(val);
+  _updateNameIcon(isEmail);
+  if(val.length>0)_updateTypeBadge(isEmail);
+  // Nếu là tên khách mà có mật khẩu → cảnh báo
+  const pwd=(document.getElementById('loginPassword')?.value||'');
+  if(!isEmail&&pwd){_showWarn('Xóa mật khẩu để đăng nhập khách!')}
+  else _hideWarn();
+}
+
+// Blur ô Tên/Email
+function onLoginNameBlur(e){
+  // Nếu focus sang ô Lớp → giữ nguyên (không ẩn pwd)
+  const next=e.relatedTarget;
+  if(next&&next.id==='loginClass'){
+    // ẩn password
+    _hidePwdField();
+    _hideWarn();
+    return;
+  }
+  // Nếu focus sang pwd toggle hoặc pwd input → không ẩn
+  if(next&&(next.id==='loginPassword'||next.classList.contains('auth-pwd-toggle'))){return}
+  // Blur ra ngoài → ẩn password
+  _hidePwdField();
+  _hideWarn();
+}
+
+// Input trong ô Tên/Email
 function onLoginNameInput(val){
   const isEmail=_isEmail(val);
-  const icon=document.getElementById('loginNameIcon');
-  const hint=document.getElementById('loginEmailHint');
-  const clsWrap=document.getElementById('loginClassWrap');
-  const pwdLabel=document.getElementById('loginPwdLabel');
-  if(icon)icon.textContent=isEmail?'email':'person';
-  if(hint){if(isEmail)hint.classList.add('visible');else hint.classList.remove('visible')}
-  if(clsWrap)clsWrap.style.display=isEmail?'none':'block';
-  if(pwdLabel)pwdLabel.textContent=isEmail?'Mật khẩu tài khoản':'Mật khẩu (nếu có)';
+  _updateNameIcon(isEmail);
+  if(val.trim().length>0)_updateTypeBadge(isEmail);else _hideBadge();
+  clearAuthErrors();_hideWarn();
+  if(isEmail){
+    // Email → ẩn Lớp, hiện Password
+    _hideClassField();
+    _showPwdField();
+    // Nếu có Lớp đã nhập → cảnh báo
+    const cls=(document.getElementById('loginClass')?.value||'').trim();
+    if(cls)_showWarn('Xóa lớp để đăng nhập bằng tài khoản!');
+  } else {
+    // Tên khách → hiện Lớp, ẩn Password (chỉ khi không focus)
+    _showClassField();
+    // Nếu có mật khẩu đã nhập → cảnh báo
+    const pwd=(document.getElementById('loginPassword')?.value||'');
+    if(pwd)_showWarn('Xóa mật khẩu để đăng nhập khách!');
+  }
 }
-function _resetLoginPwd(){
-  _pwdExpanded=false;
-  const wrap=document.getElementById('loginPasswordWrap');if(!wrap)return;
-  wrap.style.maxHeight='0';wrap.style.opacity='0';wrap.style.transform='translateY(-10px)';
+
+// Focus vào ô Mật khẩu → ẩn Lớp
+function onPasswordFocus(){
+  _hideClassField();
+  const val=(document.getElementById('loginName')?.value||'').trim();
+  const isEmail=_isEmail(val);
+  // Nếu là tên khách → cảnh báo
+  if(!isEmail){
+    _showWarn('Xóa mật khẩu để đăng nhập khách!');
+  } else {
+    _hideWarn();
+  }
+}
+
+// Blur ô Mật khẩu
+function onPasswordBlur(e){
+  const next=e.relatedTarget;
+  // Nếu focus sang pwd toggle → không làm gì
+  if(next&&next.classList.contains('auth-pwd-toggle'))return;
+  // Nếu focus sang ô Tên → không làm gì (onLoginNameFocus sẽ xử lý)
+  if(next&&next.id==='loginName')return;
+  // Blur ra ngoài hoặc sang ô Lớp → hiện Lớp
+  const val=(document.getElementById('loginName')?.value||'').trim();
+  const isEmail=_isEmail(val);
+  if(!isEmail){
+    _showClassField();
+    _hidePwdField();
+  }
+  _hideWarn();
+}
+
+// Focus vào ô Lớp → ẩn Mật khẩu
+function onClassFocus(){
+  _hidePwdField();
+  _hideWarn();
+}
+
+// Blur ô Lớp
+function onClassBlur(e){
+  const next=e.relatedTarget;
+  if(next&&next.id==='loginName')return;
+  // không làm gì thêm
+}
+
+/* Reset toàn bộ login form về trạng thái ban đầu */
+function _resetLoginForm(){
+  _hidePwdField();
+  _showClassField();
+  _hideBadge();
+  _hideWarn();
   const hint=document.getElementById('loginEmailHint');if(hint)hint.classList.remove('visible');
   const icon=document.getElementById('loginNameIcon');if(icon)icon.textContent='person';
-  const clsWrap=document.getElementById('loginClassWrap');if(clsWrap)clsWrap.style.display='block';
-  const pwdLabel=document.getElementById('loginPwdLabel');if(pwdLabel)pwdLabel.textContent='Mật khẩu tài khoản';
-  const pwdInput=document.getElementById('loginPassword');if(pwdInput)pwdInput.value='';
-  const nameInput=document.getElementById('loginName');if(nameInput)nameInput.value='';
-  const clsInput=document.getElementById('loginClass');if(clsInput)clsInput.value='';
+  const lbl=document.getElementById('loginPwdLabel');if(lbl)lbl.textContent='Mật khẩu (nếu có)';
+  const n=document.getElementById('loginName');if(n)n.value='';
+  const p=document.getElementById('loginPassword');if(p)p.value='';
+  const c=document.getElementById('loginClass');if(c)c.value='';
 }
 
 /* ═══ AUTH TABS ═══ */
@@ -1094,13 +1381,14 @@ function switchAuthTab(tab){
   if(tab==='login'){
     registerPanel.classList.add('hidden');loginPanel.classList.remove('hidden');
     loginPanel.style.animation='tabSlideRight .3s ease';setTimeout(()=>loginPanel.style.animation='',300);
-    _resetLoginPwd();
-  }else{
+    _resetLoginForm();
+  } else {
     loginPanel.classList.add('hidden');registerPanel.classList.remove('hidden');
     registerPanel.style.animation='tabSlideLeft .3s ease';setTimeout(()=>registerPanel.style.animation='',300);
   }
   clearAuthErrors();
 }
+
 function clearAuthErrors(){
   document.getElementById('loginError').classList.remove('show');
   document.getElementById('registerError').classList.remove('show');
@@ -1154,45 +1442,49 @@ function triggerAdminLogin(){
   setTimeout(()=>document.getElementById('adminEmail').focus(),300);
 }
 
-/* ═══════════════════════════════════════════════
-   LOGIN HANDLER — ĐỌC TỪ user_metadata
-   ═══════════════════════════════════════════════ */
+/* ═══ LOGIN HANDLER ═══ */
 async function handleLoginSubmit(){
-  clearAuthErrors();
+  clearAuthErrors();_hideWarn();
   const nameOrEmail=(document.getElementById('loginName').value||'').trim();
   const cls=(document.getElementById('loginClass').value||'').trim();
   const pass=(document.getElementById('loginPassword').value||'').trim();
+  const isEmail=_isEmail(nameOrEmail);
 
   if(!nameOrEmail||nameOrEmail.length<2){showAuthError('loginError','Nhập tên hoặc email của bạn!');return}
 
-  const isEmail=_isEmail(nameOrEmail);
+  /* ── Validate: Email nhưng có nhập lớp ── */
+  if(isEmail&&cls){
+    _showWarn('Xóa lớp để đăng nhập bằng tài khoản!');
+    document.getElementById('loginClass').focus();
+    return;
+  }
+
+  /* ── Validate: Tên khách nhưng có nhập mật khẩu ── */
+  if(!isEmail&&pass){
+    _showWarn('Xóa mật khẩu để đăng nhập khách!');
+    document.getElementById('loginPassword').focus();
+    return;
+  }
 
   /* ── ĐĂNG NHẬP BẰNG EMAIL ── */
   if(isEmail){
     if(!pass){showAuthError('loginError','Vui lòng nhập mật khẩu!');return}
     setBtnLoading('loginBtn','loginSpinner','loginBtnIcon',true);
-
     const{data,error}=await _sb.auth.signInWithPassword({email:nameOrEmail,password:pass});
     setBtnLoading('loginBtn','loginSpinner','loginBtnIcon',false);
-
     if(error){
       const msg=error.message||'';
-      if(msg.toLowerCase().includes('invalid login')||msg.toLowerCase().includes('invalid credentials')){
+      if(msg.toLowerCase().includes('invalid login')||msg.toLowerCase().includes('invalid credentials'))
         showAuthError('loginError','Sai email hoặc mật khẩu!');
-      }else{
-        showAuthError('loginError','Đăng nhập thất bại: '+msg.substring(0,60));
-      }
+      else showAuthError('loginError','Đăng nhập thất bại: '+msg.substring(0,60));
       return;
     }
-
-    /* ── Đăng nhập thành công — lấy tên từ user_metadata ── */
     const meta=data.user.user_metadata||{};
     state.user=sanitizeText(meta.full_name||nameOrEmail,120);
     state.displayUser=state.user;
     state.userClass=sanitizeText(meta.user_class||'8A7',20);
     state.avatarKey=state.user;
     state.isRegistered=true;
-
     if(!localStorage.getItem('nerd_joined'))localStorage.setItem('nerd_joined',new Date().toLocaleDateString('vi-VN'));
     localStorage.setItem('nerd_session',JSON.stringify({user:state.user,displayUser:state.displayUser,userClass:state.userClass,isAdmin:false,avatarKey:state.avatarKey,isRegistered:true}));
     showAuthSuccess('Chào mừng, '+state.displayUser+'!','Đang vào hệ thống...');
@@ -1200,7 +1492,7 @@ async function handleLoginSubmit(){
     return;
   }
 
-  /* ── ĐĂNG NHẬP KHÁCH (tên + lớp) ── */
+  /* ── ĐĂNG NHẬP KHÁCH ── */
   if(!cls){showAuthError('loginError','Vui lòng nhập lớp!');return}
   setBtnLoading('loginBtn','loginSpinner','loginBtnIcon',true);
   await new Promise(r=>setTimeout(r,280));
@@ -1312,7 +1604,6 @@ function launchConfetti(){
   }
   requestAnimationFrame(draw);
 }
-
 function animateScore(el,target,duration=1300){
   const start=performance.now();
   function step(now){const t=Math.min((now-start)/duration,1);const et=1-Math.pow(1-t,3);el.textContent=(target*et).toFixed(1);if(t<1)requestAnimationFrame(step);else el.textContent=target.toFixed(1)}
