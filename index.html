@@ -617,6 +617,62 @@ button:focus-visible,input:focus-visible{outline:2px solid #ff9830!important;out
 }
 </style>
 
+
+<style id="nerv-cinematic-operations-layer">
+:root{--nerv-orange:#ff9830;--nerv-green:#50ff80;--nerv-red:#ff3030;--nerv-cyan:#20f0ff;--nerv-black:#030504}
+.nerv-unit-rail,.nerv-system-rail{position:absolute;z-index:0;color:#a8b6aa;font-family:'IBM Plex Mono',monospace;pointer-events:none}
+.nerv-unit-rail-left{left:clamp(18px,4vw,76px);top:50%;transform:translateY(-50%);width:clamp(145px,15vw,220px);display:grid;gap:10px}
+.nerv-rail-heading{font-size:9px;letter-spacing:.2em;color:#ff9830;border-bottom:1px solid rgba(255,152,48,.45);padding:0 0 10px}
+.nerv-unit-card{position:relative;min-height:100px;overflow:hidden;padding:12px 12px 10px;border:1px solid rgba(150,170,150,.2);background:linear-gradient(110deg,rgba(12,19,14,.88),rgba(3,6,4,.48));clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,0 100%)}
+.nerv-unit-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--unit-color)}
+.nerv-unit-number{display:block;font-family:Impact,'Arial Narrow',sans-serif;font-size:34px;line-height:.9;letter-spacing:-.04em;color:var(--unit-color);text-shadow:0 0 18px color-mix(in srgb,var(--unit-color) 25%,transparent)}
+.nerv-unit-name{display:block;margin-top:5px;font-size:8px;letter-spacing:.18em;color:#c2c8bd}
+.nerv-unit-glyph{position:absolute;right:12px;top:12px;width:34px;height:53px;opacity:.8;background:var(--unit-color);clip-path:polygon(36% 0,63% 5%,70% 25%,100% 36%,83% 48%,75% 77%,100% 100%,57% 88%,44% 65%,20% 78%,0 66%,25% 47%,17% 24%);filter:drop-shadow(0 0 8px var(--unit-color))}
+.nerv-unit-state{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:8px;letter-spacing:.1em;color:#7c9685}
+.nerv-unit-state b{width:5px;height:5px;border-radius:50%;background:var(--nerv-green);box-shadow:0 0 8px var(--nerv-green)}
+.unit-zero{--unit-color:#e6bd45}.unit-one{--unit-color:#9c6cff}.unit-two{--unit-color:#ff4a39}
+.nerv-system-rail{right:clamp(18px,4vw,76px);top:50%;transform:translateY(-50%);height:min(460px,65vh);width:56px;display:flex;align-items:center;flex-direction:column;gap:14px}
+.nerv-system-seal{font-family:Impact,sans-serif;font-size:18px;color:#ff9830;border:1px solid rgba(255,152,48,.6);padding:8px 3px;writing-mode:vertical-rl;letter-spacing:.15em}
+.nerv-system-line{flex:1;width:1px;background:linear-gradient(transparent,rgba(255,152,48,.6),rgba(80,255,128,.4),transparent)}
+.nerv-system-vertical{writing-mode:vertical-rl;font-size:8px;letter-spacing:.2em;color:#6c8574}
+.nerv-system-readout{border:1px solid rgba(80,255,128,.25);padding:7px 5px;text-align:center;display:grid;gap:3px;width:100%}
+.nerv-system-readout span{font-size:8px;color:#50ff80}.nerv-system-readout b{font-size:14px;color:#d9e4d8}.nerv-system-readout small{font-size:6px;letter-spacing:.08em;color:#718777}
+#authPage .auth-card{z-index:2}
+#authPage .auth-body,#authPage .auth-tabs{position:relative}
+#authPage .auth-card{width:min(440px,calc(100vw - 34px))!important}
+#authPage .auth-logo-wrap{border-bottom:1px solid rgba(255,152,48,.14);padding-bottom:22px}
+#authPage .auth-logo{outline:1px solid rgba(255,152,48,.28);outline-offset:5px}
+#authPage .auth-logo-text p{font-size:9px!important}
+#authPage .auth-divider span{font-family:monospace;color:#708275!important;text-transform:uppercase;letter-spacing:.15em;font-size:9px}
+#authPage .auth-input::placeholder{color:#58665b!important}
+#authPage .auth-google:hover,#authPage .auth-tab-btn:hover{border-color:rgba(255,152,48,.55)!important;background:rgba(255,152,48,.06)!important}
+#authPage .auth-submit{clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
+#authPage .auth-submit:active{transform:translateY(1px)}
+#app{position:relative}
+#app h1,#app h2,#app h3{letter-spacing:.035em}
+#app .glass{border:1px solid rgba(255,152,48,.24)!important;background:rgba(5,10,7,.82)!important;box-shadow:inset 0 1px rgba(255,255,255,.025),0 18px 45px rgba(0,0,0,.2)}
+#app button:not(.auth-tab-btn):not(.auth-pwd-toggle){border-radius:2px}
+#app input,#app textarea,#app select{border-radius:2px}
+#app ::selection{background:#ff9830;color:#050706}
+@media(max-width:1200px){
+ .nerv-unit-rail-left{left:16px;width:130px;opacity:.7}
+ .nerv-system-rail{right:14px;width:42px}
+ .nerv-unit-card{min-height:88px;padding:10px}
+ .nerv-unit-number{font-size:28px}
+}
+@media(max-width:900px){
+ .nerv-unit-rail-left,.nerv-system-rail{display:none}
+ #authPage:before{top:4%;font-size:8px;letter-spacing:.2em}
+ #authPage:after{top:calc(4% + 17px);font-size:7px}
+}
+@media(min-width:901px) and (max-height:720px){
+ .nerv-unit-rail-left{top:53%;gap:6px}
+ .nerv-unit-card{min-height:78px;padding:8px}
+ .nerv-unit-glyph{height:42px}
+ .nerv-system-rail{height:70vh}
+}
+</style>
+
 </head>
 
 <body oncontextmenu="return false;">
@@ -636,6 +692,20 @@ button:focus-visible,input:focus-visible{outline:2px solid #ff9830!important;out
   <div class="auth-orb auth-orb-1"></div>
   <div class="auth-orb auth-orb-2"></div>
   <div class="auth-orb auth-orb-3"></div>
+
+  <aside class="nerv-unit-rail nerv-unit-rail-left" aria-label="Evangelion unit status">
+    <div class="nerv-rail-heading">NERV // E-DEFENSE</div>
+    <div class="nerv-unit-card unit-zero"><span class="nerv-unit-number">00</span><span class="nerv-unit-name">PROTOTYPE</span><i class="nerv-unit-glyph"></i><span class="nerv-unit-state"><b></b> STANDBY</span></div>
+    <div class="nerv-unit-card unit-one"><span class="nerv-unit-number">01</span><span class="nerv-unit-name">TEST TYPE</span><i class="nerv-unit-glyph"></i><span class="nerv-unit-state"><b></b> NOMINAL</span></div>
+    <div class="nerv-unit-card unit-two"><span class="nerv-unit-number">02</span><span class="nerv-unit-name">PRODUCTION</span><i class="nerv-unit-glyph"></i><span class="nerv-unit-state"><b></b> STANDBY</span></div>
+  </aside>
+  <aside class="nerv-system-rail" aria-hidden="true">
+    <div class="nerv-system-seal">NERV</div>
+    <div class="nerv-system-line"></div>
+    <div class="nerv-system-vertical">SPECIAL AGENCY // TOKYO-3</div>
+    <div class="nerv-system-readout"><span>MAGI</span><b>3 / 3</b><small>CONSENSUS</small></div>
+  </aside>
+
 
   <div class="auth-card" id="authCard">
     <div class="auth-success-overlay" id="authSuccessOverlay">
