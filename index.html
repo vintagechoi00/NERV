@@ -282,9 +282,9 @@ body{
 
 .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.18);animation:rippleAnim .55s ease-out;pointer-events:none}
 
-.btn-premium{background:linear-gradient(135deg,var(--primary),var(--secondary));color:black;font-weight:800;transition:all .35s cubic-bezier(.4,0,.2,1);box-shadow:0 10px 25px -5px rgba(249,115,22,.4)}
-.btn-premium:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 16px 32px -6px rgba(249,115,22,.55)}
-.btn-premium:active{transform:scale(.96)}
+.btn-premium{background:var(--primary);color:#000;font-weight:900;transition:all .25s cubic-bezier(.4,0,.2,1);box-shadow:0 0 20px rgba(249,115,22,.3),inset 0 1px 0 rgba(255,255,255,.15);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-tech),Orbitron,'Share Tech Mono',monospace;border:none!important;border-radius:0!important}
+.btn-premium:hover{transform:translateY(-1px);box-shadow:0 0 35px rgba(249,115,22,.55),0 0 12px rgba(249,115,22,.3);filter:brightness(1.15)}
+.btn-premium:active{transform:scale(.97);filter:brightness(.9)}
 button:disabled{opacity:.4!important;cursor:not-allowed!important;transform:none!important}
 
 input,textarea{background:var(--input-bg)!important;border:1px solid rgba(249,115,22,.2)!important;color:var(--text-main)!important;max-width:100%;transition:border-color .2s}
@@ -341,6 +341,127 @@ input:checked+.slider:before{transform:translateX(22px)}
 #devtoolsGuard{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:99999;align-items:center;justify-content:center;text-align:center;backdrop-filter:blur(20px)}
 
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
+
+/* ── NERV NAV BUTTONS ── */
+.nerv-nav-btn{
+  padding:6px 14px;font-size:10px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;
+  font-family:var(--font-tech),Orbitron,monospace;
+  background:rgba(0,0,0,.4);border:1px solid;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+  cursor:pointer;transition:all .2s ease;
+}
+.nerv-nav-btn:hover{
+  background:rgba(249,115,22,.1);filter:brightness(1.3);
+}
+/* ── NERV CONFIRM PANEL ── */
+.nerv-confirm-panel{
+  max-width:420px;width:92%;background:rgba(8,8,8,.96);
+  border:2px solid var(--primary);position:relative;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));
+  box-shadow:0 0 40px rgba(249,115,22,.15),0 40px 80px rgba(0,0,0,.8);
+  animation:authFadeIn .3s cubic-bezier(.16,1,.3,1);
+  padding:0;
+}
+.nerv-confirm-hazard{
+  height:4px;width:100%;
+  background:repeating-linear-gradient(90deg,var(--primary) 0,var(--primary) 12px,transparent 12px,transparent 20px);
+}
+.nerv-confirm-badge{
+  font-family:var(--font-mono),'Share Tech Mono',monospace;
+  font-size:9px;font-weight:600;letter-spacing:.2em;
+  color:var(--primary);opacity:.6;text-align:center;
+  padding:14px 20px 0;text-transform:uppercase;
+}
+.nerv-confirm-title{
+  font-family:var(--font-tech),Orbitron,sans-serif;
+  font-size:20px;font-weight:900;color:var(--primary);
+  text-align:center;letter-spacing:.15em;
+  padding:8px 20px 4px;text-transform:uppercase;
+}
+.nerv-confirm-text{
+  font-family:var(--font-mono),'Share Tech Mono',monospace;
+  font-size:11px;font-weight:500;letter-spacing:.12em;
+  text-align:center;opacity:.7;padding:4px 28px 20px;
+  text-transform:uppercase;line-height:1.8;
+}
+.nerv-confirm-actions{
+  display:flex;gap:0;border-top:1px solid rgba(249,115,22,.2);
+}
+.nerv-btn-confirm{
+  flex:1;padding:16px 20px;
+  background:var(--primary);color:#000;
+  font-family:var(--font-tech),Orbitron,sans-serif;
+  font-size:12px;font-weight:900;letter-spacing:.15em;
+  text-transform:uppercase;border:none;cursor:pointer;
+  transition:all .2s ease;position:relative;
+  clip-path:polygon(0 0,100% 0,100% 100%,12px 100%,0 calc(100% - 12px));
+}
+.nerv-btn-confirm:hover{
+  background:#fff;color:#000;
+  box-shadow:0 0 30px var(--primary);
+  filter:brightness(1.1);
+}
+.nerv-btn-confirm:active{transform:scale(.97)}
+.nerv-btn-cancel{
+  flex:1;padding:16px 20px;
+  background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);
+  font-family:var(--font-tech),Orbitron,sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;border:none;border-left:1px solid rgba(249,115,22,.2);
+  cursor:pointer;transition:all .2s ease;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);
+}
+.nerv-btn-cancel:hover{
+  background:rgba(255,30,39,.15);color:#ff1e27;
+  box-shadow:inset 0 0 30px rgba(255,30,39,.1);
+}
+.nerv-btn-cancel:active{transform:scale(.97)}
+
+/* EVA-01 confirm overrides */
+body.theme-eva01 .nerv-confirm-panel{
+  border-color:#b537f2;
+  box-shadow:0 0 40px rgba(181,55,242,.2),0 40px 80px rgba(0,0,0,.8);
+}
+body.theme-eva01 .nerv-confirm-hazard{
+  background:repeating-linear-gradient(90deg,#b537f2 0,#b537f2 8px,#00ff66 8px,#00ff66 16px);
+}
+body.theme-eva01 .nerv-confirm-badge,
+body.theme-eva01 .nerv-confirm-title{color:#00ff66}
+body.theme-eva01 .nerv-btn-confirm{
+  background:#00ff66;color:#000;
+  border:none;
+}
+body.theme-eva01 .nerv-btn-confirm:hover{
+  background:#fff;
+  box-shadow:0 0 30px #00ff66;
+}
+body.theme-eva01 .nerv-confirm-actions{border-top-color:rgba(181,55,242,.3)}
+body.theme-eva01 .nerv-btn-cancel{border-left-color:rgba(181,55,242,.3)}
+body.theme-eva01 .nerv-btn-cancel:hover{
+  background:rgba(181,55,242,.15);color:#b537f2;
+}
+
+/* EVA-02 confirm overrides */
+body.theme-eva02 .nerv-confirm-panel{border-color:#ff1e27}
+body.theme-eva02 .nerv-confirm-hazard{
+  background:repeating-linear-gradient(90deg,#ff1e27 0,#ff1e27 8px,#ff9100 8px,#ff9100 16px);
+}
+body.theme-eva02 .nerv-confirm-badge,
+body.theme-eva02 .nerv-confirm-title{color:#ff1e27}
+body.theme-eva02 .nerv-btn-confirm{background:#ff1e27;color:#fff}
+body.theme-eva02 .nerv-btn-confirm:hover{background:#fff;color:#000;box-shadow:0 0 30px #ff1e27}
+
+/* EVA-00 confirm overrides */
+body.theme-eva00 .nerv-confirm-panel{border-color:#00bfff}
+body.theme-eva00 .nerv-confirm-hazard{
+  background:repeating-linear-gradient(90deg,#00bfff 0,#00bfff 8px,#ffe066 8px,#ffe066 16px);
+}
+body.theme-eva00 .nerv-confirm-badge,
+body.theme-eva00 .nerv-confirm-title{color:#00bfff}
+body.theme-eva00 .nerv-btn-confirm{background:#00bfff;color:#000}
+body.theme-eva00 .nerv-btn-confirm:hover{background:#fff;color:#000;box-shadow:0 0 30px #00bfff}
+
 #profileModal{z-index:10001}
 
 .profile-modal-panel{animation:profileModalIn .4s cubic-bezier(.16,1,.3,1);transform-origin:top center;width:min(900px,96vw);max-height:calc(100dvh - 32px);overflow-y:auto;background:#111;border:1px solid rgba(249,115,22,.25);border-radius:28px;overflow-x:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03);scrollbar-width:none}
@@ -409,10 +530,10 @@ input:checked+.slider:before{transform:translateX(22px)}
 .score-bar::after{content:attr(data-score);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:7px;font-weight:900;opacity:0;transition:.2s;white-space:nowrap}
 .score-bar:hover::after{opacity:1}
 
-.avatar-btn{width:42px;height:42px;border-radius:999px;cursor:pointer;overflow:hidden;flex-shrink:0;display:grid;place-items:center;font-weight:900;font-size:14px;color:#0b0b0b;background:linear-gradient(135deg,var(--primary),var(--secondary));border:1px solid rgba(249,115,22,.25)!important;box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 8px 20px rgba(249,115,22,.2);transition:transform .22s ease,box-shadow .25s ease}
-.avatar-btn:hover{transform:translateY(-1px) scale(1.05);box-shadow:0 0 0 2px rgba(249,115,22,.3),0 12px 24px rgba(249,115,22,.3)}
-.avatar-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
-.avatar-btn.has-image{background:rgba(0,0,0,.65);color:transparent}
+.avatar-btn{width:42px;height:42px;border-radius:4px;cursor:pointer;overflow:hidden;flex-shrink:0;display:grid;place-items:center;font-weight:900;font-size:13px;color:var(--primary);background:rgba(0,0,0,.7);border:2px solid var(--primary)!important;box-shadow:0 0 12px rgba(249,115,22,.2),inset 0 0 8px rgba(249,115,22,.05);transition:all .22s ease;font-family:var(--font-tech),Orbitron,monospace;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.avatar-btn:hover{transform:translateY(-1px);box-shadow:0 0 20px rgba(249,115,22,.4);border-color:var(--primary)!important;filter:brightness(1.2)}
+.avatar-btn img{width:100%;height:100%;object-fit:cover;border-radius:2px;display:block}
+.avatar-btn.has-image{background:rgba(0,0,0,.5);color:transparent}
 
 #avatarEditorModal{z-index:10005}
 .ae-panel{animation:avatarEditorIn .4s cubic-bezier(.16,1,.3,1);width:min(480px,96vw);max-height:calc(100dvh - 32px);overflow-y:auto;background:#0d0d0d;border:1px solid rgba(249,115,22,.25);border-radius:40px;padding:32px 36px 36px;box-shadow:0 40px 80px rgba(0,0,0,.9),0 0 80px rgba(249,115,22,.05);scrollbar-width:none;position:relative}
@@ -574,9 +695,14 @@ body.theme-eva01 .auth-card::after {
 
 body.theme-eva01 .auth-submit,
 body.theme-eva01 .btn-premium {
-  background: linear-gradient(135deg, #00ff66 0%, #b537f2 100%) !important;
+  background: #00ff66 !important;
   color: #000000 !important;
-  box-shadow: 0 0 25px rgba(0, 255, 102, 0.45), 0 0 15px rgba(181, 55, 242, 0.35) !important;
+  box-shadow: 0 0 25px rgba(0, 255, 102, 0.45), 0 0 8px rgba(181, 55, 242, 0.25) !important;
+  border: 2px solid rgba(181, 55, 242, 0.5) !important;
+}
+body.theme-eva01 .btn-premium:hover {
+  box-shadow: 0 0 40px rgba(0, 255, 102, 0.7), 0 0 15px rgba(181, 55, 242, 0.5) !important;
+  filter: brightness(1.2) !important;
 }
 
 body.theme-eva01 .auth-tab-btn.active {
@@ -1956,12 +2082,14 @@ body, input, button, textarea, select {
 
 <!-- CONFIRM MODAL -->
 <div id="confirmModal" class="confirm-overlay">
-  <div class="glass p-10 max-w-sm w-full text-center border-2 border-orange-500/50">
-    <h3 class="text-2xl font-black text-orange-500 mb-4 italic uppercase">Thông báo</h3>
-    <p id="confirmText" class="text-xs mb-8 tracking-widest opacity-80 uppercase leading-relaxed"></p>
-    <div class="flex gap-4">
-      <button id="confirmYes" class="flex-1 btn-premium py-4 rounded-xl font-black text-black uppercase text-xs">Xác nhận</button>
-      <button id="confirmNo" class="flex-1 glass py-4 rounded-xl font-bold uppercase text-xs hover:bg-white/10">Hủy bỏ</button>
+  <div class="nerv-confirm-panel" onclick="event.stopPropagation()">
+    <div class="nerv-confirm-hazard"></div>
+    <div class="nerv-confirm-badge">MAGI SYSTEM // DIRECTIVE VERIFICATION</div>
+    <h3 class="nerv-confirm-title">THÔNG BÁO</h3>
+    <p id="confirmText" class="nerv-confirm-text"></p>
+    <div class="nerv-confirm-actions">
+      <button id="confirmYes" class="nerv-btn-confirm">XÁC NHẬN</button>
+      <button id="confirmNo" class="nerv-btn-cancel">HỦY BỎ</button>
     </div>
   </div>
 </div>
@@ -2105,8 +2233,8 @@ body, input, button, textarea, select {
       <div class="switch-container"><label class="theme-switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="slider"></span></label></div>
       <div class="avatar-btn" id="headerAvatar" onclick="openProfile()" title="Hồ sơ">?</div>
       <div class="flex gap-2 flex-wrap hidden md:flex">
-        <button onclick="showSection('mainMenu')" class="glass px-4 py-2 text-[10px] font-bold hover:bg-white/10 transition text-orange-500">TRANG CHỦ</button>
-        <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐĂNG XUẤT?',handleLogout)" class="glass px-4 py-2 text-[10px] font-bold hover:bg-red-500/20 transition">ĐĂNG XUẤT</button>
+        <button onclick="showSection('mainMenu')" class="nerv-nav-btn" style="color:var(--primary);border-color:var(--primary)">TRANG CHỦ</button>
+        <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN ĐĂNG XUẤT?',handleLogout)" class="nerv-nav-btn" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)">ĐĂNG XUẤT</button>
       </div>
     </div>
   </header>
@@ -3462,8 +3590,6 @@ function initAtFieldCanvas() {
   window.addEventListener('pointerdown', (e) => {
     spawnAtFieldBurst(e.clientX, e.clientY);
   });
-
-  animateAtField();
 }
 
 function drawOctagon(ctx, x, y, radius, color, alpha) {
@@ -3486,6 +3612,7 @@ function drawOctagon(ctx, x, y, radius, color, alpha) {
   ctx.restore();
 }
 
+let isAnimatingAtField = false;
 function spawnAtFieldBurst(x, y) {
   if (typeof playSfx === 'function') playSfx('atfield');
   const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#ff9830';
@@ -3502,6 +3629,10 @@ function spawnAtFieldBurst(x, y) {
       color: primaryColor
     });
   }
+  if (!isAnimatingAtField) {
+    isAnimatingAtField = true;
+    requestAnimationFrame(animateAtField);
+  }
 }
 
 function triggerAtFieldBurst() {
@@ -3509,7 +3640,7 @@ function triggerAtFieldBurst() {
 }
 
 function animateAtField() {
-  if (!atCtx) return;
+  if (!atCtx) { isAnimatingAtField = false; return; }
   atCtx.clearRect(0, 0, atFieldCanvas.width, atFieldCanvas.height);
 
   for (let i = atOctagons.length - 1; i >= 0; i--) {
@@ -3521,7 +3652,12 @@ function animateAtField() {
       atOctagons.splice(i, 1);
     }
   }
-  requestAnimationFrame(animateAtField);
+  if (atOctagons.length > 0) {
+    requestAnimationFrame(animateAtField);
+  } else {
+    atCtx.clearRect(0, 0, atFieldCanvas.width, atFieldCanvas.height);
+    isAnimatingAtField = false;
+  }
 }
 
 /* ═══ EVANGELION THEME APPLIER ═══ */
