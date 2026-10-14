@@ -9,6 +9,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+JP:wght@700;900&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
 <style>
 :root{
   --primary:#f97316;--secondary:#fbbf24;
@@ -505,177 +509,925 @@ input:checked+.slider:before{transform:translateX(22px)}
 .admin-login-modal-panel::before{content:'🔐';font-size:80px;position:absolute;top:-10px;right:-10px;opacity:.04;transform:rotate(15deg);pointer-events:none}
 </style>
 
-<style id="nerv-cinematic-redesign">
-/* NERV cinematic visual layer — presentation only; existing app logic stays intact */
-:root{
-  --primary:#ff9830;--secondary:#ffc04a;
-  --bg-gradient:#050706;--text-main:#e9e8df;
-  --glass-bg:rgba(7,13,10,.88);--glass-border:rgba(255,152,48,.34);
-  --input-bg:rgba(0,0,0,.72);
-  color-scheme:dark;
+
+<style id="nerv-cinematic-theme">
+/* ═════════════════════════════════════════════════════════════════════
+   NERV TACTICAL COMMAND INTERFACE — EVANGELION CINEMATIC REDESIGN
+   Special Agency NERV // Tokyo-3 GeoFront // Central Dogma System
+   ═════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --primary: #ff9830;
+  --secondary: #ffb84d;
+  --primary-rgb: 255, 152, 48;
+  --eva00-color: #ffaa00;
+  --eva00-accent: #00b0ff;
+  --eva01-color: #00ff66;
+  --eva01-accent: #9d4edd;
+  --eva02-color: #ff1e27;
+  --eva02-accent: #ff9100;
+  --nerv-dark: #050806;
+  --nerv-surface: rgba(10, 16, 12, 0.88);
+  --nerv-border: rgba(255, 152, 48, 0.35);
+  --nerv-glow: rgba(255, 152, 48, 0.25);
+  --magi-agree: #00ff66;
+  --magi-reject: #ff1e27;
+  --text-main: #ecefe6;
+  --font-mono: 'Share Tech Mono', 'IBM Plex Mono', monospace;
+  --font-tech: 'Orbitron', 'Rajdhani', sans-serif;
+  --font-motto: 'Cinzel', serif;
+  --font-jp: 'Noto Sans JP', sans-serif;
 }
-html,body{background:#050706!important;color:#e9e8df}
-body{
-  font-family:'IBM Plex Mono','Plus Jakarta Sans',monospace;
-  background:
-    radial-gradient(ellipse at 50% 42%,rgba(57,91,58,.18),transparent 52%),
-    linear-gradient(180deg,#070a08 0%,#020302 100%)!important;
+
+/* Unit 01 Mode */
+body.theme-eva01 {
+  --primary: #00ff66;
+  --secondary: #b388ff;
+  --primary-rgb: 0, 255, 102;
+  --nerv-border: rgba(0, 255, 102, 0.4);
+  --nerv-glow: rgba(0, 255, 102, 0.3);
 }
-body:before{
-  content:"";position:fixed;inset:0;z-index:9990;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(0,0,0,.17) 4px),
-             linear-gradient(90deg,rgba(255,152,48,.025) 1px,transparent 1px),
-             linear-gradient(rgba(255,152,48,.025) 1px,transparent 1px);
-  background-size:auto,48px 48px,48px 48px;opacity:.55;
+
+/* Unit 02 Mode */
+body.theme-eva02 {
+  --primary: #ff1e27;
+  --secondary: #ff9100;
+  --primary-rgb: 255, 30, 39;
+  --nerv-border: rgba(255, 30, 39, 0.45);
+  --nerv-glow: rgba(255, 30, 39, 0.3);
 }
-body:after{
-  content:"NERV // SPECIAL AGENCY  •  TOKYO-3  •  MAGI SYSTEM ONLINE";
-  position:fixed;left:22px;bottom:16px;z-index:9991;pointer-events:none;
-  color:rgba(255,152,48,.56);font:10px/1.2 monospace;letter-spacing:.18em;
+
+/* Unit 00 Mode */
+body.theme-eva00 {
+  --primary: #ffaa00;
+  --secondary: #00d2ff;
+  --primary-rgb: 255, 170, 0;
+  --nerv-border: rgba(255, 170, 0, 0.4);
+  --nerv-glow: rgba(255, 170, 0, 0.3);
 }
-#authPage{
-  background:
-    radial-gradient(ellipse at 50% 50%,rgba(22,54,34,.22),transparent 52%),
-    linear-gradient(90deg,transparent 49.9%,rgba(255,152,48,.08) 50%,transparent 50.1%),
-    #050706!important;isolation:isolate;
+
+html, body {
+  background: var(--nerv-dark) !important;
+  color: var(--text-main) !important;
+  font-family: var(--font-mono) !important;
+  overflow-x: hidden;
+  letter-spacing: 0.04em;
 }
-#authPage:before{
-  content:"EVA UNIT 00  /  01  /  02";
-  position:absolute;top:7%;left:50%;transform:translateX(-50%);
-  color:rgba(255,152,48,.46);font:10px monospace;letter-spacing:.42em;
-  white-space:nowrap;pointer-events:none;
+
+/* Background CRT scanlines & tactical grid */
+#atFieldCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
 }
-#authPage:after{
-  content:"GEOFRONT  •  CLASSIFIED / LEVEL 07";
-  position:absolute;top:calc(7% + 20px);left:50%;transform:translateX(-50%);
-  color:rgba(137,180,146,.48);font:9px monospace;letter-spacing:.25em;
-  white-space:nowrap;pointer-events:none;
+
+.nerv-scanline-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%),
+              linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 3px, 6px 100%;
+  opacity: 0.6;
 }
-.auth-orb{opacity:.14!important;filter:blur(75px) saturate(.65)!important}
-.auth-orb-1{background:#ff6a00!important}
-.auth-orb-2{background:#6e2cff!important}
-.auth-orb-3{background:#27a65b!important}
-.auth-card{
-  position:relative!important;isolation:isolate;
-  background:linear-gradient(145deg,rgba(12,18,14,.97),rgba(3,6,4,.98))!important;
-  border:1px solid rgba(255,152,48,.42)!important;border-radius:2px!important;
-  box-shadow:0 0 0 1px rgba(255,152,48,.07),0 28px 100px rgba(0,0,0,.75),0 0 55px rgba(255,115,0,.08)!important;
-  backdrop-filter:blur(16px)!important;
+
+.nerv-grid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb), 0.08) 0%, transparent 70%),
+    linear-gradient(to right, rgba(var(--primary-rgb), 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--primary-rgb), 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
 }
-.auth-card:before{
-  content:"NERV PERSONNEL ACCESS // AUTH GATE";
-  display:block;position:absolute;top:-29px;left:0;
-  color:rgba(255,152,48,.8);font:9px monospace;letter-spacing:.2em;
+
+/* TOP TACTICAL HUD TICKER */
+#nervTopBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background: rgba(5, 8, 6, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--nerv-border);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
 }
-.auth-card:after{
-  content:"";position:absolute;left:0;right:0;top:0;height:3px;
-  background:repeating-linear-gradient(135deg,#ff9830 0,#ff9830 8px,#101510 8px,#101510 16px);
+
+.nerv-top-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
-.auth-logo{
-  border-radius:0!important;
-  background:linear-gradient(145deg,#ff9e31,#b84008)!important;
-  color:#080a07!important;box-shadow:0 0 26px rgba(255,120,20,.2)!important;
-  clip-path:polygon(8% 0,100% 0,100% 78%,82% 100%,0 100%,0 18%)!important;
+
+.nerv-top-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(var(--primary-rgb), 0.12);
+  border: 1px solid var(--nerv-border);
+  padding: 3px 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
-.auth-logo-text h1,.auth-logo-text p,.auth-label,.auth-tab-btn,.auth-submit{
-  font-family:'IBM Plex Mono','Plus Jakarta Sans',monospace!important;
-  text-transform:uppercase;letter-spacing:.08em;
+
+.nerv-top-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+  animation: nervPulse 1.4s infinite;
 }
-.auth-logo-text h1{letter-spacing:.16em!important;font-weight:900!important}
-.auth-logo-text h1 span{color:#ff9830!important}
-.auth-logo-text p{color:#8da393!important;letter-spacing:.12em!important}
-.glass,.auth-input-wrap,.auth-input,.auth-tab-btn,.auth-submit,.auth-google,
-.auth-info,.auth-error,.login-type-badge,.login-field-warn{
-  border-radius:2px!important;
+
+.nerv-ticker-text {
+  opacity: 0.85;
+  letter-spacing: 0.12em;
+  font-size: 10px;
 }
-.auth-input-wrap,.auth-input{
-  background:rgba(0,0,0,.42)!important;border-color:rgba(255,152,48,.22)!important;
+
+.nerv-top-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.auth-input:focus,.auth-input-wrap:focus-within{
-  border-color:#ff9830!important;box-shadow:0 0 0 1px rgba(255,152,48,.18),0 0 24px rgba(255,152,48,.08)!important;
+
+.nerv-hud-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--nerv-border);
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
-.auth-submit{
-  background:#ff9830!important;color:#080a07!important;font-weight:900!important;
-  box-shadow:none!important;letter-spacing:.16em!important;
+
+.nerv-hud-btn:hover {
+  background: var(--primary);
+  color: #000;
+  box-shadow: 0 0 14px var(--nerv-glow);
 }
-.auth-submit:hover{background:#ffb14f!important;box-shadow:0 0 28px rgba(255,152,48,.2)!important}
-.auth-google,.auth-tab-btn{background:rgba(255,255,255,.025)!important;border-color:rgba(255,152,48,.2)!important;color:#d7d9d1!important}
-.auth-tab-btn.active{color:#ff9830!important;border-color:rgba(255,152,48,.5)!important}
-.auth-tab-indicator{background:#ff9830!important}
-.auth-label{color:#a8b5a7!important}
-#topProgressBar{background:#ff9830!important;box-shadow:0 0 12px #ff9830}
-button{transition:background .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease}
-button:focus-visible,input:focus-visible{outline:2px solid #ff9830!important;outline-offset:3px}
-@media(max-width:600px){
-  body:after{left:10px;bottom:8px;font-size:8px;letter-spacing:.08em}
-  #authPage:before{top:3%;font-size:8px;letter-spacing:.2em}
-  #authPage:after{top:calc(3% + 17px);font-size:7px}
-  .auth-card{max-width:calc(100vw - 28px)!important}
+
+.nerv-hud-btn.active {
+  background: rgba(var(--primary-rgb), 0.25);
+  border-color: var(--primary);
 }
-@media(prefers-reduced-motion:reduce){
-  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+
+/* EMERGENCY ALARM STRIPES */
+.nerv-hazard-tape {
+  height: 5px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    #000,
+    #000 10px,
+    var(--primary) 10px,
+    var(--primary) 20px
+  );
+  box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.4);
+}
+
+.nerv-emergency-banner {
+  position: fixed;
+  top: 38px;
+  left: 0;
+  right: 0;
+  background: #ff1e27;
+  color: #000;
+  font-family: var(--font-tech);
+  font-size: 13px;
+  font-weight: 900;
+  padding: 6px 0;
+  text-align: center;
+  letter-spacing: 0.25em;
+  z-index: 8999;
+  display: none;
+  animation: emergencyFlash 0.8s infinite alternate;
+  box-shadow: 0 0 30px rgba(255, 30, 39, 0.8);
+}
+
+.nerv-emergency-banner.show {
+  display: block;
+}
+
+@keyframes emergencyFlash {
+  from { background: #ff1e27; color: #000; }
+  to { background: #000; color: #ff1e27; }
+}
+
+@keyframes nervPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.25); }
+}
+
+/* NERV AUTH PAGE UPGRADE */
+#authPage {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 16px 30px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(15, 30, 20, 0.3), transparent 65%), #050806 !important;
+}
+
+.nerv-auth-classified-header {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+  width: 100%;
+  z-index: 1;
+}
+
+.nerv-auth-classified-header .jp-seal {
+  font-family: var(--font-jp);
+  font-size: 11px;
+  color: var(--primary);
+  letter-spacing: 0.4em;
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+
+.nerv-auth-classified-header .en-code {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* NERV VECTOR LOGO */
+.nerv-svg-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--nerv-border);
+  padding-bottom: 20px;
+}
+
+.nerv-logo-emblem-svg {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 16px rgba(var(--primary-rgb), 0.6));
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nerv-logo-emblem-svg:hover {
+  transform: scale(1.08) rotate(3deg);
+  filter: drop-shadow(0 0 24px rgba(var(--primary-rgb), 0.9));
+}
+
+.nerv-brand-title {
+  font-family: var(--font-tech);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: 0.08em;
+}
+
+.nerv-brand-title span {
+  color: var(--primary);
+  text-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5);
+}
+
+.nerv-brand-motto {
+  font-family: var(--font-motto);
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+
+.nerv-brand-sub {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--primary);
+  margin-top: 3px;
+  opacity: 0.85;
+}
+
+/* CARDS AND PANELS */
+.auth-card {
+  width: min(480px, 100%) !important;
+  background: rgba(8, 12, 10, 0.95) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 1px solid var(--nerv-border) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.1),
+              0 30px 100px rgba(0, 0, 0, 0.9),
+              0 0 40px rgba(var(--primary-rgb), 0.12) !important;
+  position: relative;
+  z-index: 10;
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+
+.auth-card::before {
+  content: "SECURITY LEVEL 01 // RESTRICTED ACCESS" !important;
+  position: absolute;
+  top: 6px;
+  right: 14px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: rgba(var(--primary-rgb), 0.7);
+  pointer-events: none;
+}
+
+.auth-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #000,
+    #000 6px,
+    var(--primary) 6px,
+    var(--primary) 12px
+  );
+}
+
+.auth-tabs {
+  background: rgba(0, 0, 0, 0.45) !important;
+  border-bottom: 1px solid var(--nerv-border) !important;
+}
+
+.auth-tab-btn {
+  font-family: var(--font-tech) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.16em !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  transition: all 0.25s ease !important;
+}
+
+.auth-tab-btn.active {
+  color: var(--primary) !important;
+  text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5);
+  background: rgba(var(--primary-rgb), 0.08) !important;
+}
+
+.auth-tab-indicator {
+  background: var(--primary) !important;
+  box-shadow: 0 0 10px var(--primary);
+  height: 2px !important;
+}
+
+.auth-input-wrap {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: 1px solid var(--nerv-border) !important;
+  border-radius: 2px !important;
+  transition: all 0.25s ease;
+}
+
+.auth-input-wrap:focus-within {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 1px var(--primary), 0 0 16px rgba(var(--primary-rgb), 0.2) !important;
+}
+
+.auth-input {
+  font-family: var(--font-mono) !important;
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  letter-spacing: 0.08em;
+}
+
+.auth-submit {
+  font-family: var(--font-tech) !important;
+  background: var(--primary) !important;
+  color: #000 !important;
+  font-weight: 900 !important;
+  border-radius: 2px !important;
+  letter-spacing: 0.2em !important;
+  box-shadow: 0 0 25px rgba(var(--primary-rgb), 0.35) !important;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  transition: all 0.25s ease !important;
+}
+
+.auth-submit:hover {
+  background: #fff !important;
+  color: #000 !important;
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px);
+}
+
+.auth-google {
+  font-family: var(--font-mono) !important;
+  border-radius: 2px !important;
+  border: 1px solid var(--nerv-border) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  letter-spacing: 0.1em;
+}
+
+.auth-google:hover {
+  background: rgba(var(--primary-rgb), 0.15) !important;
+  border-color: var(--primary) !important;
+}
+
+/* EVANGELION UNIT RAILS (LEFT & RIGHT) */
+.nerv-unit-rail-left {
+  position: absolute;
+  left: clamp(12px, 3.5vw, 60px);
+  top: 52%;
+  transform: translateY(-50%);
+  width: clamp(150px, 14vw, 200px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 5;
+}
+
+.nerv-unit-interactive-card {
+  position: relative;
+  padding: 12px 14px;
+  background: rgba(8, 14, 10, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 4px solid var(--unit-color);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-mono);
+}
+
+.nerv-unit-interactive-card:hover,
+.nerv-unit-interactive-card.selected {
+  background: rgba(15, 24, 18, 0.95);
+  border-color: var(--unit-color);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--unit-color) 45%, transparent),
+              inset 0 0 15px color-mix(in srgb, var(--unit-color) 15%, transparent);
+  transform: translateX(6px) scale(1.02);
+}
+
+.nerv-unit-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.nerv-unit-id-big {
+  font-family: var(--font-tech);
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 0.85;
+  color: var(--unit-color);
+  text-shadow: 0 0 16px var(--unit-color);
+}
+
+.nerv-unit-jp {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.1em;
+}
+
+.nerv-unit-pilot {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.12em;
+  margin-top: 6px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.nerv-unit-model {
+  font-size: 8px;
+  color: var(--unit-color);
+  letter-spacing: 0.15em;
+  opacity: 0.8;
+}
+
+.nerv-sync-meter-wrap {
+  margin-top: 8px;
+}
+
+.nerv-sync-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 7.5px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.1em;
+  margin-bottom: 3px;
+}
+
+.nerv-sync-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.nerv-sync-fill {
+  height: 100%;
+  background: var(--unit-color);
+  box-shadow: 0 0 8px var(--unit-color);
+  transition: width 0.6s ease;
+}
+
+/* RIGHT SYSTEM RAIL - MAGI READOUT */
+.nerv-system-rail {
+  position: absolute;
+  right: clamp(12px, 3.5vw, 60px);
+  top: 52%;
+  transform: translateY(-50%);
+  width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  z-index: 5;
+  font-family: var(--font-mono);
+}
+
+.nerv-magi-box {
+  background: rgba(8, 14, 10, 0.9);
+  border: 1px solid var(--nerv-border);
+  padding: 8px 6px;
+  text-align: center;
+  width: 100%;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.nerv-magi-title {
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--nerv-border);
+  padding-bottom: 2px;
+}
+
+.nerv-magi-node {
+  font-size: 7px;
+  padding: 2px 0;
+  color: var(--magi-agree);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+.nerv-magi-node::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--magi-agree);
+  box-shadow: 0 0 6px var(--magi-agree);
+}
+
+/* MAIN APP WRAPPER UPGRADE */
+#app {
+  position: relative;
+  z-index: 10;
+  padding-top: 54px !important;
+}
+
+#app .glass {
+  background: var(--nerv-surface) !important;
+  border: 1px solid var(--nerv-border) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(var(--primary-rgb), 0.03) !important;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  position: relative;
+}
+
+#app .glass::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: var(--primary);
+}
+
+/* MAIN MENU CARDS AS LAUNCH BAYS */
+#mainMenu > div {
+  background: rgba(8, 14, 10, 0.92) !important;
+  border: 1px solid var(--nerv-border) !important;
+  border-radius: 4px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+#mainMenu > div:hover {
+  transform: translateY(-6px) scale(1.02) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 30px var(--nerv-glow) !important;
+}
+
+#mainMenu > div::after {
+  content: "GEOFRONT // DOCK GATE";
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.2em;
+}
+
+/* EXAM PAGE TACTICAL DISPLAY */
+#examSidebar {
+  border-left: 3px solid var(--primary) !important;
+}
+
+#timer {
+  font-family: var(--font-tech) !important;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 15px currentColor;
+}
+
+.opt-card {
+  border-radius: 2px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  font-family: var(--font-mono) !important;
+  transition: all 0.2s ease !important;
+}
+
+.opt-card:hover {
+  border-color: var(--primary) !important;
+  background: rgba(var(--primary-rgb), 0.12) !important;
+  transform: translateX(4px) !important;
+}
+
+.opt-card.selected {
+  border-color: var(--primary) !important;
+  background: rgba(var(--primary-rgb), 0.25) !important;
+  box-shadow: 0 0 20px var(--nerv-glow), inset 0 0 10px rgba(var(--primary-rgb), 0.2) !important;
+}
+
+/* MODALS STYLED AS NERV TACTICAL PANELS */
+.profile-modal-panel, .admin-login-modal-panel, .ae-panel {
+  border: 1px solid var(--nerv-border) !important;
+  border-radius: 4px !important;
+  background: rgba(6, 10, 8, 0.98) !important;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.95), 0 0 50px var(--nerv-glow) !important;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+}
+
+/* EVA HANGAR MODAL & ARCHIVE MODAL */
+.nerv-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(14px);
+  z-index: 10050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: authFadeIn 0.3s ease;
+}
+
+.nerv-modal-panel {
+  width: min(840px, 96vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #080d0a;
+  border: 1px solid var(--nerv-border);
+  border-radius: 4px;
+  padding: 28px;
+  position: relative;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.95), 0 0 40px var(--nerv-glow);
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+}
+
+.nerv-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-family: var(--font-tech);
+  font-size: 20px;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: transform 0.2s;
+}
+
+.nerv-modal-close:hover {
+  transform: scale(1.2);
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media (max-width: 900px) {
+  .nerv-unit-rail-left, .nerv-system-rail {
+    display: none !important;
+  }
+  #nervTopBar .nerv-ticker-text {
+    display: none;
+  }
 }
 </style>
 
-
-<style id="nerv-cinematic-operations-layer">
-:root{--nerv-orange:#ff9830;--nerv-green:#50ff80;--nerv-red:#ff3030;--nerv-cyan:#20f0ff;--nerv-black:#030504}
-.nerv-unit-rail,.nerv-system-rail{position:absolute;z-index:0;color:#a8b6aa;font-family:'IBM Plex Mono',monospace;pointer-events:none}
-.nerv-unit-rail-left{left:clamp(18px,4vw,76px);top:50%;transform:translateY(-50%);width:clamp(145px,15vw,220px);display:grid;gap:10px}
-.nerv-rail-heading{font-size:9px;letter-spacing:.2em;color:#ff9830;border-bottom:1px solid rgba(255,152,48,.45);padding:0 0 10px}
-.nerv-unit-card{position:relative;min-height:100px;overflow:hidden;padding:12px 12px 10px;border:1px solid rgba(150,170,150,.2);background:linear-gradient(110deg,rgba(12,19,14,.88),rgba(3,6,4,.48));clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,0 100%)}
-.nerv-unit-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--unit-color)}
-.nerv-unit-number{display:block;font-family:Impact,'Arial Narrow',sans-serif;font-size:34px;line-height:.9;letter-spacing:-.04em;color:var(--unit-color);text-shadow:0 0 18px color-mix(in srgb,var(--unit-color) 25%,transparent)}
-.nerv-unit-name{display:block;margin-top:5px;font-size:8px;letter-spacing:.18em;color:#c2c8bd}
-.nerv-unit-glyph{position:absolute;right:12px;top:12px;width:34px;height:53px;opacity:.8;background:var(--unit-color);clip-path:polygon(36% 0,63% 5%,70% 25%,100% 36%,83% 48%,75% 77%,100% 100%,57% 88%,44% 65%,20% 78%,0 66%,25% 47%,17% 24%);filter:drop-shadow(0 0 8px var(--unit-color))}
-.nerv-unit-state{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:8px;letter-spacing:.1em;color:#7c9685}
-.nerv-unit-state b{width:5px;height:5px;border-radius:50%;background:var(--nerv-green);box-shadow:0 0 8px var(--nerv-green)}
-.unit-zero{--unit-color:#e6bd45}.unit-one{--unit-color:#9c6cff}.unit-two{--unit-color:#ff4a39}
-.nerv-system-rail{right:clamp(18px,4vw,76px);top:50%;transform:translateY(-50%);height:min(460px,65vh);width:56px;display:flex;align-items:center;flex-direction:column;gap:14px}
-.nerv-system-seal{font-family:Impact,sans-serif;font-size:18px;color:#ff9830;border:1px solid rgba(255,152,48,.6);padding:8px 3px;writing-mode:vertical-rl;letter-spacing:.15em}
-.nerv-system-line{flex:1;width:1px;background:linear-gradient(transparent,rgba(255,152,48,.6),rgba(80,255,128,.4),transparent)}
-.nerv-system-vertical{writing-mode:vertical-rl;font-size:8px;letter-spacing:.2em;color:#6c8574}
-.nerv-system-readout{border:1px solid rgba(80,255,128,.25);padding:7px 5px;text-align:center;display:grid;gap:3px;width:100%}
-.nerv-system-readout span{font-size:8px;color:#50ff80}.nerv-system-readout b{font-size:14px;color:#d9e4d8}.nerv-system-readout small{font-size:6px;letter-spacing:.08em;color:#718777}
-#authPage .auth-card{z-index:2}
-#authPage .auth-body,#authPage .auth-tabs{position:relative}
-#authPage .auth-card{width:min(440px,calc(100vw - 34px))!important}
-#authPage .auth-logo-wrap{border-bottom:1px solid rgba(255,152,48,.14);padding-bottom:22px}
-#authPage .auth-logo{outline:1px solid rgba(255,152,48,.28);outline-offset:5px}
-#authPage .auth-logo-text p{font-size:9px!important}
-#authPage .auth-divider span{font-family:monospace;color:#708275!important;text-transform:uppercase;letter-spacing:.15em;font-size:9px}
-#authPage .auth-input::placeholder{color:#58665b!important}
-#authPage .auth-google:hover,#authPage .auth-tab-btn:hover{border-color:rgba(255,152,48,.55)!important;background:rgba(255,152,48,.06)!important}
-#authPage .auth-submit{clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
-#authPage .auth-submit:active{transform:translateY(1px)}
-#app{position:relative}
-#app h1,#app h2,#app h3{letter-spacing:.035em}
-#app .glass{border:1px solid rgba(255,152,48,.24)!important;background:rgba(5,10,7,.82)!important;box-shadow:inset 0 1px rgba(255,255,255,.025),0 18px 45px rgba(0,0,0,.2)}
-#app button:not(.auth-tab-btn):not(.auth-pwd-toggle){border-radius:2px}
-#app input,#app textarea,#app select{border-radius:2px}
-#app ::selection{background:#ff9830;color:#050706}
-@media(max-width:1200px){
- .nerv-unit-rail-left{left:16px;width:130px;opacity:.7}
- .nerv-system-rail{right:14px;width:42px}
- .nerv-unit-card{min-height:88px;padding:10px}
- .nerv-unit-number{font-size:28px}
-}
-@media(max-width:900px){
- .nerv-unit-rail-left,.nerv-system-rail{display:none}
- #authPage:before{top:4%;font-size:8px;letter-spacing:.2em}
- #authPage:after{top:calc(4% + 17px);font-size:7px}
-}
-@media(min-width:901px) and (max-height:720px){
- .nerv-unit-rail-left{top:53%;gap:6px}
- .nerv-unit-card{min-height:78px;padding:8px}
- .nerv-unit-glyph{height:42px}
- .nerv-system-rail{height:70vh}
-}
-</style>
 
 </head>
 
 <body oncontextmenu="return false;">
+
+<!-- AT-FIELD DYNAMIC BACKGROUND CANVAS -->
+<canvas id="atFieldCanvas"></canvas>
+<div class="nerv-scanline-overlay"></div>
+<div class="nerv-grid-overlay"></div>
+
+<!-- NERV TOP TACTICAL HUD BAR -->
+<header id="nervTopBar">
+  <div class="nerv-top-left">
+    <div class="nerv-top-badge"><span class="dot"></span> NERV GEOFRONT</div>
+    <span class="nerv-ticker-text">TOKYO-3 DEFENSE // MAGI SYSTEM: ONLINE (3/3)</span>
+    <span class="nerv-ticker-text" id="nervClock">19:20:00 JST</span>
+  </div>
+  <div class="nerv-top-right">
+    <button class="nerv-hud-btn" onclick="openEvaHangarModal()" title="Xem Hangar Evangelion 00, 01, 02">
+      <span class="material-icons" style="font-size:13px">view_in_ar</span> EVA UNITS
+    </button>
+    <button class="nerv-hud-btn" onclick="openLogoArchiveModal()" title="Xem Logo NERV & Lịch sử">
+      <span class="material-icons" style="font-size:13px">military_tech</span> LOGOS
+    </button>
+    <button class="nerv-hud-btn" onclick="triggerEmergencyDrill()" title="Kích hoạt báo động khẩn cấp">
+      <span class="material-icons" style="font-size:13px">warning</span> ALARM
+    </button>
+    <button class="nerv-hud-btn" id="sfxToggleBtn" onclick="toggleSfx()" title="Bật/Tắt âm thanh hiệu ứng">
+      <span class="material-icons" style="font-size:13px" id="sfxIcon">volume_up</span> SFX
+    </button>
+  </div>
+</header>
+
+<!-- EMERGENCY BANNER -->
+<div class="nerv-emergency-banner" id="nervEmergencyBanner">
+  ⚠ EMERGENCY // BLOOD TYPE BLUE DETECTED // ANGEL APPROACHING // TOKYO-3 CONDITION ONE ⚠
+</div>
+
+<!-- EVA UNIT INTERACTIVE HANGAR MODAL -->
+<div class="nerv-modal-overlay" id="evaHangarModal" onclick="closeEvaHangarModal()">
+  <div class="nerv-modal-panel" onclick="event.stopPropagation()">
+    <button class="nerv-modal-close" onclick="closeEvaHangarModal()">✕</button>
+    <div style="border-bottom: 1px solid var(--nerv-border); padding-bottom: 12px; margin-bottom: 20px;">
+      <div style="font-size: 9px; color: var(--primary); letter-spacing: 0.3em; font-weight: 700;">NERV CENTRAL DOGMA // UNDERGROUND HANGAR DOCK 07</div>
+      <h2 style="font-family: var(--font-tech); font-size: 24px; font-weight: 900; color: #fff; margin-top: 4px;">
+        SYNCHRONIZATION & <span style="color:var(--primary)">EVA TELEMETRY</span>
+      </h2>
+      <p style="font-size: 11px; opacity: 0.6;">Chọn Evangelion để thay đổi giao diện, kiểm tra tỷ lệ đồng bộ (Sync Rate) và kích hoạt AT-Field.</p>
+    </div>
+
+    <!-- 3 UNITS GRID -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <!-- EVA-01 -->
+      <div class="nerv-unit-interactive-card" style="--unit-color:#00ff66" onclick="applyEvaTheme('eva01')">
+        <div class="nerv-unit-header-row">
+          <div>
+            <div class="nerv-unit-id-big">01</div>
+            <div class="nerv-unit-jp">初号機 // TEST TYPE</div>
+          </div>
+          <span style="font-size:8px; padding:2px 8px; background:rgba(0,255,102,0.15); border:1px solid #00ff66; color:#00ff66; font-weight:700;">ACTIVE</span>
+        </div>
+        <div class="nerv-unit-pilot">PILOT: IKARI SHINJI</div>
+        <div class="nerv-unit-model">SYNCHRONIZATION RATE: <b id="eva01Sync">91.4%</b></div>
+        <div class="nerv-sync-meter-wrap">
+          <div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width: 91.4%;"></div></div>
+        </div>
+        <div style="font-size: 8px; opacity:0.6; margin-top:8px; line-height:1.4;">
+          Core Status: NOMINAL · Progressive Knife: LOADED · Berserk Mode: READY
+        </div>
+        <button class="nerv-hud-btn" style="width:100%; margin-top:12px; justify-content:center; background:#00ff66; color:#000;">
+          KÍCH HOẠT THEME EVA-01
+        </button>
+      </div>
+
+      <!-- EVA-02 -->
+      <div class="nerv-unit-interactive-card" style="--unit-color:#ff1e27" onclick="applyEvaTheme('eva02')">
+        <div class="nerv-unit-header-row">
+          <div>
+            <div class="nerv-unit-id-big">02</div>
+            <div class="nerv-unit-jp">弐号機 // PRODUCTION MODEL</div>
+          </div>
+          <span style="font-size:8px; padding:2px 8px; background:rgba(255,30,39,0.15); border:1px solid #ff1e27; color:#ff1e27; font-weight:700;">STANDBY</span>
+        </div>
+        <div class="nerv-unit-pilot">PILOT: SORYU ASUKA LANGLEY</div>
+        <div class="nerv-unit-model">SYNCHRONIZATION RATE: <b id="eva02Sync">84.8%</b></div>
+        <div class="nerv-sync-meter-wrap">
+          <div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width: 84.8%;"></div></div>
+        </div>
+        <div style="font-size: 8px; opacity:0.6; margin-top:8px; line-height:1.4;">
+          Core Status: STABLE · Dual Sonic Glaive: ARMED · The Beast: RESTRICTED
+        </div>
+        <button class="nerv-hud-btn" style="width:100%; margin-top:12px; justify-content:center; background:#ff1e27; color:#fff;">
+          KÍCH HOẠT THEME EVA-02
+        </button>
+      </div>
+
+      <!-- EVA-00 -->
+      <div class="nerv-unit-interactive-card" style="--unit-color:#ffaa00" onclick="applyEvaTheme('eva00')">
+        <div class="nerv-unit-header-row">
+          <div>
+            <div class="nerv-unit-id-big">00</div>
+            <div class="nerv-unit-jp">零号機 // PROTO TYPE</div>
+          </div>
+          <span style="font-size:8px; padding:2px 8px; background:rgba(255,170,0,0.15); border:1px solid #ffaa00; color:#ffaa00; font-weight:700;">DORMANT</span>
+        </div>
+        <div class="nerv-unit-pilot">PILOT: AYANAMI REI</div>
+        <div class="nerv-unit-model">SYNCHRONIZATION RATE: <b id="eva00Sync">72.3%</b></div>
+        <div class="nerv-sync-meter-wrap">
+          <div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width: 72.3%;"></div></div>
+        </div>
+        <div style="font-size: 8px; opacity:0.6; margin-top:8px; line-height:1.4;">
+          Core Status: SECURE · Positron Cannon Sniper: MOUNTED · N2 Mine: SAFE
+        </div>
+        <button class="nerv-hud-btn" style="width:100%; margin-top:12px; justify-content:center; background:#ffaa00; color:#000;">
+          KÍCH HOẠT THEME EVA-00
+        </button>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <button class="nerv-hud-btn" onclick="triggerAtFieldBurst()" style="flex:1; padding:12px; justify-content:center;">
+        ⚡ PHÁT XUNG AT-FIELD CHẤN ĐỘNG
+      </button>
+      <button class="nerv-hud-btn" onclick="applyEvaTheme('default')" style="padding:12px 20px;">
+        MẶC ĐỊNH NERV AMBER
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NERV LOGOS EXHIBITION ARCHIVE MODAL -->
+<div class="nerv-modal-overlay" id="logoArchiveModal" onclick="closeLogoArchiveModal()">
+  <div class="nerv-modal-panel" onclick="event.stopPropagation()">
+    <button class="nerv-modal-close" onclick="closeLogoArchiveModal()">✕</button>
+    <div style="border-bottom: 1px solid var(--nerv-border); padding-bottom: 12px; margin-bottom: 20px;">
+      <div style="font-size: 9px; color: var(--primary); letter-spacing: 0.3em; font-weight: 700;">HISTORICAL CLASSIFIED REPOSITORY</div>
+      <h2 style="font-family: var(--font-tech); font-size: 24px; font-weight: 900; color: #fff; margin-top: 4px;">
+        NERV EMBLEM & <span style="color:var(--primary)">INSIGNIA ARCHIVE</span>
+      </h2>
+      <p style="font-size: 11px; opacity: 0.6;">Kho tư liệu chính thức về huy hiệu Đặc Vụ NERV qua các thời kỳ (Original 1995, Rebuild & WILLE).</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+      <div style="border: 1px solid var(--nerv-border); padding: 12px; background: rgba(0,0,0,0.5); text-align: center;">
+        <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
+             onerror="this.src='./nerv-logos.webp'" 
+             alt="NERV Official Logos" 
+             style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
+        <p style="font-size: 9px; opacity: 0.5; margin-top: 8px;">FILE TƯ LIỆU GỐC TRÊN REPOSITORY</p>
+      </div>
+
+      <div style="font-size: 11px; line-height: 1.6; space-y-3;">
+        <div style="background: rgba(var(--primary-rgb), 0.08); border-left: 3px solid var(--primary); padding: 10px 14px; margin-bottom: 12px;">
+          <b style="color:var(--primary); font-family:var(--font-tech); display:block; margin-bottom:4px;">1. CLASSIC NERV (1995 NEON GENESIS EVANGELION)</b>
+          Chiếc lá vả nửa vầng biểu trưng cho quả táo tri thức và sự sa ngã trong Vườn Địa Đàng. Khẩu hiệu từ thi sĩ Robert Browning: <i>"God's in his heaven. All's right with the world."</i>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.03); border-left: 3px solid #ff1e27; padding: 10px 14px; margin-bottom: 12px;">
+          <b style="color:#ff1e27; font-family:var(--font-tech); display:block; margin-bottom:4px;">2. REBUILD OF EVANGELION (1.0 / 2.0 / 3.0)</b>
+          Phiên bản tái thiết hiện đại với quả táo cắt vát và lá khía sắc nhọn, mang phong cách điện ảnh tương lai đầy gai góc.
+        </div>
+
+        <div style="background: rgba(0,255,102,0.05); border-left: 3px solid #00ff66; padding: 10px 14px;">
+          <b style="color:#00ff66; font-family:var(--font-tech); display:block; margin-bottom:4px;">3. WILLE & FINAL EVANGELION 3.0+1.0</b>
+          Biểu tượng đôi cánh xanh của tổ chức WILLE do Đại tá Katsuragi Misato chỉ huy nhằm giải thoát nhân loại khỏi Kế hoạch Bổ hoàn.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div id="topProgressBar" class="hidden" style="width:100%"></div>
 
@@ -693,12 +1445,46 @@ button:focus-visible,input:focus-visible{outline:2px solid #ff9830!important;out
   <div class="auth-orb auth-orb-2"></div>
   <div class="auth-orb auth-orb-3"></div>
 
-  <aside class="nerv-unit-rail nerv-unit-rail-left" aria-label="Evangelion unit status">
-    <div class="nerv-rail-heading">NERV // E-DEFENSE</div>
-    <div class="nerv-unit-card unit-zero"><span class="nerv-unit-number">00</span><span class="nerv-unit-name">PROTOTYPE</span><i class="nerv-unit-glyph"></i><span class="nerv-unit-state"><b></b> STANDBY</span></div>
-    <div class="nerv-unit-card unit-one"><span class="nerv-unit-number">01</span><span class="nerv-unit-name">TEST TYPE</span><i class="nerv-unit-glyph"></i><span class="nerv-unit-state"><b></b> NOMINAL</span></div>
-    <div class="nerv-unit-card unit-two"><span class="nerv-unit-number">02</span><span class="nerv-unit-name">PRODUCTION</span><i class="nerv-unit-glyph"></i><span class="nerv-unit-state"><b></b> STANDBY</span></div>
+  
+  <aside class="nerv-unit-rail-left" aria-label="Evangelion unit status">
+    <div style="font-size:9px; color:var(--primary); letter-spacing:0.2em; border-bottom:1px solid var(--nerv-border); padding-bottom:6px; font-weight:700;">
+      NERV // EVA DEFENSE
+    </div>
+
+    <!-- Unit 00 -->
+    <div class="nerv-unit-interactive-card" style="--unit-color:#ffaa00" onclick="applyEvaTheme('eva00')" title="Click để kích hoạt Eva-00">
+      <div class="nerv-unit-header-row">
+        <div class="nerv-unit-id-big">00</div>
+        <div class="nerv-unit-jp">零号機</div>
+      </div>
+      <div class="nerv-unit-pilot">REI AYANAMI</div>
+      <div class="nerv-unit-model">SYNC: 72.3%</div>
+      <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:72.3%;"></div></div></div>
+    </div>
+
+    <!-- Unit 01 -->
+    <div class="nerv-unit-interactive-card selected" style="--unit-color:#00ff66" onclick="applyEvaTheme('eva01')" title="Click để kích hoạt Eva-01">
+      <div class="nerv-unit-header-row">
+        <div class="nerv-unit-id-big">01</div>
+        <div class="nerv-unit-jp">初号機</div>
+      </div>
+      <div class="nerv-unit-pilot">SHINJI IKARI</div>
+      <div class="nerv-unit-model">SYNC: 91.4%</div>
+      <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:91.4%;"></div></div></div>
+    </div>
+
+    <!-- Unit 02 -->
+    <div class="nerv-unit-interactive-card" style="--unit-color:#ff1e27" onclick="applyEvaTheme('eva02')" title="Click để kích hoạt Eva-02">
+      <div class="nerv-unit-header-row">
+        <div class="nerv-unit-id-big">02</div>
+        <div class="nerv-unit-jp">弐号機</div>
+      </div>
+      <div class="nerv-unit-pilot">ASUKA LANGLEY</div>
+      <div class="nerv-unit-model">SYNC: 84.8%</div>
+      <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:84.8%;"></div></div></div>
+    </div>
   </aside>
+
   <aside class="nerv-system-rail" aria-hidden="true">
     <div class="nerv-system-seal">NERV</div>
     <div class="nerv-system-line"></div>
@@ -719,15 +1505,50 @@ button:focus-visible,input:focus-visible{outline:2px solid #ff9830!important;out
     </div>
 
     <div class="auth-body" style="padding-bottom:0">
-      <div class="auth-logo-wrap">
-        <div class="auth-logo" id="authLogo" onclick="triggerAdminLogin()" title="Click để đăng nhập Admin">
-          <span style="transform:rotate(10deg);display:inline-block">N</span>
-        </div>
-        <div class="auth-logo-text">
-          <h1>NERD <span>V6.0</span></h1>
-          <p>Hệ thống học tập Lớp 8A7</p>
-        </div>
-      </div>
+      
+<div class="nerv-svg-logo-wrap">
+  <svg class="nerv-logo-emblem-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="triggerAdminLogin()" title="NERV Special Agency - Click để mở Admin Portal">
+    <!-- Outer Glow & Compass Ring -->
+    <circle cx="60" cy="60" r="56" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="8 4" opacity="0.6"/>
+    <circle cx="60" cy="60" r="50" stroke="var(--primary)" stroke-width="0.8" opacity="0.3"/>
+    
+    <!-- Classic NERV Fig Leaf / Half Leaf -->
+    <path d="M 60 14 C 74 24 88 42 86 64 C 84 80 72 96 60 102 C 60 76 60 48 60 14 Z" fill="url(#nervLeafGrad)"/>
+    <path d="M 60 22 C 68 34 76 48 74 66 C 72 78 64 90 60 96 Z" fill="var(--primary)" opacity="0.45"/>
+    <path d="M 60 35 L 75 42 M 60 50 L 78 56 M 60 65 L 74 72 M 60 80 L 68 85" stroke="#000" stroke-width="1.8" opacity="0.7"/>
+    
+    <!-- Triangular Base / NERV Industrial Cut -->
+    <polygon points="26,104 94,104 60,114" fill="var(--primary)" opacity="0.85"/>
+    
+    <!-- Text Along Arc / Motto Path -->
+    <path id="nervMottoArc" d="M 22 62 A 40 40 0 0 1 98 62" fill="none"/>
+    <text font-family="'Cinzel', serif" font-size="5" font-weight="900" fill="var(--primary)" letter-spacing="0.4">
+      <textPath href="#nervMottoArc" startOffset="50%" text-anchor="middle">
+        GOD'S IN HIS HEAVEN. ALL'S RIGHT WITH THE WORLD.
+      </textPath>
+    </text>
+    
+    <!-- Bold Geometric NERV Typography -->
+    <text x="60" y="69" font-family="'Orbitron', sans-serif" font-size="20" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3" style="text-shadow: 0 0 12px var(--primary);">
+      NERV
+    </text>
+
+    <!-- Gradients -->
+    <defs>
+      <linearGradient id="nervLeafGrad" x1="60" y1="14" x2="86" y2="102" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff1e27"/>
+        <stop offset="60%" stop-color="#ff7700"/>
+        <stop offset="100%" stop-color="#ffaa00"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div>
+    <div class="nerv-brand-title">NERV <span>HQ</span></div>
+    <div class="nerv-brand-motto">"God's in his heaven. All's right with the world."</div>
+    <div class="nerv-brand-sub">特務機関 NERV // CENTRAL DOGMA PERSONNEL GATE</div>
+  </div>
+</div>
+
     </div>
 
     <div class="auth-tabs" id="authTabs">
@@ -1145,11 +1966,21 @@ button:focus-visible,input:focus-visible{outline:2px solid #ff9830!important;out
 <div id="app" class="p-4 md:p-10 max-w-7xl mx-auto" style="display:none">
   <header id="header" class="hidden flex flex-wrap justify-between items-center mb-8 md:mb-12 gap-4">
     <div class="flex items-center gap-4">
-      <div class="nerv-logo-img" onclick="showSection('mainMenu')"><span>N</span></div>
+      
+    <div style="display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="showSection('mainMenu')" title="Về Trung Tâm Chỉ Huy NERV">
+      <svg class="nerv-logo-emblem-svg" style="width:48px;height:48px;" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="56" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.6"/>
+        <path d="M 60 14 C 74 24 88 42 86 64 C 84 80 72 96 60 102 C 60 76 60 48 60 14 Z" fill="url(#nervLeafGrad)"/>
+        <text x="60" y="68" font-family="'Orbitron', sans-serif" font-size="20" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3">
+          NERV
+        </text>
+      </svg>
       <div>
-        <h1 class="text-xl md:text-2xl font-extrabold tracking-tight uppercase">NERD <span class="text-orange-500">SYSTEM</span></h1>
-        <p id="userTag" class="text-[9px] md:text-[10px] font-bold opacity-50 uppercase tracking-[.2em]"></p>
+        <h1 class="text-xl md:text-2xl font-black tracking-tight uppercase" style="font-family:var(--font-tech)">NERV <span style="color:var(--primary)">TACTICAL</span></h1>
+        <p id="userTag" class="text-[9px] md:text-[10px] font-bold opacity-75 uppercase tracking-[.2em]" style="color:var(--primary); font-family:var(--font-mono)"></p>
       </div>
+    </div>
+  
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <div class="switch-container"><label class="theme-switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="slider"></span></label></div>
@@ -2372,6 +3203,259 @@ window.onload=async()=>{
     }catch(_){localStorage.removeItem('nerd_session')}
   }
 };
+</script>
+
+<script id="nerv-tactical-engine">
+/* ═════════════════════════════════════════════════════════════════════
+   NERV TACTICAL AUDIO & INTERACTIVE AT-FIELD ENGINE (PURE WEB API)
+   ═════════════════════════════════════════════════════════════════════ */
+
+let sfxEnabled = true;
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) audioCtx = new AudioContextClass();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playSfx(type) {
+  if (!sfxEnabled) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    if (type === 'beep' || type === 'click') {
+      // Crisp Evangelion Computer Beep
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(800, now + 0.06);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.06);
+    } 
+    else if (type === 'confirm') {
+      // MAGI Affirmation Chime
+      [880, 1320, 1760].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+        gain.gain.setValueAtTime(0.07, now + idx * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.15);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + idx * 0.05);
+        osc.stop(now + idx * 0.05 + 0.15);
+      });
+    }
+    else if (type === 'atfield') {
+      // AT-Field Resonance Hum
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(120, now);
+      osc.frequency.linearRampToValueAtTime(320, now + 0.25);
+      osc.frequency.linearRampToValueAtTime(80, now + 0.55);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.55);
+    }
+    else if (type === 'alarm') {
+      // Evangelion Two-Tone Emergency Klaxon
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(750, now);
+      osc.frequency.setValueAtTime(450, now + 0.2);
+      osc.frequency.setValueAtTime(750, now + 0.4);
+      osc.frequency.setValueAtTime(450, now + 0.6);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.8);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.8);
+    }
+  } catch (_) {}
+}
+
+function toggleSfx() {
+  sfxEnabled = !sfxEnabled;
+  const icon = document.getElementById('sfxIcon');
+  if (icon) icon.textContent = sfxEnabled ? 'volume_up' : 'volume_off';
+  const btn = document.getElementById('sfxToggleBtn');
+  if (btn) btn.classList.toggle('active', sfxEnabled);
+  if (sfxEnabled) playSfx('confirm');
+}
+
+// Attach subtle click beeps to interactive buttons
+document.addEventListener('click', (e) => {
+  if (e.target.closest('button, .opt-card, .nerv-unit-interactive-card, .nerv-hud-btn, a')) {
+    playSfx('beep');
+  }
+});
+
+/* ═══ AT-FIELD INTERACTIVE CANVAS ═══ */
+const atFieldCanvas = document.getElementById('atFieldCanvas');
+let atCtx = null;
+let atOctagons = [];
+
+function initAtFieldCanvas() {
+  if (!atFieldCanvas) return;
+  atCtx = atFieldCanvas.getContext('2d');
+  function resize() {
+    atFieldCanvas.width = window.innerWidth;
+    atFieldCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  window.addEventListener('pointerdown', (e) => {
+    spawnAtFieldBurst(e.clientX, e.clientY);
+  });
+
+  animateAtField();
+}
+
+function drawOctagon(ctx, x, y, radius, color, alpha) {
+  ctx.save();
+  ctx.beginPath();
+  for (let i = 0; i < 8; i++) {
+    const angle = (i * Math.PI) / 4 + Math.PI / 8;
+    const px = x + radius * Math.cos(angle);
+    const py = y + radius * Math.sin(angle);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function spawnAtFieldBurst(x, y) {
+  playSfx('atfield');
+  const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#ff9830';
+  for (let i = 0; i < 4; i++) {
+    atOctagons.push({
+      x: x || window.innerWidth / 2,
+      y: y || window.innerHeight / 2,
+      radius: 10 + i * 28,
+      maxRadius: 280 + i * 50,
+      alpha: 0.9,
+      speed: 3.5 + i * 1.2,
+      color: primaryColor
+    });
+  }
+}
+
+function triggerAtFieldBurst() {
+  spawnAtFieldBurst(window.innerWidth / 2, window.innerHeight / 2);
+}
+
+function animateAtField() {
+  if (!atCtx) return;
+  atCtx.clearRect(0, 0, atFieldCanvas.width, atFieldCanvas.height);
+
+  for (let i = atOctagons.length - 1; i >= 0; i--) {
+    const oct = atOctagons[i];
+    oct.radius += oct.speed;
+    oct.alpha *= 0.96;
+    drawOctagon(atCtx, oct.x, oct.y, oct.radius, oct.color, oct.alpha);
+    if (oct.alpha < 0.02 || oct.radius > oct.maxRadius) {
+      atOctagons.splice(i, 1);
+    }
+  }
+  requestAnimationFrame(animateAtField);
+}
+
+/* ═══ EVANGELION THEME APPLIER ═══ */
+function applyEvaTheme(themeName) {
+  document.body.classList.remove('theme-eva00', 'theme-eva01', 'theme-eva02');
+  if (themeName && themeName !== 'default') {
+    document.body.classList.add('theme-' + themeName);
+  }
+  playSfx('confirm');
+  triggerAtFieldBurst();
+  showToast('ĐÃ KÍCH HOẠT HỆ THỐNG: ' + themeName.toUpperCase(), 'normal', 3000);
+}
+
+/* ═══ EMERGENCY DRILL SIMULATION ═══ */
+let isEmergency = false;
+function triggerEmergencyDrill() {
+  isEmergency = !isEmergency;
+  const banner = document.getElementById('nervEmergencyBanner');
+  if (banner) banner.classList.toggle('show', isEmergency);
+  if (isEmergency) {
+    playSfx('alarm');
+    showToast('🚨 CẢNH BÁO: PHÁT HIỆN SỰ XÂM NHẬP CỦA THIÊN SỨ (ANGEL)', 'error', 5000);
+  } else {
+    playSfx('confirm');
+    showToast('HỆ THỐNG TRỞ VỀ TRẠNG THÁI BÌNH THƯỜNG', 'success', 2500);
+  }
+}
+
+/* ═══ MODAL HANDLERS ═══ */
+function openEvaHangarModal() {
+  playSfx('beep');
+  document.getElementById('evaHangarModal').style.display = 'flex';
+}
+function closeEvaHangarModal() {
+  document.getElementById('evaHangarModal').style.display = 'none';
+}
+function openLogoArchiveModal() {
+  playSfx('beep');
+  document.getElementById('logoArchiveModal').style.display = 'flex';
+}
+function closeLogoArchiveModal() {
+  document.getElementById('logoArchiveModal').style.display = 'none';
+}
+
+/* ═══ REAL-TIME TOKYO-3 CLOCK ═══ */
+function updateNervClock() {
+  const clockEl = document.getElementById('nervClock');
+  if (!clockEl) return;
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const ss = String(d.getSeconds()).padStart(2, '0');
+  clockEl.textContent = `TOKYO-3: ${hh}:${mm}:${ss} JST`;
+}
+setInterval(updateNervClock, 1000);
+
+// Dynamic subtle sync rate fluctuations
+setInterval(() => {
+  const r01 = (90 + Math.random() * 3.5).toFixed(1);
+  const r02 = (83 + Math.random() * 4).toFixed(1);
+  const r00 = (71 + Math.random() * 3).toFixed(1);
+  const e1 = document.getElementById('eva01Sync');
+  const e2 = document.getElementById('eva02Sync');
+  const e0 = document.getElementById('eva00Sync');
+  if (e1) e1.textContent = r01 + '%';
+  if (e2) e2.textContent = r02 + '%';
+  if (e0) e0.textContent = r00 + '%';
+}, 3000);
+
+// Initialize canvas
+initAtFieldCanvas();
+updateNervClock();
 </script>
 </body>
 </html>
