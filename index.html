@@ -2030,6 +2030,118 @@ body[data-theme="light"] #evaHangarModal .nerv-unit-model {
   font-weight: 700 !important;
 }
 
+
+/* ═══ NERV SLENDER HEADER BRANDING (AUTHENTIC EVANGELION STYLE) ═══ */
+.nerv-header-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  cursor: pointer;
+  user-select: none;
+}
+.nerv-header-hero-logo {
+  width: 82px !important;
+  height: 82px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 0 18px rgba(var(--primary-rgb), 0.7)) !important;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  flex-shrink: 0;
+}
+.nerv-header-brand-wrap:hover .nerv-header-hero-logo {
+  transform: scale(1.08) rotate(3deg);
+  filter: drop-shadow(0 0 26px var(--primary)) !important;
+}
+@media (max-width: 640px) {
+  .nerv-header-hero-logo {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+.nerv-header-text-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.nerv-header-title {
+  font-family: var(--font-tech), Orbitron, 'Rajdhani', sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: var(--text-main) !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+@media (min-width: 768px) {
+  .nerv-header-title {
+    font-size: 18px !important;
+    letter-spacing: 0.26em !important;
+  }
+}
+.nerv-header-title-accent {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+.nerv-header-usertag {
+  font-family: var(--font-mono), 'Share Tech Mono', monospace !important;
+  font-size: 9.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.28em !important;
+  text-transform: uppercase !important;
+  color: var(--primary) !important;
+  opacity: 0.85 !important;
+  margin-top: 4px !important;
+}
+@media (min-width: 768px) {
+  .nerv-header-usertag {
+    font-size: 10.5px !important;
+    letter-spacing: 0.3em !important;
+  }
+}
+body[data-theme="light"] .nerv-header-title {
+  color: #0a0e17 !important;
+}
+
+/* ═══ NERV LOGO ARCHIVE: TRANSPARENT BACKGROUND & BLACK LOGO IN LIGHT MODE ═══ */
+.nerv-archive-img-wrap {
+  border: 1px solid var(--nerv-border);
+  padding: 20px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Dark mode logo presentation */
+body:not([data-theme="light"]) .nerv-archive-logo-img {
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.35)) !important;
+  opacity: 1 !important;
+}
+
+/* Light mode: 100% see-through transparent background & JET BLACK logo */
+body[data-theme="light"] .nerv-archive-img-wrap {
+  background: transparent !important;
+  border: 1.5px dashed var(--nerv-border) !important;
+  box-shadow: none !important;
+}
+
+body[data-theme="light"] .nerv-archive-logo-img {
+  filter: brightness(0) !important; /* Turns white logo graphic into pure jet black */
+  opacity: 0.95 !important;
+  transition: filter 0.3s ease;
+}
+
+body[data-theme="light"] .nerv-archive-img-caption {
+  color: #475569 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+}
+
 </style>
 
 
@@ -2179,6 +2291,7 @@ body[data-theme="light"] #evaHangarModal .nerv-unit-model {
         <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
              onerror="this.src='./nerv-logos.webp'" 
              alt="NERV Official Logos" 
+             class="nerv-archive-logo-img"
              style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
         <p class="nerv-archive-img-caption">FILE TƯ LIỆU GỐC TRÊN REPOSITORY</p>
       </div>
@@ -2719,17 +2832,14 @@ body[data-theme="light"] #evaHangarModal .nerv-unit-model {
   <header id="header" class="hidden flex flex-wrap justify-between items-center mb-8 md:mb-12 gap-4">
     <div class="flex items-center gap-4">
       
-    <div style="display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="showSection('mainMenu')" title="Về Trung Tâm Chỉ Huy NERV">
+    <div class="nerv-header-brand-wrap" onclick="showSection('mainMenu')" title="Về Trung Tâm Chỉ Huy NERV">
       <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
            onerror="this.src='./nerv-logos.webp'" 
-           class="nerv-official-logo-img" 
-           style="width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(var(--primary-rgb),0.65));transition:transform .3s ease;" 
-           alt="NERV Logo"
-           onmouseover="this.style.transform='scale(1.08) rotate(3deg)'"
-           onmouseout="this.style.transform='scale(1) rotate(0deg)'">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-black tracking-tight uppercase" style="font-family:var(--font-tech);line-height:1.1;">NERV <span style="color:var(--primary)">TACTICAL</span></h1>
-        <p id="userTag" class="text-[10px] md:text-[11px] font-bold opacity-80 uppercase tracking-[.2em] mt-0.5" style="color:var(--primary); font-family:var(--font-mono)"></p>
+           class="nerv-official-logo-img nerv-header-hero-logo" 
+           alt="NERV Logo">
+      <div class="nerv-header-text-block">
+        <h1 class="nerv-header-title">NERV <span class="nerv-header-title-accent">TACTICAL</span></h1>
+        <p id="userTag" class="nerv-header-usertag"></p>
       </div>
     </div>
   
@@ -4252,6 +4362,5 @@ setInterval(() => {
 initAtFieldCanvas();
 updateNervClock();
 </script>
-
 </body>
 </html>
