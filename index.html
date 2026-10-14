@@ -1884,6 +1884,152 @@ body[data-theme="light"] .ae-panel {
   border: 2px solid var(--primary) !important;
   color: #0a0e17 !important;
 }
+
+/* ═══ NERV LOGO ARCHIVE & MODAL SYSTEM ═══ */
+.nerv-archive-title {
+  font-family: var(--font-tech);
+  font-size: 22px;
+  font-weight: 900;
+  margin-top: 4px;
+  color: #ffffff;
+}
+body[data-theme="light"] .nerv-archive-title {
+  color: #0a0e17 !important;
+}
+
+.nerv-archive-subtitle {
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
+}
+body[data-theme="light"] .nerv-archive-subtitle {
+  color: #334155 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.nerv-archive-img-wrap {
+  border: 1px solid var(--nerv-border);
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  text-align: center;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+body[data-theme="light"] .nerv-archive-img-wrap {
+  background: #f8fafc !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+.nerv-archive-img-caption {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono);
+}
+body[data-theme="light"] .nerv-archive-img-caption {
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
+/* Archive explanation cards */
+.nerv-archive-box {
+  padding: 14px 18px;
+  font-size: 12px;
+  line-height: 1.65;
+  border-radius: 4px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.nerv-archive-box:hover {
+  transform: translateX(4px);
+}
+
+/* Dark mode styling for explanation cards */
+body:not([data-theme="light"]) .nerv-archive-box-classic {
+  background: rgba(var(--primary-rgb), 0.12);
+  border-left: 3.5px solid var(--primary);
+  color: #e2e8f0;
+}
+body:not([data-theme="light"]) .nerv-archive-box-rebuild {
+  background: rgba(255, 30, 39, 0.12);
+  border-left: 3.5px solid #ff1e27;
+  color: #e2e8f0;
+}
+body:not([data-theme="light"]) .nerv-archive-box-wille {
+  background: rgba(0, 255, 102, 0.1);
+  border-left: 3.5px solid #00ff66;
+  color: #e2e8f0;
+}
+
+/* Light mode styling for explanation cards (WCAG AAA high contrast) */
+body[data-theme="light"] .nerv-archive-box {
+  color: #0f172a !important;
+  font-weight: 500 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+body[data-theme="light"] .nerv-archive-box-classic {
+  background: rgba(var(--primary-rgb), 0.09) !important;
+  border-left: 4.5px solid var(--primary) !important;
+  border-top: 1px solid rgba(var(--primary-rgb), 0.25) !important;
+  border-right: 1px solid rgba(var(--primary-rgb), 0.25) !important;
+  border-bottom: 1px solid rgba(var(--primary-rgb), 0.25) !important;
+}
+body[data-theme="light"] .nerv-archive-box-rebuild {
+  background: rgba(203, 17, 26, 0.07) !important;
+  border-left: 4.5px solid #cb111a !important;
+  border-top: 1px solid rgba(203, 17, 26, 0.25) !important;
+  border-right: 1px solid rgba(203, 17, 26, 0.25) !important;
+  border-bottom: 1px solid rgba(203, 17, 26, 0.25) !important;
+}
+body[data-theme="light"] .nerv-archive-box-wille {
+  background: rgba(0, 143, 67, 0.08) !important;
+  border-left: 4.5px solid #008f43 !important;
+  border-top: 1px solid rgba(0, 143, 67, 0.25) !important;
+  border-right: 1px solid rgba(0, 143, 67, 0.25) !important;
+  border-bottom: 1px solid rgba(0, 143, 67, 0.25) !important;
+}
+
+/* Light mode for all .nerv-modal-panel */
+body[data-theme="light"] .nerv-modal-overlay {
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(10px) !important;
+}
+body[data-theme="light"] .nerv-modal-panel {
+  background: #ffffff !important;
+  border: 2px solid var(--primary) !important;
+  color: #0a0e17 !important;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25), 0 0 40px var(--nerv-glow) !important;
+}
+body[data-theme="light"] .nerv-modal-panel h2 {
+  color: #0a0e17 !important;
+}
+body[data-theme="light"] .nerv-modal-close {
+  color: var(--primary) !important;
+}
+body[data-theme="light"] #evaHangarModal .nerv-unit-interactive-card {
+  background: #f8fafc !important;
+  border: 1.5px solid var(--nerv-border) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  color: #0a0e17 !important;
+}
+body[data-theme="light"] #evaHangarModal .nerv-unit-id-big {
+  color: #0a0e17 !important;
+}
+body[data-theme="light"] #evaHangarModal .nerv-unit-pilot {
+  color: #1e293b !important;
+  font-weight: 800 !important;
+}
+body[data-theme="light"] #evaHangarModal .nerv-unit-model {
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
 </style>
 
 
@@ -2022,34 +2168,34 @@ body[data-theme="light"] .ae-panel {
     <button class="nerv-modal-close" onclick="closeLogoArchiveModal()">✕</button>
     <div style="border-bottom: 1px solid var(--nerv-border); padding-bottom: 12px; margin-bottom: 20px;">
       <div style="font-size: 9px; color: var(--primary); letter-spacing: 0.3em; font-weight: 700;">HISTORICAL CLASSIFIED REPOSITORY</div>
-      <h2 style="font-family: var(--font-tech); font-size: 24px; font-weight: 900; color: #fff; margin-top: 4px;">
+      <h2 class="nerv-archive-title">
         NERV EMBLEM & <span style="color:var(--primary)">INSIGNIA ARCHIVE</span>
       </h2>
-      <p style="font-size: 11px; opacity: 0.6;">Kho tư liệu chính thức về huy hiệu Đặc Vụ NERV qua các thời kỳ (Original 1995, Rebuild & WILLE).</p>
+      <p class="nerv-archive-subtitle">Kho tư liệu chính thức về huy hiệu Đặc Vụ NERV qua các thời kỳ (Original 1995, Rebuild & WILLE).</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
-      <div style="border: 1px solid var(--nerv-border); padding: 12px; background: rgba(0,0,0,0.5); text-align: center;">
+    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; align-items: stretch;">
+      <div class="nerv-archive-img-wrap">
         <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
              onerror="this.src='./nerv-logos.webp'" 
              alt="NERV Official Logos" 
              style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
-        <p style="font-size: 9px; opacity: 0.5; margin-top: 8px;">FILE TƯ LIỆU GỐC TRÊN REPOSITORY</p>
+        <p class="nerv-archive-img-caption">FILE TƯ LIỆU GỐC TRÊN REPOSITORY</p>
       </div>
 
-      <div style="font-size: 11px; line-height: 1.6; space-y-3;">
-        <div style="background: rgba(var(--primary-rgb), 0.08); border-left: 3px solid var(--primary); padding: 10px 14px; margin-bottom: 12px;">
-          <b style="color:var(--primary); font-family:var(--font-tech); display:block; margin-bottom:4px;">1. CLASSIC NERV (1995 NEON GENESIS EVANGELION)</b>
+      <div style="display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
+        <div class="nerv-archive-box nerv-archive-box-classic">
+          <b style="color:var(--primary); font-family:var(--font-tech); display:block; margin-bottom:6px; font-size:12px; letter-spacing:0.05em;">1. CLASSIC NERV (1995 NEON GENESIS EVANGELION)</b>
           Chiếc lá vả nửa vầng biểu trưng cho quả táo tri thức và sự sa ngã trong Vườn Địa Đàng. Khẩu hiệu từ thi sĩ Robert Browning: <i>"God's in his heaven. All's right with the world."</i>
         </div>
 
-        <div style="background: rgba(255,255,255,0.03); border-left: 3px solid #ff1e27; padding: 10px 14px; margin-bottom: 12px;">
-          <b style="color:#ff1e27; font-family:var(--font-tech); display:block; margin-bottom:4px;">2. REBUILD OF EVANGELION (1.0 / 2.0 / 3.0)</b>
-          Phiên bản tái thiết hiện đại với quả táo cắt vát và lá khía sắc nhọn, mang phong cách điện ảnh tương lai đầy gai góc.
+        <div class="nerv-archive-box nerv-archive-box-rebuild">
+          <b style="color:#ff1e27; font-family:var(--font-tech); display:block; margin-bottom:6px; font-size:12px; letter-spacing:0.05em;">2. REBUILD OF EVANGELION (1.0 / 2.0 / 3.0)</b>
+          Phiên bản tái thiết hiện đại với quả táo cắt vát và lá khía sắc nhọn, mang phong cách điện ảnh tương lai đầy gai góc và bí hiểm.
         </div>
 
-        <div style="background: rgba(0,255,102,0.05); border-left: 3px solid #00ff66; padding: 10px 14px;">
-          <b style="color:#00ff66; font-family:var(--font-tech); display:block; margin-bottom:4px;">3. WILLE & FINAL EVANGELION 3.0+1.0</b>
+        <div class="nerv-archive-box nerv-archive-box-wille">
+          <b style="color:#00ff66; font-family:var(--font-tech); display:block; margin-bottom:6px; font-size:12px; letter-spacing:0.05em;">3. WILLE & FINAL EVANGELION 3.0+1.0</b>
           Biểu tượng đôi cánh xanh của tổ chức WILLE do Đại tá Katsuragi Misato chỉ huy nhằm giải thoát nhân loại khỏi Kế hoạch Bổ hoàn.
         </div>
       </div>
@@ -2573,15 +2719,17 @@ body[data-theme="light"] .ae-panel {
   <header id="header" class="hidden flex flex-wrap justify-between items-center mb-8 md:mb-12 gap-4">
     <div class="flex items-center gap-4">
       
-    <div style="display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="showSection('mainMenu')" title="Về Trung Tâm Chỉ Huy NERV">
+    <div style="display:flex; align-items:center; gap:16px; cursor:pointer;" onclick="showSection('mainMenu')" title="Về Trung Tâm Chỉ Huy NERV">
       <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
            onerror="this.src='./nerv-logos.webp'" 
            class="nerv-official-logo-img" 
-           style="width:38px;height:38px;" 
-           alt="NERV Logo">
+           style="width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(var(--primary-rgb),0.65));transition:transform .3s ease;" 
+           alt="NERV Logo"
+           onmouseover="this.style.transform='scale(1.08) rotate(3deg)'"
+           onmouseout="this.style.transform='scale(1) rotate(0deg)'">
       <div>
-        <h1 class="text-xl md:text-2xl font-black tracking-tight uppercase" style="font-family:var(--font-tech)">NERV <span style="color:var(--primary)">TACTICAL</span></h1>
-        <p id="userTag" class="text-[9px] md:text-[10px] font-bold opacity-75 uppercase tracking-[.2em]" style="color:var(--primary); font-family:var(--font-mono)"></p>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight uppercase" style="font-family:var(--font-tech);line-height:1.1;">NERV <span style="color:var(--primary)">TACTICAL</span></h1>
+        <p id="userTag" class="text-[10px] md:text-[11px] font-bold opacity-80 uppercase tracking-[.2em] mt-0.5" style="color:var(--primary); font-family:var(--font-mono)"></p>
       </div>
     </div>
   
@@ -4104,5 +4252,6 @@ setInterval(() => {
 initAtFieldCanvas();
 updateNervClock();
 </script>
+
 </body>
 </html>
