@@ -488,7 +488,7 @@ body.theme-eva00 .nerv-btn-confirm:hover{background:#fff;color:#000;box-shadow:0
 .pm-left::before{content:'';position:absolute;top:-60px;left:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(249,115,22,.12),transparent 70%);pointer-events:none}
 .profile-avatar-wrap{width:100px;height:100px;border-radius:50%;position:relative;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#0b0b0b;transition:transform .25s ease,box-shadow .25s ease;border:2.5px solid var(--primary);box-shadow:0 0 0 6px rgba(249,115,22,.08),0 18px 34px rgba(249,115,22,.2);animation:avatarRingPulse 3s ease-in-out infinite;margin-bottom:6px}
 .profile-avatar-wrap:hover{transform:scale(1.04)}
-.profile-avatar-wrap:not(.has-image){background:linear-gradient(135deg,var(--primary),var(--secondary))}
+.profile-avatar-wrap:not(.has-image){background:var(--primary)!important;color:#000!important;font-family:var(--font-tech),Orbitron,monospace}
 .profile-avatar-wrap.has-image{background:#000!important;border:none!important}
 .profile-avatar-wrap img{width:100%;height:100%;object-fit:cover;position:absolute;border-radius:50%}
 .avatar-camera-btn{position:absolute;bottom:3px;right:3px;width:28px;height:28px;border-radius:50%;background:rgba(10,10,10,.9);border:2px solid rgba(249,115,22,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;z-index:2}
@@ -513,7 +513,7 @@ body.theme-eva00 .nerv-btn-confirm:hover{background:#fff;color:#000;box-shadow:0
 .pm-field-wrap{position:relative;margin-bottom:16px}
 .pm-field-input{width:100%;background:#1a1a1a!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;padding:14px 18px!important;font-size:14px!important;font-weight:700!important;color:var(--text-main)!important;transition:border-color .2s,box-shadow .2s!important;cursor:text}
 .pm-field-input:focus{border-color:rgba(249,115,22,.6)!important;box-shadow:0 0 0 3px rgba(249,115,22,.1)!important}
-.pm-save-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:black;font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.1em;border-radius:14px;border:none;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 10px 25px -5px rgba(249,115,22,.4);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;margin-bottom:14px}
+.pm-save-btn{width:100%;padding:16px;background:var(--primary)!important;color:#000!important;font-family:var(--font-tech),Orbitron,sans-serif;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.14em;border:none;cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));box-shadow:0 0 20px rgba(var(--primary-rgb),.35);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;margin-bottom:14px;transition:all .2s ease}
 .pm-save-btn:hover{transform:translateY(-2px);box-shadow:0 16px 32px -6px rgba(249,115,22,.55)}
 .pm-save-btn .material-icons{font-size:18px}
 .pm-history-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 0;border-top:1px solid rgba(255,255,255,.05);margin-top:4px;transition:.2s}
@@ -1528,77 +1528,361 @@ body, input, button, textarea, select {
   }
 }
 
-/* ═══ NERV LIGHT MODE ═══ */
+/* ═══ NERV DYNAMIC PILOT THEME UTILITIES ═══ */
+/* Ensure all highlight & accent elements map dynamically to active pilot color */
+.text-orange-500,
+.text-orange-400,
+[class*="text-orange-500"],
+[class*="text-orange-400"] {
+  color: var(--primary) !important;
+}
+
+.border-orange-500,
+[class*="border-orange-500"] {
+  border-color: var(--primary) !important;
+}
+
+.bg-orange-500,
+[class*="bg-orange-500"] {
+  background-color: var(--primary) !important;
+}
+
+.hover\:text-orange-500:hover {
+  color: var(--primary) !important;
+}
+
+.hover\:bg-orange-500\/10:hover {
+  background-color: rgba(var(--primary-rgb), 0.12) !important;
+}
+
+.shadow-orange-500\/20 {
+  box-shadow: 0 10px 25px -5px rgba(var(--primary-rgb), 0.35) !important;
+}
+
+/* Ensure menu card indicators match pilot */
+#mainMenu > div {
+  border-bottom: 4px solid var(--primary) !important;
+}
+
+/* ═══ NERV AUTHENTIC TACTICAL LIGHT MODE ═══ */
+/* Base Tactical Command Blueprint Surface */
 body[data-theme="light"] {
-  --nerv-dark: #f0ede8;
-  --nerv-surface: rgba(240, 237, 232, 0.94);
-  --nerv-border: rgba(255, 152, 48, 0.4);
-  --text-main: #1a1714;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(249, 115, 22, 0.3);
-  --input-bg: rgba(255, 255, 255, 0.9);
-  background: radial-gradient(circle at top right, #fff7ed, #f0ede8) !important;
-  color: #1a1714;
+  --nerv-dark: #dce3ea;
+  --nerv-surface: rgba(255, 255, 255, 0.94);
+  --nerv-border: rgba(var(--primary-rgb), 0.38);
+  --nerv-glow: rgba(var(--primary-rgb), 0.2);
+  --text-main: #0a0e17;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(var(--primary-rgb), 0.3);
+  --input-bg: #ffffff;
+  background: radial-gradient(ellipse at 50% 25%, #eef3f8 0%, #d6dee8 100%) !important;
+  color: #0a0e17 !important;
 }
+
+/* NERV Default Pilot (GeoFront Amber) Light Mode */
+body:not([class*="theme-eva"])[data-theme="light"] {
+  --primary: #d96500;
+  --secondary: #b45309;
+  --primary-rgb: 217, 101, 0;
+  --nerv-border: rgba(217, 101, 0, 0.4);
+  --nerv-glow: rgba(217, 101, 0, 0.25);
+  background: radial-gradient(ellipse at 50% 25%, #faf4ed 0%, #ebdccb 100%) !important;
+}
+
+/* EVA-01 Test Type (Shinji / Neon Green & Violet) Light Mode */
+body.theme-eva01[data-theme="light"] {
+  --primary: #008f43;
+  --secondary: #7e22ce;
+  --primary-rgb: 0, 143, 67;
+  --purple-rgb: 126, 34, 206;
+  --nerv-border: rgba(0, 143, 67, 0.45);
+  --nerv-glow: rgba(0, 143, 67, 0.25);
+  background: radial-gradient(ellipse at 50% 25%, #edf7f1 0%, #d4ebd9 100%) !important;
+}
+
+/* EVA-02 Production Model (Asuka / Crimson & Orange) Light Mode */
+body.theme-eva02[data-theme="light"] {
+  --primary: #cb111a;
+  --secondary: #ea580c;
+  --primary-rgb: 203, 17, 26;
+  --nerv-border: rgba(203, 17, 26, 0.45);
+  --nerv-glow: rgba(203, 17, 26, 0.25);
+  background: radial-gradient(ellipse at 50% 25%, #fdf2f0 0%, #f0d5d0 100%) !important;
+}
+
+/* EVA-00 Proto Type (Rei / Ayanami Blue & Gold) Light Mode */
+body.theme-eva00[data-theme="light"] {
+  --primary: #0284c7;
+  --secondary: #d97706;
+  --primary-rgb: 2, 132, 199;
+  --nerv-border: rgba(2, 132, 199, 0.45);
+  --nerv-glow: rgba(2, 132, 199, 0.25);
+  background: radial-gradient(ellipse at 50% 25%, #f0f7fd 0%, #d3e4f4 100%) !important;
+}
+
+/* Tactical HUD Bar in Light Mode: Stays High-Tech Dark Terminal */
 body[data-theme="light"] #nervTopBar {
-  background: rgba(245, 240, 235, 0.96);
-  border-bottom-color: rgba(255, 152, 48, 0.3);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: #080c10 !important;
+  border-bottom: 2px solid var(--primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
 }
-body[data-theme="light"] .glass {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: rgba(249, 115, 22, 0.2);
+body[data-theme="light"] #nervTopBar .nerv-ticker-text {
+  color: rgba(255, 255, 255, 0.8) !important;
 }
+body[data-theme="light"] #nervTopBar .nerv-hud-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+body[data-theme="light"] #nervTopBar .nerv-top-badge {
+  background: rgba(var(--primary-rgb), 0.28) !important;
+  border-color: var(--primary) !important;
+  color: #ffffff !important;
+}
+
+/* Tactical Blueprint Grid in Light Mode */
 body[data-theme="light"] .nerv-grid-overlay {
-  opacity: 0.03;
+  opacity: 0.16 !important;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px) !important;
 }
-body[data-theme="light"] .confirm-overlay {
-  background: rgba(255, 255, 255, 0.7);
+
+/* Main App Header in Light Mode */
+body[data-theme="light"] #header h1 {
+  color: #0a0e17 !important;
 }
-body[data-theme="light"] .nerv-confirm-panel {
-  background: rgba(255, 255, 255, 0.97);
-  color: #1a1714;
-}
-body[data-theme="light"] .nerv-confirm-text {
-  color: #333;
-}
-body[data-theme="light"] .nerv-btn-cancel {
-  background: rgba(0, 0, 0, 0.04);
-  color: rgba(0, 0, 0, 0.5);
-  border-left-color: rgba(249, 115, 22, 0.2);
-}
-body[data-theme="light"] .profile-modal-panel {
-  background: #f8f5f0;
-  color: #1a1714;
-}
-body[data-theme="light"] .pm-header {
-  background: #f8f5f0;
-}
-body[data-theme="light"] #header {
-  color: #1a1714;
+body[data-theme="light"] .avatar-btn {
+  background: #ffffff !important;
+  color: var(--primary) !important;
+  border: 2px solid var(--primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 body[data-theme="light"] .nerv-nav-btn {
-  background: rgba(255, 255, 255, 0.6);
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
 }
+body[data-theme="light"] .theme-switch .slider {
+  background: #cbd5e1 !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Main Menu Cards in Light Mode */
+body[data-theme="light"] #mainMenu > div {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 2px solid var(--nerv-border) !important;
+  border-bottom: 4px solid var(--primary) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  color: #0a0e17 !important;
+}
+body[data-theme="light"] #mainMenu > div:hover {
+  border-color: var(--primary) !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.12), 0 0 30px var(--nerv-glow) !important;
+}
+body[data-theme="light"] #mainMenu > div::after {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+body[data-theme="light"] #mainMenu h3 {
+  color: #0a0e17 !important;
+  font-weight: 900 !important;
+}
+body[data-theme="light"] #mainMenu p {
+  color: #475569 !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
+/* Universal Text & Subtext Legibility in Light Mode */
+body[data-theme="light"] .opacity-40,
+body[data-theme="light"] .opacity-30,
+body[data-theme="light"] .opacity-25,
+body[data-theme="light"] [class*="opacity-40"],
+body[data-theme="light"] [class*="opacity-30"] {
+  opacity: 1 !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
+/* Fix White-on-White Text in Admin & Modals */
+body[data-theme="light"] .text-white,
+body[data-theme="light"] [class*="text-white"] {
+  color: #0a0e17 !important;
+}
+
+/* General Glass Panels in Light Mode */
+body[data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06) !important;
+  color: #0a0e17 !important;
+}
+
+/* Admin Page & Leaderboard Panels */
+body[data-theme="light"] #adminPage,
+body[data-theme="light"] #leaderboard {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 2px solid var(--nerv-border) !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Inputs & Selects in Light Mode */
 body[data-theme="light"] input,
-body[data-theme="light"] textarea {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #1a1714 !important;
-  border-color: rgba(249, 115, 22, 0.25) !important;
+body[data-theme="light"] textarea,
+body[data-theme="light"] select {
+  background: #ffffff !important;
+  color: #0a0e17 !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.2) !important;
+}
+body[data-theme="light"] input::placeholder,
+body[data-theme="light"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Select Exam Pills */
+body[data-theme="light"] #shufflePills button:not(.active-pill) {
+  background: #ffffff !important;
+  color: #475569 !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
+  opacity: 1 !important;
+}
+body[data-theme="light"] #shufflePills button.active-pill {
+  background: rgba(var(--primary-rgb), 0.15) !important;
+  color: var(--primary) !important;
+  border: 2px solid var(--primary) !important;
+  opacity: 1 !important;
+}
+
+/* Exam Cards in SelectExam */
+body[data-theme="light"] #examList .glass {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.1) !important;
+  border-left: 5px solid var(--primary) !important;
+}
+body[data-theme="light"] #examList h3 {
+  color: #0a0e17 !important;
+}
+
+/* Admin Vault Cards */
+body[data-theme="light"] .vault-card {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
+}
+body[data-theme="light"] .vault-card-content {
+  background: #f8fafc !important;
+}
+body[data-theme="light"] .vault-toggle h4 {
+  color: #0a0e17 !important;
+}
+
+/* Profile Modal Panel Overhaul */
+body[data-theme="light"] .profile-modal-panel {
+  background: #ffffff !important;
+  border: 2px solid var(--primary) !important;
+  color: #0a0e17 !important;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2), 0 0 40px var(--nerv-glow) !important;
+}
+body[data-theme="light"] .pm-header {
+  background: #f1f5f9 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #0a0e17 !important;
+}
+body[data-theme="light"] .pm-header-title {
+  color: #475569 !important;
+  opacity: 1 !important;
+}
+body[data-theme="light"] .pm-left {
+  background: #f8fafc !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+body[data-theme="light"] .pm-name {
+  color: #0a0e17 !important;
+  font-weight: 900 !important;
+}
+body[data-theme="light"] .pm-stats-row {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
+}
+body[data-theme="light"] .pm-stat {
+  background: #ffffff !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+body[data-theme="light"] .pm-stat-val {
+  color: #0a0e17 !important;
+  font-weight: 900 !important;
+}
+body[data-theme="light"] #statCount {
+  color: #0a0e17 !important;
+}
+body[data-theme="light"] .pm-stat-lbl {
+  color: #64748b !important;
+  opacity: 1 !important;
+  font-weight: 800 !important;
+}
+body[data-theme="light"] .pm-meta-item {
+  background: #f1f5f9 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+body[data-theme="light"] .pm-meta-item p:first-child {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+body[data-theme="light"] .pm-meta-item p:last-child {
+  color: #0a0e17 !important;
+  font-weight: 800 !important;
+}
+body[data-theme="light"] .pm-right-title {
+  color: #0a0e17 !important;
+  opacity: 1 !important;
+}
+body[data-theme="light"] .pm-field-label {
+  color: #475569 !important;
+  opacity: 1 !important;
+}
+body[data-theme="light"] .pm-field-input {
+  background: #ffffff !important;
+  color: #0a0e17 !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.18) !important;
+}
+body[data-theme="light"] .history-item {
+  background: #f8fafc !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #0a0e17 !important;
+}
+
+/* Modals & Overlays */
+body[data-theme="light"] .confirm-overlay {
+  background: rgba(15, 23, 42, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+body[data-theme="light"] .nerv-confirm-panel {
+  background: #ffffff !important;
+  border: 2px solid var(--primary) !important;
+  color: #0a0e17 !important;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25) !important;
+}
+body[data-theme="light"] .nerv-confirm-text {
+  color: #334155 !important;
+}
+body[data-theme="light"] .nerv-btn-cancel {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-left-color: rgba(0, 0, 0, 0.1) !important;
+}
+body[data-theme="light"] .nerv-btn-cancel:hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+}
+body[data-theme="light"] .admin-login-modal-panel {
+  background: #ffffff !important;
+  border: 2px solid var(--primary) !important;
+  color: #0a0e17 !important;
 }
 body[data-theme="light"] .ae-panel {
-  background: #f5f2ed;
-  color: #1a1714;
-}
-/* EVA themed light modes */
-body.theme-eva01[data-theme="light"] {
-  background: radial-gradient(ellipse at 50% 50%, rgba(200, 230, 210, 0.5), #f0f5f2) !important;
-}
-body.theme-eva02[data-theme="light"] {
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 220, 210, 0.5), #f5f0ed) !important;
-}
-body.theme-eva00[data-theme="light"] {
-  background: radial-gradient(ellipse at 50% 50%, rgba(210, 235, 255, 0.5), #f0f2f5) !important;
+  background: #ffffff !important;
+  border: 2px solid var(--primary) !important;
+  color: #0a0e17 !important;
 }
 </style>
 
@@ -2959,7 +3243,21 @@ function animateScore(el,target,duration=1300){
   requestAnimationFrame(step);
 }
 
-function initTheme(){const saved=localStorage.getItem('nerd_theme');if(saved==='light'){const tog=document.getElementById('themeToggle');if(tog)tog.checked=true;document.body.setAttribute('data-theme','light')}}
+function initTheme(){
+  const saved=localStorage.getItem('nerd_theme');
+  if(saved==='light'){
+    const tog=document.getElementById('themeToggle');
+    if(tog)tog.checked=true;
+    document.body.setAttribute('data-theme','light');
+  }
+  const savedEva=localStorage.getItem('nerv_eva_theme');
+  if(savedEva&&savedEva!=='default'){
+    document.body.classList.remove('theme-eva00','theme-eva01','theme-eva02');
+    document.body.classList.add('theme-'+savedEva);
+    const targetCard=document.querySelector('.unit-'+savedEva);
+    if(targetCard)targetCard.classList.add('selected');
+  }
+}
 function toggleTheme(){const isLight=document.getElementById('themeToggle').checked;document.body.setAttribute('data-theme',isLight?'light':'');localStorage.setItem('nerd_theme',isLight?'light':'dark');document.body.offsetHeight}
 
 const SECTIONS=['mainMenu','selectExamPage','examPage','adminPage','leaderboard','resultPage','reviewPage','practicePage'];
@@ -3737,6 +4035,9 @@ function applyEvaTheme(themeName) {
     document.body.classList.add('theme-' + themeName);
     const targetCard = document.querySelector('.unit-' + themeName);
     if (targetCard) targetCard.classList.add('selected');
+    localStorage.setItem('nerv_eva_theme', themeName);
+  } else {
+    localStorage.setItem('nerv_eva_theme', 'default');
   }
   if (typeof playSfx === 'function') playSfx('confirm');
   if (typeof triggerAtFieldBurst === 'function') triggerAtFieldBurst();
