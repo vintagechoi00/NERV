@@ -584,14 +584,25 @@ html, body {
 }
 
 .nerv-scanline-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  pointer-events: none;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%),
-              linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-  background-size: 100% 3px, 6px 100%;
-  opacity: 0.6;
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Crisp text rendering & high-contrast inputs */
+body, input, button, textarea, select {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+.auth-input {
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.75) !important;
+  letter-spacing: 0.05em !important;
+}
+.auth-label {
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-weight: 800 !important;
 }
 
 .nerv-grid-overlay {
@@ -781,27 +792,120 @@ html, body {
 }
 
 /* NERV VECTOR LOGO */
-.nerv-svg-logo-wrap {
+/* NERV OFFICIAL LOGO & ADMIN BADGE */
+.nerv-auth-logo-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--nerv-border);
+  padding-bottom: 18px;
+}
+
+.nerv-official-logo-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 22px;
-  border-bottom: 1px solid var(--nerv-border);
-  padding-bottom: 20px;
-}
-
-.nerv-logo-emblem-svg {
-  width: 72px;
-  height: 72px;
-  flex-shrink: 0;
-  filter: drop-shadow(0 0 16px rgba(var(--primary-rgb), 0.6));
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(var(--primary-rgb), 0.25);
+  border-radius: 4px;
   cursor: pointer;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s ease;
+  user-select: none;
 }
 
-.nerv-logo-emblem-svg:hover {
-  transform: scale(1.08) rotate(3deg);
-  filter: drop-shadow(0 0 24px rgba(var(--primary-rgb), 0.9));
+.nerv-official-logo-card:hover {
+  border-color: var(--primary);
+  background: rgba(var(--primary-rgb), 0.08);
+  box-shadow: 0 0 24px rgba(var(--primary-rgb), 0.35);
+}
+
+.nerv-official-logo-img {
+  width: 66px;
+  height: 66px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 14px rgba(var(--primary-rgb), 0.6));
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nerv-official-logo-card:hover .nerv-official-logo-img {
+  transform: scale(1.08) rotate(2deg);
+}
+
+.nerv-brand-text {
+  text-align: left;
+}
+
+.nerv-admin-trigger-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nerv-admin-badge-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(var(--primary-rgb), 0.12);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-family: var(--font-tech);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
+}
+
+.nerv-admin-badge-btn:hover {
+  background: var(--primary);
+  color: #000;
+  box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.6);
+  transform: translateY(-1px);
+}
+
+/* UNIT HAZARD COLOR STRIPES (CORRESPONDING TO EVA UNITS) */
+.nerv-unit-stripe-bar {
+  height: 4px;
+  width: 100%;
+  margin-bottom: 8px;
+  border-radius: 1px;
+}
+.stripe-eva00 {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffaa00 0,
+    #ffaa00 6px,
+    #ffd54f 6px,
+    #ffd54f 12px
+  );
+  box-shadow: 0 0 8px rgba(255, 170, 0, 0.5);
+}
+.stripe-eva01 {
+  background: repeating-linear-gradient(
+    -45deg,
+    #00ff66 0,
+    #00ff66 6px,
+    #9d4edd 6px,
+    #9d4edd 12px
+  );
+  box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+}
+.stripe-eva02 {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff1e27 0,
+    #ff1e27 6px,
+    #ff7700 6px,
+    #ff7700 12px
+  );
+  box-shadow: 0 0 8px rgba(255, 30, 39, 0.5);
 }
 
 .nerv-brand-title {
@@ -1258,315 +1362,13 @@ html, body {
 </style>
 
 
-
-/* ═════════════════════════════════════════════════════════════════════
-   CRISP TEXT READABILITY & ULTRA-CLEAR TYPOGRAPHY (NO NOISE / STRIPES)
-   ═════════════════════════════════════════════════════════════════════ */
-
-/* Remove any scanlines over text, inputs, or buttons */
-input, select, textarea, button, .auth-input, .auth-submit, .opt-card {
-  background-image: none !important;
-  text-shadow: none !important;
-}
-
-.auth-input-wrap {
-  background: rgba(8, 14, 10, 0.95) !important;
-  border: 1.5px solid rgba(var(--primary-rgb), 0.45) !important;
-  border-radius: 4px !important;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8) !important;
-}
-
-.auth-input-wrap:focus-within {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.3), inset 0 2px 6px rgba(0, 0, 0, 0.9) !important;
-  background: rgba(12, 20, 15, 0.98) !important;
-}
-
-.auth-input {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  color: #ffffff !important;
-  padding: 15px 16px 15px 46px !important;
-  letter-spacing: 0.02em !important;
-}
-
-.auth-input::placeholder {
-  color: rgba(255, 255, 255, 0.35) !important;
-  font-weight: 400 !important;
-}
-
-.auth-submit {
-  font-family: var(--font-tech) !important;
-  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
-  color: #050806 !important;
-  font-weight: 900 !important;
-  font-size: 13px !important;
-  letter-spacing: 0.16em !important;
-  padding: 16px !important;
-  border-radius: 4px !important;
-  box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.4) !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-}
-
-.auth-submit:hover {
-  filter: brightness(1.15);
-  box-shadow: 0 12px 35px rgba(var(--primary-rgb), 0.65) !important;
-  transform: translateY(-2px);
-}
-
-/* AUTHENTIC NERV LOGO WRAPPER */
-.nerv-official-logo-box {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--nerv-border);
-  padding-bottom: 18px;
-  position: relative;
-}
-
-.nerv-official-logo-img {
-  width: 78px;
-  height: 98px;
-  object-fit: contain;
-  cursor: pointer;
-  filter: drop-shadow(0 0 14px rgba(255, 60, 0, 0.75));
-  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.35s;
-  flex-shrink: 0;
-  border-radius: 4px;
-}
-
-.nerv-official-logo-img:hover {
-  transform: scale(1.08) rotate(-2deg);
-  filter: drop-shadow(0 0 24px rgba(255, 80, 0, 1));
-}
-
-.nerv-brand-text {
-  flex: 1;
-}
-
-.nerv-brand-title {
-  font-family: var(--font-tech);
-  font-size: 24px;
-  font-weight: 900;
-  color: #ffffff;
-  letter-spacing: 0.08em;
-  line-height: 1.1;
-}
-
-.nerv-brand-title span {
-  color: var(--primary);
-  text-shadow: 0 0 14px rgba(var(--primary-rgb), 0.6);
-}
-
-.nerv-brand-motto {
-  font-family: var(--font-motto);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.7);
-  margin-top: 4px;
-  text-transform: uppercase;
-  line-height: 1.35;
-}
-
-.nerv-brand-sub {
-  font-family: var(--font-jp);
-  font-size: 8.5px;
-  letter-spacing: 0.18em;
-  color: var(--primary);
-  margin-top: 3px;
-  opacity: 0.9;
-}
-
-.nerv-admin-badge-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  padding: 4px 10px;
-  background: rgba(var(--primary-rgb), 0.12);
-  border: 1px solid var(--nerv-border);
-  color: var(--primary);
-  font-family: var(--font-mono);
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: all 0.2s;
-}
-
-.nerv-admin-badge-btn:hover {
-  background: var(--primary);
-  color: #000;
-  box-shadow: 0 0 12px var(--nerv-glow);
-}
-
-/* ═════════════════════════════════════════════════════════════════════
-   EVA UNITS (00, 01, 02) MECHA VISUALS & STRIPES FOR LEFT RAIL
-   ═════════════════════════════════════════════════════════════════════ */
-
-.nerv-unit-rail-left {
-  position: absolute;
-  left: clamp(10px, 2.5vw, 42px);
-  top: 50%;
-  transform: translateY(-50%);
-  width: clamp(170px, 15vw, 215px);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  z-index: 15;
-}
-
-.nerv-unit-card-v2 {
-  position: relative;
-  background: rgba(8, 12, 10, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
-  padding: 10px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-}
-
-.nerv-unit-card-v2:hover,
-.nerv-unit-card-v2.active {
-  border-color: var(--unit-color);
-  background: rgba(14, 20, 16, 0.98);
-  transform: translateX(6px) scale(1.02);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px color-mix(in srgb, var(--unit-color) 40%, transparent);
-}
-
-/* Distinct Hazard Stripes for each Eva unit */
-.nerv-unit-card-v2::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 5px;
-  background: repeating-linear-gradient(
-    -45deg,
-    #000,
-    #000 4px,
-    var(--unit-color) 4px,
-    var(--unit-color) 8px
-  );
-}
-
-.nerv-unit-top-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 6px;
-  margin-bottom: 6px;
-}
-
-.nerv-unit-num-badge {
-  font-family: var(--font-tech);
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--unit-color);
-  line-height: 1;
-  text-shadow: 0 0 14px var(--unit-color);
-}
-
-.nerv-unit-tag-pill {
-  font-family: var(--font-jp);
-  font-size: 8px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--unit-color) 18%, transparent);
-  border: 1px solid var(--unit-color);
-  color: var(--unit-color);
-  letter-spacing: 0.1em;
-}
-
-/* Mecha Graphic + Info Layout */
-.nerv-unit-body-flex {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-left: 6px;
-}
-
-.nerv-unit-mecha-svg {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid color-mix(in srgb, var(--unit-color) 40%, transparent);
-  padding: 2px;
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--unit-color) 50%, transparent));
-  transition: transform 0.3s;
-}
-
-.nerv-unit-card-v2:hover .nerv-unit-mecha-svg {
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 14px var(--unit-color));
-}
-
-.nerv-unit-info-col {
-  flex: 1;
-  min-width: 0;
-}
-
-.nerv-unit-pilot-title {
-  font-family: var(--font-mono);
-  font-size: 8.5px;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: 0.08em;
-}
-
-.nerv-unit-status-sub {
-  font-family: var(--font-mono);
-  font-size: 7.5px;
-  color: var(--unit-color);
-  letter-spacing: 0.12em;
-  opacity: 0.9;
-  margin-top: 2px;
-}
-
-.nerv-unit-sync-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 7px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 5px;
-  letter-spacing: 0.08em;
-}
-
-.nerv-unit-sync-track {
-  height: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-  margin-top: 2px;
-  overflow: hidden;
-}
-
-.nerv-unit-sync-bar {
-  height: 100%;
-  background: var(--unit-color);
-  box-shadow: 0 0 6px var(--unit-color);
-  transition: width 0.6s ease;
-}
-
 </head>
 
 <body oncontextmenu="return false;">
 
 <!-- AT-FIELD DYNAMIC BACKGROUND CANVAS -->
 <canvas id="atFieldCanvas"></canvas>
-<!-- scanline overlay removed for crisp text readability -->
+<!-- Scanline overlay removed for crisp text readability -->
 <div class="nerv-grid-overlay"></div>
 
 <!-- NERV TOP TACTICAL HUD BAR -->
@@ -1748,141 +1550,47 @@ input, select, textarea, button, .auth-input, .auth-submit, .opt-card {
   <div class="auth-orb auth-orb-3"></div>
 
   
-  
   <aside class="nerv-unit-rail-left" aria-label="Evangelion unit status">
-    <div style="font-size:8.5px; color:var(--primary); letter-spacing:0.22em; border-bottom:1px solid var(--nerv-border); padding-bottom:5px; font-weight:900; font-family:var(--font-tech)">
+    <div style="font-size:9px; color:var(--primary); letter-spacing:0.2em; border-bottom:1px solid var(--nerv-border); padding-bottom:6px; font-weight:700;">
       NERV // EVA DEFENSE
     </div>
 
     <!-- Unit 00: Proto Type (Rei Ayanami) -->
-    <div class="nerv-unit-card-v2" style="--unit-color:#ff9100" onclick="applyEvaTheme('eva00')" title="Kích hoạt EVA-00 // 零号機">
-      <div class="nerv-unit-top-row">
-        <span class="nerv-unit-num-badge">00</span>
-        <span class="nerv-unit-tag-pill">零号機</span>
+    <div class="nerv-unit-interactive-card unit-eva00" style="--unit-color:#ffaa00" onclick="applyEvaTheme('eva00')" title="Click để kích hoạt Eva-00">
+      <div class="nerv-unit-stripe-bar stripe-eva00"></div>
+      <div class="nerv-unit-header-row">
+        <div class="nerv-unit-id-big">00</div>
+        <div class="nerv-unit-jp">零号機 // PROTO</div>
       </div>
-      <div class="nerv-unit-body-flex">
-        
-<svg class="nerv-unit-mecha-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Armor Crest / Prototype Dome -->
-  <path d="M 40 8 C 24 8 16 22 16 40 C 16 56 26 70 40 74 C 54 70 64 56 64 40 C 64 22 56 8 40 8 Z" fill="#ff9100"/>
-  <path d="M 40 12 C 28 12 22 24 22 38 C 22 52 30 64 40 68 C 50 64 58 52 58 38 C 58 24 52 12 40 12 Z" fill="#ffffff" opacity="0.85"/>
-  <path d="M 40 16 C 32 16 28 24 28 36 C 28 48 34 58 40 62 C 46 58 52 48 52 36 C 52 24 48 16 40 16 Z" fill="#111814"/>
-  
-  <!-- Single Center Giant Cyclops Optical Sensor (Glowing Red/Green) -->
-  <circle cx="40" cy="36" r="10" fill="#00e5ff" stroke="#ff9100" stroke-width="2"/>
-  <circle cx="40" cy="36" r="6" fill="#ff1744"/>
-  <circle cx="38" cy="34" r="2.5" fill="#ffffff"/>
-  
-  <!-- Auxiliary Sensor Nodes -->
-  <circle cx="30" cy="22" r="3" fill="#ff9100"/>
-  <circle cx="50" cy="22" r="3" fill="#ff9100"/>
-  <rect x="36" y="52" width="8" height="3" fill="#ff9100" rx="1"/>
-</svg>
-
-        <div class="nerv-unit-info-col">
-          <div class="nerv-unit-pilot-title">AYANAMI REI</div>
-          <div class="nerv-unit-status-sub">PROTO TYPE</div>
-          <div class="nerv-unit-sync-row">
-            <span>SYNC RATE</span>
-            <b id="railSync00" style="color:#ff9100">72.3%</b>
-          </div>
-          <div class="nerv-unit-sync-track">
-            <div class="nerv-unit-sync-bar" style="width:72.3%;"></div>
-          </div>
-        </div>
-      </div>
+      <div class="nerv-unit-pilot">PILOT: REI AYANAMI</div>
+      <div class="nerv-unit-model">SYNC: <b id="railEva00Sync">72.3%</b></div>
+      <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:72.3%;"></div></div></div>
     </div>
 
     <!-- Unit 01: Test Type (Shinji Ikari) -->
-    <div class="nerv-unit-card-v2 active" style="--unit-color:#00ff66" onclick="applyEvaTheme('eva01')" title="Kích hoạt EVA-01 // 初号機">
-      <div class="nerv-unit-top-row">
-        <span class="nerv-unit-num-badge">01</span>
-        <span class="nerv-unit-tag-pill">初号機</span>
+    <div class="nerv-unit-interactive-card unit-eva01 selected" style="--unit-color:#00ff66" onclick="applyEvaTheme('eva01')" title="Click để kích hoạt Eva-01">
+      <div class="nerv-unit-stripe-bar stripe-eva01"></div>
+      <div class="nerv-unit-header-row">
+        <div class="nerv-unit-id-big">01</div>
+        <div class="nerv-unit-jp">初号機 // TEST</div>
       </div>
-      <div class="nerv-unit-body-flex">
-        
-<svg class="nerv-unit-mecha-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Iconic Forward Horn -->
-  <polygon points="40,2 37,28 43,28" fill="#00ff66"/>
-  <polygon points="40,6 38,26 42,26" fill="#7b2cbf"/>
-  
-  <!-- Angular Purple Helmet / Crown -->
-  <path d="M 40 24 L 20 34 L 18 52 L 28 66 L 40 76 L 52 66 L 62 52 L 60 34 Z" fill="#5a189a"/>
-  
-  <!-- Black Faceplate & Cheeks -->
-  <polygon points="40,36 28,42 26,58 40,70 54,58 52,42" fill="#0d110f"/>
-  
-  <!-- Twin Glowing Neon Green Optical Lenses -->
-  <polygon points="31,44 38,46 36,49 29,46" fill="#00ff66" filter="drop-shadow(0 0 4px #00ff66)"/>
-  <polygon points="49,44 42,46 44,49 51,46" fill="#00ff66" filter="drop-shadow(0 0 4px #00ff66)"/>
-  
-  <!-- Green Teeth / Mouth Grill -->
-  <rect x="34" y="58" width="12" height="2" fill="#00ff66"/>
-  <rect x="36" y="62" width="8" height="2" fill="#00ff66"/>
-  
-  <!-- Cheek Accent Stripes -->
-  <line x1="20" y1="42" x2="26" y2="46" stroke="#00ff66" stroke-width="2"/>
-  <line x1="60" y1="42" x2="54" y2="46" stroke="#00ff66" stroke-width="2"/>
-</svg>
-
-        <div class="nerv-unit-info-col">
-          <div class="nerv-unit-pilot-title">IKARI SHINJI</div>
-          <div class="nerv-unit-status-sub">TEST TYPE</div>
-          <div class="nerv-unit-sync-row">
-            <span>SYNC RATE</span>
-            <b id="railSync01" style="color:#00ff66">91.4%</b>
-          </div>
-          <div class="nerv-unit-sync-track">
-            <div class="nerv-unit-sync-bar" style="width:91.4%;"></div>
-          </div>
-        </div>
-      </div>
+      <div class="nerv-unit-pilot">PILOT: SHINJI IKARI</div>
+      <div class="nerv-unit-model">SYNC: <b id="railEva01Sync">91.4%</b></div>
+      <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:91.4%;"></div></div></div>
     </div>
 
     <!-- Unit 02: Production Model (Asuka Langley) -->
-    <div class="nerv-unit-card-v2" style="--unit-color:#ff1e27" onclick="applyEvaTheme('eva02')" title="Kích hoạt EVA-02 // 弐号機">
-      <div class="nerv-unit-top-row">
-        <span class="nerv-unit-num-badge">02</span>
-        <span class="nerv-unit-tag-pill">弐号機</span>
+    <div class="nerv-unit-interactive-card unit-eva02" style="--unit-color:#ff1e27" onclick="applyEvaTheme('eva02')" title="Click để kích hoạt Eva-02">
+      <div class="nerv-unit-stripe-bar stripe-eva02"></div>
+      <div class="nerv-unit-header-row">
+        <div class="nerv-unit-id-big">02</div>
+        <div class="nerv-unit-jp">弐号機 // PROD</div>
       </div>
-      <div class="nerv-unit-body-flex">
-        
-<svg class="nerv-unit-mecha-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Red Angular Helmet -->
-  <path d="M 40 10 L 22 26 L 16 48 L 26 68 L 40 76 L 54 68 L 64 48 L 58 26 Z" fill="#d50000"/>
-  
-  <!-- White Forehead Crest Plate -->
-  <polygon points="40,14 30,28 50,28" fill="#ffffff" opacity="0.9"/>
-  <polygon points="40,18 34,26 46,26" fill="#ff6d00"/>
-  
-  <!-- Black Visor Section -->
-  <polygon points="40,32 24,38 24,56 40,66 56,56 56,38" fill="#141815"/>
-  
-  <!-- 4 Glowing Optical Sensors (Quad Eyes) -->
-  <circle cx="32" cy="42" r="2.8" fill="#00e676" filter="drop-shadow(0 0 3px #00e676)"/>
-  <circle cx="48" cy="42" r="2.8" fill="#00e676" filter="drop-shadow(0 0 3px #00e676)"/>
-  <circle cx="35" cy="49" r="2.8" fill="#00e676" filter="drop-shadow(0 0 3px #00e676)"/>
-  <circle cx="45" cy="49" r="2.8" fill="#00e676" filter="drop-shadow(0 0 3px #00e676)"/>
-  
-  <!-- Orange / White Chin Clasp -->
-  <polygon points="36,64 44,64 42,72 38,72" fill="#ff6d00"/>
-</svg>
-
-        <div class="nerv-unit-info-col">
-          <div class="nerv-unit-pilot-title">ASUKA LANGLEY</div>
-          <div class="nerv-unit-status-sub">PRODUCTION</div>
-          <div class="nerv-unit-sync-row">
-            <span>SYNC RATE</span>
-            <b id="railSync02" style="color:#ff1e27">84.8%</b>
-          </div>
-          <div class="nerv-unit-sync-track">
-            <div class="nerv-unit-sync-bar" style="width:84.8%;"></div>
-          </div>
-        </div>
-      </div>
+      <div class="nerv-unit-pilot">PILOT: ASUKA LANGLEY</div>
+      <div class="nerv-unit-model">SYNC: <b id="railEva02Sync">84.8%</b></div>
+      <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:84.8%;"></div></div></div>
     </div>
   </aside>
-
 
   <aside class="nerv-system-rail" aria-hidden="true">
     <div class="nerv-system-seal">NERV</div>
@@ -1905,26 +1613,25 @@ input, select, textarea, button, .auth-input, .auth-submit, .opt-card {
 
     <div class="auth-body" style="padding-bottom:0">
       
-
-      <div class="nerv-official-logo-box">
-        <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
-             onerror="this.src='./nerv-logos.webp'" 
-             id="authLogo" 
-             class="nerv-official-logo-img" 
-             onclick="triggerAdminLogin()" 
-             title="Huy hiệu NERV chính quy - Click để mở Admin Portal" 
-             alt="NERV Official Logo">
-        <div class="nerv-brand-text">
-          <div class="nerv-brand-title">NERV <span>HQ</span></div>
-          <div class="nerv-brand-motto">"GOD'S IN HIS HEAVEN. ALL'S RIGHT WITH THE WORLD."</div>
-          <div class="nerv-brand-sub">特務機関 NERV // CENTRAL DOGMA GATE</div>
-          <button type="button" class="nerv-admin-badge-btn" onclick="triggerAdminLogin()" title="Đăng nhập tài khoản Quản Trị Viên">
-            <span class="material-icons" style="font-size:12px">admin_panel_settings</span> ĐĂNG NHẬP ADMIN // 管理者
-          </button>
-        </div>
-      </div>
-
-</div>
+<div class="nerv-auth-logo-box">
+  <div class="nerv-official-logo-card" onclick="triggerAdminLogin()" title="Huy hiệu NERV — Nhấp để mở cổng Admin">
+    <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
+         onerror="this.src='./nerv-logos.webp'" 
+         id="authLogo" 
+         class="nerv-official-logo-img" 
+         alt="NERV Official Insignia">
+    <div class="nerv-brand-text">
+      <div class="nerv-brand-title">NERV <span>HQ</span></div>
+      <div class="nerv-brand-motto">"GOD'S IN HIS HEAVEN. ALL'S RIGHT WITH THE WORLD."</div>
+      <div class="nerv-brand-sub">特務機関 NERV // CENTRAL DOGMA PERSONNEL GATE</div>
+    </div>
+  </div>
+  <div class="nerv-admin-trigger-row">
+    <button type="button" class="nerv-admin-badge-btn" onclick="triggerAdminLogin()" title="Đăng nhập tài khoản Quản Trị Viên">
+      <span class="material-icons" style="font-size:13px;vertical-align:middle;margin-right:4px">admin_panel_settings</span> ĐĂNG NHẬP ADMIN // 管理者
+    </button>
+  </div>
+</div></div>
 
     </div>
 
@@ -2345,13 +2052,11 @@ input, select, textarea, button, .auth-input, .auth-submit, .opt-card {
     <div class="flex items-center gap-4">
       
     <div style="display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="showSection('mainMenu')" title="Về Trung Tâm Chỉ Huy NERV">
-      <svg class="nerv-logo-emblem-svg" style="width:48px;height:48px;" viewBox="0 0 120 120" fill="none">
-        <circle cx="60" cy="60" r="56" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.6"/>
-        <path d="M 60 14 C 74 24 88 42 86 64 C 84 80 72 96 60 102 C 60 76 60 48 60 14 Z" fill="url(#nervLeafGrad)"/>
-        <text x="60" y="68" font-family="'Orbitron', sans-serif" font-size="20" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3">
-          NERV
-        </text>
-      </svg>
+      <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
+           onerror="this.src='./nerv-logos.webp'" 
+           class="nerv-official-logo-img" 
+           style="width:38px;height:38px;" 
+           alt="NERV Logo">
       <div>
         <h1 class="text-xl md:text-2xl font-black tracking-tight uppercase" style="font-family:var(--font-tech)">NERV <span style="color:var(--primary)">TACTICAL</span></h1>
         <p id="userTag" class="text-[9px] md:text-[10px] font-bold opacity-75 uppercase tracking-[.2em]" style="color:var(--primary); font-family:var(--font-mono)"></p>
@@ -2826,17 +2531,26 @@ function setBtnLoading(btnId,spinnerId,iconId,loading){
 
 /* ═══ ADMIN LOGIN ═══ */
 function triggerAdminLogin(){
-  const logo = document.getElementById('authLogo');
-  if (logo) {
-    logo.style.animation = 'logoShake .5s ease';
-    setTimeout(() => { if (logo) logo.style.animation = ''; }, 500);
+  try {
+    const logo = document.getElementById('authLogo');
+    if (logo) {
+      logo.style.animation = 'logoShake .5s ease';
+      setTimeout(() => { if (logo) logo.style.animation = ''; }, 500);
+    }
+  } catch(e) {}
+  const emailEl = document.getElementById('adminEmail');
+  const passEl = document.getElementById('adminPassword');
+  const errEl = document.getElementById('adminLoginError');
+  const modal = document.getElementById('adminLoginModal');
+  if (emailEl) emailEl.value = '';
+  if (passEl) passEl.value = '';
+  if (errEl) errEl.textContent = '';
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.style.zIndex = '100000';
   }
-  document.getElementById('adminEmail').value = '';
-  document.getElementById('adminPassword').value = '';
-  document.getElementById('adminLoginError').textContent = '';
-  document.getElementById('adminLoginModal').style.display = 'flex';
-  if (typeof playSfx === 'function') playSfx('confirm');
-  setTimeout(()=>document.getElementById('adminEmail').focus(),300);
+  if (typeof playSfx === 'function') playSfx('beep');
+  setTimeout(() => { if (emailEl) emailEl.focus(); }, 200);
 }
 
 /* ═══ LOGIN HANDLER ═══ */
@@ -3772,12 +3486,15 @@ function animateAtField() {
 /* ═══ EVANGELION THEME APPLIER ═══ */
 function applyEvaTheme(themeName) {
   document.body.classList.remove('theme-eva00', 'theme-eva01', 'theme-eva02');
+  document.querySelectorAll('.nerv-unit-interactive-card').forEach(el => el.classList.remove('selected'));
   if (themeName && themeName !== 'default') {
     document.body.classList.add('theme-' + themeName);
+    const targetCard = document.querySelector('.unit-' + themeName);
+    if (targetCard) targetCard.classList.add('selected');
   }
-  playSfx('confirm');
-  triggerAtFieldBurst();
-  showToast('ĐÃ KÍCH HOẠT HỆ THỐNG: ' + themeName.toUpperCase(), 'normal', 3000);
+  if (typeof playSfx === 'function') playSfx('confirm');
+  if (typeof triggerAtFieldBurst === 'function') triggerAtFieldBurst();
+  showToast('ĐÃ KÍCH HOẠT HỆ THỐNG: ' + (themeName || 'NERV DEFAULT').toUpperCase(), 'normal', 3000);
 }
 
 /* ═══ EMERGENCY DRILL SIMULATION ═══ */
@@ -3840,6 +3557,5 @@ setInterval(() => {
 initAtFieldCanvas();
 updateNervClock();
 </script>
-
 </body>
 </html>
