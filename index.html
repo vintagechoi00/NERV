@@ -539,13 +539,65 @@ input:checked+.slider:before{transform:translateX(22px)}
   --font-jp: 'Noto Sans JP', sans-serif;
 }
 
-/* Unit 01 Mode */
+/* Unit 01 Mode: Iconic XANH & TÍM (Neon Acid Green & Evangelion Purple) */
 body.theme-eva01 {
   --primary: #00ff66;
-  --secondary: #b388ff;
+  --secondary: #b537f2;
   --primary-rgb: 0, 255, 102;
-  --nerv-border: rgba(0, 255, 102, 0.4);
-  --nerv-glow: rgba(0, 255, 102, 0.3);
+  --purple-rgb: 181, 55, 242;
+  --nerv-dark: #0a0414;
+  --nerv-surface: rgba(24, 12, 38, 0.94);
+  --nerv-border: rgba(181, 55, 242, 0.55);
+  --nerv-glow: rgba(0, 255, 102, 0.4);
+}
+
+body.theme-eva01 {
+  background: radial-gradient(ellipse at 50% 50%, rgba(55, 18, 85, 0.45), transparent 70%), #0a0414 !important;
+}
+
+body.theme-eva01 .auth-card {
+  border-color: rgba(181, 55, 242, 0.65) !important;
+  box-shadow: 0 0 0 1px rgba(0, 255, 102, 0.25),
+              0 30px 100px rgba(0, 0, 0, 0.95),
+              0 0 45px rgba(181, 55, 242, 0.35) !important;
+}
+
+body.theme-eva01 .auth-card::after {
+  background: repeating-linear-gradient(
+    -45deg,
+    #b537f2 0,
+    #b537f2 8px,
+    #00ff66 8px,
+    #00ff66 16px
+  ) !important;
+}
+
+body.theme-eva01 .auth-submit,
+body.theme-eva01 .btn-premium {
+  background: linear-gradient(135deg, #00ff66 0%, #b537f2 100%) !important;
+  color: #000000 !important;
+  box-shadow: 0 0 25px rgba(0, 255, 102, 0.45), 0 0 15px rgba(181, 55, 242, 0.35) !important;
+}
+
+body.theme-eva01 .auth-tab-btn.active {
+  color: #00ff66 !important;
+  background: rgba(181, 55, 242, 0.2) !important;
+  text-shadow: 0 0 10px #00ff66 !important;
+}
+
+body.theme-eva01 .auth-tab-indicator {
+  background: linear-gradient(90deg, #00ff66, #b537f2) !important;
+  box-shadow: 0 0 12px #00ff66 !important;
+}
+
+body.theme-eva01 .auth-input-wrap:focus-within {
+  border-color: #00ff66 !important;
+  box-shadow: 0 0 0 1px #00ff66, 0 0 16px rgba(181, 55, 242, 0.4) !important;
+}
+
+body.theme-eva01 .nerv-official-logo-card:hover {
+  border-color: #b537f2 !important;
+  box-shadow: 0 0 25px rgba(181, 55, 242, 0.5) !important;
 }
 
 /* Unit 02 Mode */
@@ -578,9 +630,9 @@ html, body {
 #atFieldCanvas {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 5;
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 1;
 }
 
 .nerv-scanline-overlay {
@@ -761,7 +813,7 @@ body, input, button, textarea, select {
   align-items: center;
   justify-content: center;
   padding: 60px 16px 30px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(15, 30, 20, 0.3), transparent 65%), #050806 !important;
+  background: transparent !important;
 }
 
 .nerv-auth-classified-header {
@@ -838,37 +890,7 @@ body, input, button, textarea, select {
   text-align: left;
 }
 
-.nerv-admin-trigger-row {
-  display: flex;
-  justify-content: flex-end;
-}
 
-.nerv-admin-badge-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: rgba(var(--primary-rgb), 0.12);
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  font-family: var(--font-tech);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  padding: 6px 14px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
-}
-
-.nerv-admin-badge-btn:hover {
-  background: var(--primary);
-  color: #000;
-  box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.6);
-  transform: translateY(-1px);
-}
 
 /* UNIT HAZARD COLOR STRIPES (CORRESPONDING TO EVA UNITS) */
 .nerv-unit-stripe-bar {
@@ -891,11 +913,11 @@ body, input, button, textarea, select {
   background: repeating-linear-gradient(
     -45deg,
     #00ff66 0,
-    #00ff66 6px,
-    #9d4edd 6px,
-    #9d4edd 12px
-  );
-  box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+    #00ff66 8px,
+    #b537f2 8px,
+    #b537f2 16px
+  ) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.6), 0 0 8px rgba(181, 55, 242, 0.6) !important;
 }
 .stripe-eva02 {
   background: repeating-linear-gradient(
@@ -942,17 +964,37 @@ body, input, button, textarea, select {
 
 /* CARDS AND PANELS */
 .auth-card {
-  width: min(480px, 100%) !important;
+  width: min(460px, 92vw) !important;
+  margin: 0 auto !important;
   background: rgba(8, 12, 10, 0.95) !important;
   backdrop-filter: blur(24px) !important;
   border: 1px solid var(--nerv-border) !important;
   border-radius: 4px !important;
   box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.1),
-              0 30px 100px rgba(0, 0, 0, 0.9),
-              0 0 40px rgba(var(--primary-rgb), 0.12) !important;
+              0 30px 100px rgba(0, 0, 0, 0.95),
+              0 0 40px rgba(var(--primary-rgb), 0.15) !important;
   position: relative;
-  z-index: 10;
+  z-index: 20 !important;
   clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+
+/* EVA-01 Pilot Card: XANH TÍM */
+.unit-eva01 {
+  --unit-color: #00ff66;
+  background: rgba(22, 10, 36, 0.95) !important;
+  border: 1px solid rgba(181, 55, 242, 0.5) !important;
+  border-left: 5px solid #00ff66 !important;
+}
+
+.unit-eva01:hover, .unit-eva01.selected {
+  background: rgba(35, 14, 55, 0.98) !important;
+  border-color: #b537f2 !important;
+  box-shadow: 0 0 25px rgba(181, 55, 242, 0.5), inset 0 0 15px rgba(0, 255, 102, 0.25) !important;
+}
+
+.eva01-text-accent {
+  color: #00ff66 !important;
+  text-shadow: 0 0 14px #00ff66, 0 0 24px #b537f2 !important;
 }
 
 .auth-card::before {
@@ -1567,16 +1609,18 @@ body, input, button, textarea, select {
       <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:72.3%;"></div></div></div>
     </div>
 
-    <!-- Unit 01: Test Type (Shinji Ikari) -->
-    <div class="nerv-unit-interactive-card unit-eva01 selected" style="--unit-color:#00ff66" onclick="applyEvaTheme('eva01')" title="Click để kích hoạt Eva-01">
+    <!-- Unit 01: Test Type (Shinji Ikari) - XANH TÍM -->
+    <div class="nerv-unit-interactive-card unit-eva01 selected" onclick="applyEvaTheme('eva01')" title="Click để kích hoạt Eva-01 // Xanh & Tím">
       <div class="nerv-unit-stripe-bar stripe-eva01"></div>
       <div class="nerv-unit-header-row">
-        <div class="nerv-unit-id-big">01</div>
-        <div class="nerv-unit-jp">初号機 // TEST</div>
+        <div class="nerv-unit-id-big eva01-text-accent">01</div>
+        <div class="nerv-unit-jp"><span style="color:#00ff66">初号機</span> <span style="color:#b537f2">// TEST</span></div>
       </div>
-      <div class="nerv-unit-pilot">PILOT: SHINJI IKARI</div>
-      <div class="nerv-unit-model">SYNC: <b id="railEva01Sync">91.4%</b></div>
-      <div class="nerv-sync-meter-wrap"><div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:91.4%;"></div></div></div>
+      <div class="nerv-unit-pilot" style="color:#f3e8ff">PILOT: SHINJI IKARI</div>
+      <div class="nerv-unit-model" style="color:#b537f2">SYNC: <b id="railEva01Sync" style="color:#00ff66">91.4%</b></div>
+      <div class="nerv-sync-meter-wrap">
+        <div class="nerv-sync-bar"><div class="nerv-sync-fill" style="width:91.4%; background: linear-gradient(90deg, #b537f2, #00ff66); box-shadow: 0 0 10px #00ff66;"></div></div>
+      </div>
     </div>
 
     <!-- Unit 02: Production Model (Asuka Langley) -->
@@ -1611,28 +1655,21 @@ body, input, button, textarea, select {
       <p id="successSub" style="font-size:10px;opacity:.4;text-transform:uppercase;letter-spacing:.15em">Đang chuyển hướng...</p>
     </div>
 
-    <div class="auth-body" style="padding-bottom:0">
-      
-<div class="nerv-auth-logo-box">
-  <div class="nerv-official-logo-card" onclick="triggerAdminLogin()" title="Huy hiệu NERV — Nhấp để mở cổng Admin">
-    <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
-         onerror="this.src='./nerv-logos.webp'" 
-         id="authLogo" 
-         class="nerv-official-logo-img" 
-         alt="NERV Official Insignia">
-    <div class="nerv-brand-text">
-      <div class="nerv-brand-title">NERV <span>HQ</span></div>
-      <div class="nerv-brand-motto">"GOD'S IN HIS HEAVEN. ALL'S RIGHT WITH THE WORLD."</div>
-      <div class="nerv-brand-sub">特務機関 NERV // CENTRAL DOGMA PERSONNEL GATE</div>
-    </div>
-  </div>
-  <div class="nerv-admin-trigger-row">
-    <button type="button" class="nerv-admin-badge-btn" onclick="triggerAdminLogin()" title="Đăng nhập tài khoản Quản Trị Viên">
-      <span class="material-icons" style="font-size:13px;vertical-align:middle;margin-right:4px">admin_panel_settings</span> ĐĂNG NHẬP ADMIN // 管理者
-    </button>
-  </div>
-</div></div>
-
+    <div class="auth-body" style="padding-bottom:14px">
+      <div class="nerv-auth-logo-box">
+        <div class="nerv-official-logo-card" onclick="triggerAdminLogin()" title="Huy hiệu NERV — Nhấp vào Logo để mở cổng Admin" style="cursor:pointer">
+          <img src="./i-love-these-logos-spoilers-for-both-original-and-rebuilds-v0-eftjy5swogq71.webp" 
+               onerror="this.src='./nerv-logos.webp'" 
+               id="authLogo" 
+               class="nerv-official-logo-img" 
+               alt="NERV Official Insignia">
+          <div class="nerv-brand-text">
+            <div class="nerv-brand-title">NERV <span>HQ</span></div>
+            <div class="nerv-brand-motto">"GOD'S IN HIS HEAVEN. ALL'S RIGHT WITH THE WORLD."</div>
+            <div class="nerv-brand-sub">特務機関 NERV // CENTRAL DOGMA PERSONNEL GATE</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="auth-tabs" id="authTabs">
@@ -3441,23 +3478,27 @@ function drawOctagon(ctx, x, y, radius, color, alpha) {
   }
   ctx.closePath();
   ctx.strokeStyle = color;
-  ctx.globalAlpha = alpha;
-  ctx.lineWidth = 2.5;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 14;
+  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  ctx.lineWidth = 3.2;
   ctx.stroke();
   ctx.restore();
 }
 
 function spawnAtFieldBurst(x, y) {
-  playSfx('atfield');
+  if (typeof playSfx === 'function') playSfx('atfield');
   const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#ff9830';
-  for (let i = 0; i < 4; i++) {
+  const posX = (typeof x === 'number' && !isNaN(x) && x > 0) ? x : window.innerWidth / 2;
+  const posY = (typeof y === 'number' && !isNaN(y) && y > 0) ? y : window.innerHeight / 2;
+  for (let i = 0; i < 5; i++) {
     atOctagons.push({
-      x: x || window.innerWidth / 2,
-      y: y || window.innerHeight / 2,
-      radius: 10 + i * 28,
-      maxRadius: 280 + i * 50,
-      alpha: 0.9,
-      speed: 3.5 + i * 1.2,
+      x: posX,
+      y: posY,
+      radius: 14 + i * 32,
+      maxRadius: 360 + i * 55,
+      alpha: 1.0,
+      speed: 4.8 + i * 1.4,
       color: primaryColor
     });
   }
