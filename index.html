@@ -2142,6 +2142,893 @@ body[data-theme="light"] .nerv-archive-img-caption {
   letter-spacing: 0.16em !important;
 }
 
+
+/* ==========================================================================
+   NERV ANGEL INTERCEPT COMBAT SYSTEM & TACTICAL HUD
+   ========================================================================== */
+
+/* Top Bar Combat Button */
+.nerv-hud-combat-btn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(249, 115, 22, 0.12)) !important;
+  border: 1px solid rgba(239, 68, 68, 0.55) !important;
+  color: #ff6b6b !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+  transition: all 0.25s ease;
+}
+.nerv-hud-combat-btn:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.32), rgba(249, 115, 22, 0.22)) !important;
+  border-color: #ff3333 !important;
+  color: #fff !important;
+  box-shadow: 0 0 18px rgba(255, 51, 51, 0.45);
+  transform: translateY(-1px);
+}
+.nerv-combat-radar-ping {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff2222;
+  position: relative;
+  display: inline-block;
+  box-shadow: 0 0 8px #ff0000;
+}
+.nerv-combat-radar-ping::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  border: 1.5px solid #ff3333;
+  animation: radarPing 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes radarPing {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.nerv-combat-badge {
+  font-size: 8px;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: #dc2626;
+  color: #ffffff;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.6);
+}
+
+/* Light Mode Overrides for Combat Nav Button */
+body[data-theme="light"] .nerv-hud-combat-btn {
+  background: #fee2e2 !important;
+  border: 1px solid #ef4444 !important;
+  color: #991b1b !important;
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.2) !important;
+}
+body[data-theme="light"] .nerv-hud-combat-btn:hover {
+  background: #fecaca !important;
+  border-color: #dc2626 !important;
+  color: #7f1d1d !important;
+}
+body[data-theme="light"] .nerv-combat-badge {
+  background: #b91c1c !important;
+  color: #ffffff !important;
+}
+
+/* Summon / Alert Strip in Main Menu */
+.nerv-combat-summon-strip {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.12), rgba(249, 115, 22, 0.06), rgba(0, 0, 0, 0.5));
+  border: 1px solid rgba(239, 68, 68, 0.38);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+.nerv-combat-summon-strip::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0; width: 4px;
+  background: linear-gradient(180deg, #ef4444, #f97316);
+}
+.nerv-combat-summon-strip:hover {
+  border-color: rgba(239, 68, 68, 0.75);
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(249, 115, 22, 0.1), rgba(0, 0, 0, 0.6));
+  box-shadow: 0 8px 30px rgba(239, 68, 68, 0.25), inset 0 0 30px rgba(239, 68, 68, 0.12);
+  transform: translateY(-2px);
+}
+.nerv-summon-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.nerv-summon-alert-icon {
+  font-size: 28px;
+  animation: pulseAlarm 1.8s infinite;
+  filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
+}
+@keyframes pulseAlarm {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+.nerv-summon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.nerv-summon-title {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: #ff5555;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nerv-summon-sub {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.nerv-summon-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.nerv-summon-status-pill {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ff6666;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nerv-summon-action-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: 1px solid #ff5555;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  transition: all 0.2s ease;
+}
+.nerv-summon-action-btn:hover {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Light Mode Overrides for Summon Strip */
+body[data-theme="light"] .nerv-combat-summon-strip {
+  background: linear-gradient(90deg, #fee2e2, #ffedd5, #ffffff) !important;
+  border: 1px solid #f87171 !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.12) !important;
+}
+body[data-theme="light"] .nerv-summon-title {
+  color: #b91c1c !important;
+}
+body[data-theme="light"] .nerv-summon-sub {
+  color: #4b5563 !important;
+  font-weight: 600 !important;
+}
+body[data-theme="light"] .nerv-summon-status-pill {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  color: #991b1b !important;
+}
+
+/* Combat Section Card */
+.nerv-combat-deck {
+  width: 100%;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(13, 17, 23, 0.96), rgba(6, 9, 13, 0.98));
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.15);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.nerv-combat-deck::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #ef4444, #f97316, #ef4444);
+  box-shadow: 0 0 12px #ef4444;
+}
+
+/* Deck Header */
+.nerv-deck-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.nerv-deck-target-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nerv-target-status-tag {
+  font-size: 9px;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #dc2626;
+  color: #ffffff;
+  letter-spacing: 0.14em;
+  animation: tagBlink 2s infinite;
+}
+@keyframes tagBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+.nerv-target-title {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  color: #ff5555;
+  text-transform: uppercase;
+}
+.nerv-target-subtitle {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Sequence Switcher Buttons */
+.nerv-seq-wrap {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.nerv-seq-btn {
+  padding: 4px 10px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.nerv-seq-btn:hover {
+  border-color: #ef4444;
+  color: #ff6666;
+  background: rgba(239, 68, 68, 0.1);
+}
+.nerv-seq-btn.active {
+  border-color: #ef4444;
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+.nerv-seq-rnd-btn {
+  border-color: rgba(249, 115, 22, 0.4);
+  color: #f97316;
+}
+.nerv-seq-rnd-btn:hover {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: #f97316;
+}
+
+/* Arena Grid Area */
+.nerv-angel-arena {
+  min-height: 400px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.06) 0%, transparent 70%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Arena Tactical Rings */
+.nerv-arena-radar-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(239, 68, 68, 0.2);
+  pointer-events: none;
+  animation: radarRotate 40s linear infinite;
+}
+@keyframes radarRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Angel Stage */
+.nerv-angel-stage {
+  position: relative;
+  width: 320px;
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
+  transition: transform 0.15s ease-out;
+  animation: angelHover 4.5s ease-in-out infinite;
+  z-index: 5;
+}
+@keyframes angelHover {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-12px) scale(1.02); }
+}
+.nerv-angel-stage:active {
+  transform: scale(0.97);
+}
+.nerv-angel-svg-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.7));
+  transition: filter 0.2s ease;
+}
+.nerv-angel-svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  max-height: 330px;
+  transition: filter 0.15s ease;
+}
+.nerv-angel-stage.hit-flinch svg {
+  animation: flinchHit 0.25s ease-out;
+  filter: drop-shadow(0 0 25px #ff2222) brightness(1.4);
+}
+@keyframes flinchHit {
+  0% { transform: scale(1) translate(0, 0); }
+  25% { transform: scale(0.95) translate(-4px, 3px); }
+  50% { transform: scale(1.04) translate(4px, -2px); }
+  75% { transform: scale(0.98) translate(-2px, 1px); }
+  100% { transform: scale(1) translate(0, 0); }
+}
+
+/* Concentric Geometric AT-Field Barrier Overlay */
+.nerv-atfield-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  height: 350px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+  z-index: 6;
+}
+.nerv-atfield-overlay.hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+.nerv-atfield-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.nerv-atfield-poly {
+  fill: rgba(255, 140, 0, 0.05);
+  stroke: #ff9900;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 10px #ff7700);
+  transition: all 0.3s ease;
+  transform-origin: 175px 175px;
+}
+.atfield-ripple-active .nerv-atfield-poly {
+  animation: atfieldPulse 0.45s ease-out;
+  stroke: #ffff66;
+  fill: rgba(255, 200, 0, 0.22);
+}
+@keyframes atfieldPulse {
+  0% { transform: scale(0.92); opacity: 0.8; stroke-width: 5; }
+  50% { transform: scale(1.1); opacity: 1; stroke-width: 3.5; }
+  100% { transform: scale(1); opacity: 0.9; stroke-width: 2.5; }
+}
+
+/* Shield Break / Shatter Shards Effect */
+.atfield-shatter-burst {
+  animation: shatterDisperse 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+@keyframes shatterDisperse {
+  0% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 30px #ff3300) brightness(2); }
+  50% { transform: scale(1.3) rotate(8deg); opacity: 0.7; }
+  100% { transform: scale(1.7) rotate(15deg); opacity: 0; }
+}
+
+/* Floating Damage Numbers */
+.nerv-dmg-pop {
+  position: absolute;
+  font-weight: 900;
+  font-family: 'Share Tech Mono', monospace, sans-serif;
+  pointer-events: none;
+  z-index: 100;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 18px currentColor;
+  animation: dmgFloat 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  letter-spacing: 0.1em;
+}
+@keyframes dmgFloat {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+  25% { opacity: 1; transform: translate(-50%, -20px) scale(1.3); }
+  75% { opacity: 1; transform: translate(-50%, -45px) scale(1.05); }
+  100% { opacity: 0; transform: translate(-50%, -65px) scale(0.85); }
+}
+
+/* Attack Visual Effects (Slash, Tracer, Cross Explosion) */
+.nerv-vfx-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  overflow: hidden;
+}
+
+/* Progressive Knife Slash */
+.nerv-knife-slash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  height: 6px;
+  background: linear-gradient(90deg, transparent, #00ffff, #ffffff, #00d4ff, transparent);
+  box-shadow: 0 0 24px #00ffff, 0 0 40px #00aaff;
+  transform: translate(-50%, -50%) rotate(-35deg) scaleX(0);
+  animation: knifeSlash 0.35s ease-out forwards;
+}
+@keyframes knifeSlash {
+  0% { transform: translate(-50%, -50%) rotate(-35deg) scaleX(0); opacity: 0; }
+  40% { transform: translate(-50%, -50%) rotate(-35deg) scaleX(1.3); opacity: 1; height: 10px; }
+  100% { transform: translate(-50%, -50%) rotate(-35deg) scaleX(1.5); opacity: 0; height: 2px; }
+}
+
+/* Pallet Rifle Tracers */
+.nerv-rifle-tracer {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ffffaa, #ff8800, #ff2200);
+  box-shadow: 0 0 14px #ff6600, 0 0 24px #ff0000;
+  animation: tracerFly 0.28s ease-out forwards;
+}
+@keyframes tracerFly {
+  0% { height: 0; opacity: 1; }
+  60% { height: 160px; opacity: 1; }
+  100% { height: 0; transform: translateY(-380px); opacity: 0; }
+}
+
+/* N2 Mine Nuclear Cross Pillar */
+.nerv-n2-cross {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: n2CrossBurst 1.2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+.nerv-n2-vertical {
+  width: 24px;
+  height: 480px;
+  background: linear-gradient(180deg, transparent, #ffffff, #ff4400, #ff0033, transparent);
+  box-shadow: 0 0 45px #ff2200, 0 0 90px #ff6600;
+  border-radius: 12px;
+}
+.nerv-n2-horizontal {
+  position: absolute;
+  height: 24px;
+  width: 380px;
+  background: linear-gradient(90deg, transparent, #ffffff, #ff4400, #ff0033, transparent);
+  box-shadow: 0 0 45px #ff2200, 0 0 90px #ff6600;
+  border-radius: 12px;
+}
+@keyframes n2CrossBurst {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+  20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: brightness(2.5); }
+  60% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; filter: brightness(1); }
+}
+
+/* Screen Shake Effect */
+.nerv-combat-shake {
+  animation: screenShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes screenShake {
+  10%, 90% { transform: translate3d(-3px, 2px, 0); }
+  20%, 80% { transform: translate3d(4px, -3px, 0); }
+  30%, 50%, 70% { transform: translate3d(-5px, 3px, 0); }
+  40%, 60% { transform: translate3d(5px, -4px, 0); }
+}
+
+/* Combat Telemetry Bar (HP & Shields) */
+.nerv-combat-telemetry {
+  width: 100%;
+  padding: 18px 24px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.nerv-telemetry-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.nerv-gauge-block {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.nerv-gauge-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.nerv-gauge-bar-wrap {
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.nerv-gauge-bar-fill {
+  height: 100%;
+  width: 100%;
+  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.3, 1), background 0.3s ease;
+  border-radius: 4px;
+}
+.nerv-shield-fill {
+  background: linear-gradient(90deg, #ff9900, #ffbb33);
+  box-shadow: 0 0 10px #ff9900;
+}
+.nerv-core-fill {
+  background: linear-gradient(90deg, #dc2626, #ff4d4d);
+  box-shadow: 0 0 10px #ff2222;
+}
+
+/* Shield Layer Badges (Concentric Layer Indicators) */
+.nerv-shield-layers-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.nerv-layer-badge {
+  font-size: 9px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 153, 0, 0.15);
+  border: 1px solid #ff9900;
+  color: #ffaa00;
+  letter-spacing: 0.1em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.25s ease;
+}
+.nerv-layer-badge.broken {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: line-through;
+}
+
+/* Combat Log Ticker */
+.nerv-combat-log-ticker {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #ff8844;
+  font-family: 'Share Tech Mono', monospace, sans-serif;
+  padding: 6px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px dashed rgba(239, 68, 68, 0.25);
+  border-radius: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Light Mode Overrides for Combat Deck */
+body[data-theme="light"] .nerv-combat-deck {
+  background: linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  border: 1px solid #f87171 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08), 0 0 25px rgba(239, 68, 68, 0.08) !important;
+}
+body[data-theme="light"] .nerv-deck-header {
+  background: #fef2f2 !important;
+  border-bottom: 1px solid #fee2e2 !important;
+}
+body[data-theme="light"] .nerv-target-title {
+  color: #991b1b !important;
+}
+body[data-theme="light"] .nerv-target-subtitle {
+  color: #475569 !important;
+  font-weight: 600 !important;
+}
+body[data-theme="light"] .nerv-seq-btn {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+body[data-theme="light"] .nerv-seq-btn:hover {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+}
+body[data-theme="light"] .nerv-seq-btn.active {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+body[data-theme="light"] .nerv-combat-telemetry {
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+body[data-theme="light"] .nerv-combat-log-ticker {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fca5a5 !important;
+}
+body[data-theme="light"] .nerv-angel-arena {
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.05) 0%, transparent 70%),
+    linear-gradient(#e2e8f0 1px, transparent 1px),
+    linear-gradient(90deg, #e2e8f0 1px, transparent 1px) !important;
+  background-size: 100% 100%, 32px 32px, 32px 32px !important;
+}
+
+/* ==========================================================================
+   EVA BOTTOM TACTICAL WEAPON BAR (COCKPIT ACTION DOCK)
+   ========================================================================== */
+
+.nerv-weapon-bar-dock {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  background: rgba(10, 14, 22, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 102, 0, 0.45);
+  border-radius: 18px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85), 0 0 25px rgba(255, 102, 0, 0.25);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  max-width: 95vw;
+}
+.nerv-weapon-bar-dock.hidden {
+  transform: translate(-50%, 120%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.nerv-cockpit-indicator {
+  display: flex;
+  flex-direction: column;
+  padding-right: 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  gap: 2px;
+}
+.nerv-cockpit-pilot {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #ff6600;
+  text-transform: uppercase;
+}
+.nerv-cockpit-hint {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+/* Weapon Action Buttons */
+.nerv-weapon-slot {
+  position: relative;
+  width: 96px;
+  height: 84px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nerv-weapon-slot:hover:not(.on-cooldown) {
+  border-color: #ff6600;
+  background: rgba(255, 102, 0, 0.12);
+  box-shadow: 0 0 16px rgba(255, 102, 0, 0.4);
+  transform: translateY(-2px);
+}
+.nerv-weapon-slot:active:not(.on-cooldown) {
+  transform: scale(0.95);
+}
+.nerv-weapon-slot.on-cooldown {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Shortcut Key Label */
+.nerv-weapon-key {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 8px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.08em;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.nerv-weapon-icon {
+  font-size: 26px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.nerv-weapon-slot:hover .nerv-weapon-icon {
+  transform: scale(1.15);
+}
+.nerv-weapon-name {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+.nerv-weapon-dmg {
+  font-size: 8px;
+  font-weight: 700;
+  color: #ff9900;
+  letter-spacing: 0.05em;
+}
+
+/* Cooldown Wipe Shade */
+.nerv-cooldown-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  color: #ff3333;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.nerv-weapon-slot.on-cooldown .nerv-cooldown-overlay {
+  opacity: 1;
+}
+.nerv-cooldown-sweep {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(239, 68, 68, 0.28);
+  pointer-events: none;
+  transition: height 0.08s linear;
+}
+
+/* Weapon Bar Close Button */
+.nerv-weapon-bar-close {
+  padding: 8px 12px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.nerv-weapon-bar-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+/* Light Mode Overrides for Weapon Bar */
+body[data-theme="light"] .nerv-weapon-bar-dock {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #f87171 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), 0 0 25px rgba(239, 68, 68, 0.15) !important;
+}
+body[data-theme="light"] .nerv-cockpit-pilot {
+  color: #b91c1c !important;
+}
+body[data-theme="light"] .nerv-cockpit-hint {
+  color: #64748b !important;
+}
+body[data-theme="light"] .nerv-weapon-slot {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+body[data-theme="light"] .nerv-weapon-name {
+  color: #0f172a !important;
+}
+body[data-theme="light"] .nerv-weapon-key {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+body[data-theme="light"] .nerv-weapon-bar-close {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
 </style>
 
 
@@ -2162,7 +3049,13 @@ body[data-theme="light"] .nerv-archive-img-caption {
     <span class="nerv-ticker-text" id="nervClock">19:20:00 JST</span>
   </div>
   <div class="nerv-top-right">
-    <button class="nerv-hud-btn" onclick="openEvaHangarModal()" title="Xem Hangar Evangelion 00, 01, 02">
+        <button class="nerv-hud-btn nerv-hud-combat-btn" id="angelCombatNavBtn" onclick="toggleAngelCombat()" title="Tác Chiến Đánh Chặn Thiên Thần (Angel Intercept)">
+      <span class="nerv-combat-radar-ping"></span>
+      <span class="material-icons" style="font-size:13px; color:#ff4444;">crisis_alert</span>
+      <span class="nerv-combat-nav-text">ANGEL INTERCEPT</span>
+      <span class="nerv-combat-badge" id="angelCombatNavBadge">DEFCON 1</span>
+    </button>
+<button class="nerv-hud-btn" onclick="openEvaHangarModal()" title="Xem Hangar Evangelion 00, 01, 02">
       <span class="material-icons" style="font-size:13px">view_in_ar</span> EVA UNITS
     </button>
     <button class="nerv-hud-btn" onclick="openLogoArchiveModal()" title="Xem Logo NERV & Lịch sử">
@@ -2866,6 +3759,112 @@ body[data-theme="light"] .nerv-archive-img-caption {
     </div>
     <div id="adminBtn" onclick="showSection('adminPage')" class="hidden glass p-8 md:p-12 flex flex-col items-center border-b-4 border-dashed border-slate-600">
       <div class="menu-card-inner flex flex-col items-center"><div class="text-5xl md:text-6xl mb-6">⚙️</div><h3 class="text-xl md:text-2xl font-black text-center">QUẢN TRỊ</h3><p class="text-[9px] opacity-40 uppercase mt-2">Quản lý đề thi</p></div>
+
+    <!-- NERV ANGEL INTERCEPT TRIGGER BANNER -->
+    <div class="col-span-full" id="angelBannerTrigger">
+      <div class="nerv-combat-summon-strip" onclick="toggleAngelCombat()">
+        <div class="nerv-summon-left">
+          <span class="nerv-summon-alert-icon">⚠️</span>
+          <div class="nerv-summon-info">
+            <div class="nerv-summon-title">TOKYO-3 TACTICAL DEFENSE // RADAR ĐÁNH CHẶN THIÊN THẦN</div>
+            <div class="nerv-summon-sub">PHÁT HIỆN SỰ XÂM NHẬP DẠNG SÓNG XANH (BLOOD TYPE BLUE) - NHẤN ĐỂ TRIỂN KHAI VŨ KHÍ EVA</div>
+          </div>
+        </div>
+        <div class="nerv-summon-right">
+          <span class="nerv-summon-status-pill"><span class="dot-live"></span> ĐANG QUÉT KHU VỰC</span>
+          <button class="nerv-summon-action-btn" type="button">
+            <span class="material-icons" style="font-size:14px">military_tech</span> KÍCH HOẠT ĐÁNH CHẶN
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANGEL COMBAT ARENA (IN MAIN MENU) -->
+    <div class="col-span-full hidden" id="angelCombatSection" style="margin-top: 10px;">
+      <div class="nerv-combat-deck">
+        <!-- Deck Header -->
+        <div class="nerv-deck-header">
+          <div class="nerv-deck-target-wrap">
+            <span class="nerv-target-status-tag" id="angelStatusTag">BLOOD TYPE: BLUE</span>
+            <div>
+              <div class="nerv-target-title" id="angelTargetName">SACHIEL // ĐỆ TAM TÔNG ĐỒ</div>
+              <div class="nerv-target-subtitle" id="angelTargetEpisode">PHASE 1/5 // EPISODE 01 & 02 // CỰ LY TIẾP CẬN: 1,420M</div>
+            </div>
+          </div>
+          <!-- Angel Switcher / Sequence Buttons -->
+          <div class="nerv-seq-wrap">
+            <button class="nerv-seq-btn active" id="seqBtn0" onclick="selectAngel(0)">03. SACHIEL</button>
+            <button class="nerv-seq-btn" id="seqBtn1" onclick="selectAngel(1)">04. SHAMSHEL</button>
+            <button class="nerv-seq-btn" id="seqBtn2" onclick="selectAngel(2)">05. RAMIEL</button>
+            <button class="nerv-seq-btn" id="seqBtn3" onclick="selectAngel(3)">08. SAHAQUIEL</button>
+            <button class="nerv-seq-btn" id="seqBtn4" onclick="selectAngel(4)">10. ZERUEL</button>
+            <button class="nerv-seq-btn nerv-seq-rnd-btn" onclick="randomAngel()" title="Gặp ngẫu nhiên">🎲 NGẪU NHIÊN</button>
+          </div>
+        </div>
+
+        <!-- Angel Arena -->
+        <div class="nerv-angel-arena" id="angelArena">
+          <div class="nerv-arena-radar-ring" style="width: 380px; height: 380px;"></div>
+          <div class="nerv-arena-radar-ring" style="width: 260px; height: 260px; border-color: rgba(255, 153, 0, 0.15); animation-direction: reverse;"></div>
+          
+          <!-- Floating Angel Stage -->
+          <div class="nerv-angel-stage" id="angelStage" onclick="handleAngelDirectClick(event)" title="Click chuột chay để tấn công cận chiến!">
+            <div class="nerv-angel-svg-wrap" id="angelSvgContainer"></div>
+            
+            <!-- Dynamic AT-Field Geometric Barrier Overlay -->
+            <div class="nerv-atfield-overlay" id="angelAtFieldOverlay">
+              <svg class="nerv-atfield-svg" viewBox="0 0 350 350">
+                <!-- Outer Octagon -->
+                <polygon class="nerv-atfield-poly" points="175,15 288,52 335,165 298,278 175,335 52,298 15,185 62,72" />
+                <!-- Middle Octagon -->
+                <polygon class="nerv-atfield-poly" points="175,45 260,75 295,165 265,255 175,295 85,265 55,175 90,85" style="transform: scale(0.85); transform-origin: 175px 175px;" />
+                <!-- Inner Octagon -->
+                <polygon class="nerv-atfield-poly" points="175,75 235,95 260,165 240,235 175,260 110,240 90,175 115,105" style="transform: scale(0.68); transform-origin: 175px 175px;" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Floating Damage Popups Container -->
+          <div id="angelDmgContainer"></div>
+
+          <!-- VFX Layer -->
+          <div class="nerv-vfx-container" id="angelVfxContainer"></div>
+        </div>
+
+        <!-- Telemetry & Status Gauges -->
+        <div class="nerv-combat-telemetry">
+          <div class="nerv-telemetry-row">
+            <!-- AT-Field Layer Gauge -->
+            <div class="nerv-gauge-block">
+              <div class="nerv-gauge-head">
+                <span style="color:#ffaa00;">🛡️ KHIÊN AT-FIELD: <span id="shieldHpText">60 / 60</span></span>
+                <div class="nerv-shield-layers-row" id="shieldLayersBadges"></div>
+              </div>
+              <div class="nerv-gauge-bar-wrap">
+                <div class="nerv-gauge-bar-fill nerv-shield-fill" id="shieldHpBar" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <!-- S2 Core HP Gauge -->
+            <div class="nerv-gauge-block">
+              <div class="nerv-gauge-head">
+                <span style="color:#ff4444;">🔴 S² CORE INTEGRITY: <span id="coreHpText">120 / 120</span></span>
+                <span id="corePercentText" style="color:#ff6666;">100%</span>
+              </div>
+              <div class="nerv-gauge-bar-wrap">
+                <div class="nerv-gauge-bar-fill nerv-core-fill" id="coreHpBar" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Combat Ticker -->
+          <div class="nerv-combat-log-ticker" id="angelCombatTicker">
+            [CHỈ HUY GEOFRONT] THIÊN THẦN ĐANG TIẾP CẬN. HỆ THỐNG VŨ KHÍ EVA-01 ĐÃ SẴN SÀNG ĐÁNH CHẶN.
+          </div>
+        </div>
+      </div>
+    </div>
+
     </div>
   </div>
 
@@ -3521,7 +4520,7 @@ function toggleTheme(){const isLight=document.getElementById('themeToggle').chec
 const SECTIONS=['mainMenu','selectExamPage','examPage','adminPage','leaderboard','resultPage','reviewPage','practicePage'];
 function showSection(id){
   if(id==='adminPage'&&!state.isAdmin){showToast('Bạn không có quyền truy cập!','error');return}
-  if(id!=='examPage'){if(state.timer){clearInterval(state.timer);state.timer=null}stopCheatGuard();document.getElementById('kbHint').style.display='none'}
+  if(id!=='examPage'){if(state.timer){clearInterval(state.timer);state.timer=null}stopCheatGuard();document.getElementById('kbHint').style.display='none'}if(id!=='mainMenu'){const wb=document.getElementById('angelWeaponBar');if(wb)wb.classList.add('hidden')}else if(typeof combatState!=='undefined'&&combatState.isActive){const wb=document.getElementById('angelWeaponBar');if(wb)wb.classList.remove('hidden')}
   const current=SECTIONS.map(s=>document.getElementById(s)).find(el=>el&&!el.classList.contains('hidden'));
   const next=document.getElementById(id);if(!next)return;
   const doShow=()=>{
@@ -4182,6 +5181,110 @@ function playSfx(type) {
       osc.start(now);
       osc.stop(now + 0.8);
     }
+    else if (type === 'punch') {
+      // Organic heavy punch thump
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    }
+    else if (type === 'knife') {
+      // Progressive Knife Sonic Vibration Blade Slash
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 0.18);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
+    }
+    else if (type === 'rifle') {
+      // 3-Round Positron / Pallet Rifle Burst
+      for (let i = 0; i < 3; i++) {
+        const t = now + i * 0.08;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(620, t);
+        osc.frequency.exponentialRampToValueAtTime(110, t + 0.05);
+        gain.gain.setValueAtTime(0.14, t);
+        gain.gain.linearRampToValueAtTime(0.001, t + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.05);
+      }
+    }
+    else if (type === 'bomb') {
+      // Sub-Bass Seismic N2 Mine Detonation
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(95, now);
+      osc.frequency.exponentialRampToValueAtTime(30, now + 0.7);
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.7);
+    }
+    else if (type === 'shield_hit') {
+      // Evangelion AT-Field Metallic Resonant Clang
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(420, now);
+      osc.frequency.linearRampToValueAtTime(680, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(180, now + 0.35);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    }
+    else if (type === 'shield_break') {
+      // AT-Field Shatter / Crystalline Dispersal
+      [600, 880, 1200].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+        osc.frequency.exponentialRampToValueAtTime(120, now + idx * 0.04 + 0.25);
+        gain.gain.setValueAtTime(0.15, now + idx * 0.04);
+        gain.gain.linearRampToValueAtTime(0.001, now + idx * 0.04 + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + idx * 0.04);
+        osc.stop(now + idx * 0.04 + 0.25);
+      });
+    }
+    else if (type === 'angel_death') {
+      // Angel Alien Screech & Disintegration
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(1800, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.9);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.9);
+    }
   } catch (_) {}
 }
 
@@ -4361,6 +5464,898 @@ setInterval(() => {
 // Initialize canvas
 initAtFieldCanvas();
 updateNervClock();
+
+// ==========================================================================
+// EVANGELION ANGEL COMBAT ENGINE
+// ==========================================================================
+
+const ANGELS_LIST = [
+  {
+    id: 'sachiel',
+    name: 'SACHIEL',
+    title: 'THE 3RD ANGEL // ĐỆ TAM TÔNG ĐỒ',
+    desc: 'Thiên thần đầu tiên tấn công Tokyo-3 sau 15 năm. Có khả năng tự phục hồi và tái tạo mặt nạ.',
+    episode: 'PHASE 1/5 // EPISODE 01 & 02 / REBUILD 1.0',
+    layers: 1,
+    shieldHpPerLayer: 60,
+    coreHp: 120,
+    svg: `<svg viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="sac-core" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff6688"/>
+          <stop offset="40%" stop-color="#ff0033"/>
+          <stop offset="100%" stop-color="#660011"/>
+        </radialGradient>
+        <filter id="sac-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="8" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+        <linearGradient id="sac-body" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1c2024"/>
+          <stop offset="50%" stop-color="#0e1114"/>
+          <stop offset="100%" stop-color="#050708"/>
+        </linearGradient>
+        <linearGradient id="sac-bone" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f5f5f0"/>
+          <stop offset="70%" stop-color="#d8d8ce"/>
+          <stop offset="100%" stop-color="#a8a89a"/>
+        </linearGradient>
+      </defs>
+      <!-- Shadow Aura -->
+      <ellipse cx="160" cy="350" rx="90" ry="14" fill="rgba(0,0,0,0.6)" filter="blur(6px)"/>
+      
+      <!-- Torso & Muscular Mecha Body -->
+      <path d="M120 130 C100 160 90 220 110 280 L140 330 L160 310 L180 330 L210 280 C230 220 220 160 200 130 Z" fill="url(#sac-body)" stroke="#2d3748" stroke-width="2"/>
+      
+      <!-- Back Gill Fins / Shoulders -->
+      <path d="M110 110 Q70 80 50 120 Q60 160 100 150 Z" fill="#14171a" stroke="#4a5568" stroke-width="2"/>
+      <path d="M210 110 Q250 80 270 120 Q260 160 220 150 Z" fill="#14171a" stroke="#4a5568" stroke-width="2"/>
+      <path d="M60 115 L95 135 M65 130 L95 145" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+      <path d="M260 115 L225 135 M255 130 L225 145" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+      
+      <!-- Long Arms -->
+      <path d="M90 145 C60 180 40 240 45 300 C48 320 60 340 70 330 C75 310 80 260 110 210" fill="none" stroke="url(#sac-body)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M230 145 C260 180 280 240 275 300 C272 320 260 340 250 330 C245 310 240 260 210 210" fill="none" stroke="url(#sac-body)" stroke-width="16" stroke-linecap="round"/>
+      
+      <!-- White Bone Claws -->
+      <path d="M45 295 L40 335 M50 300 L52 342 M56 300 L64 340" stroke="url(#sac-bone)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M275 295 L280 335 M270 300 L268 342 M264 300 L256 340" stroke="url(#sac-bone)" stroke-width="4" stroke-linecap="round"/>
+      
+      <!-- Bio-Mechanical Ribs & White Plating -->
+      <path d="M130 160 Q160 175 190 160 M125 180 Q160 195 195 180 M130 200 Q160 215 190 200 M135 220 Q160 230 185 220" stroke="url(#sac-bone)" stroke-width="4" fill="none" stroke-linecap="round"/>
+      
+      <!-- S2 Core (Red Glowing Sphere) -->
+      <circle cx="160" cy="245" r="24" fill="url(#sac-core)" filter="url(#sac-glow)"/>
+      <circle cx="160" cy="245" r="16" fill="#ff1a40"/>
+      <ellipse cx="154" cy="239" rx="6" ry="3" fill="#ffffff" opacity="0.7"/>
+      <!-- Core Protective Ring -->
+      <circle cx="160" cy="245" r="26" stroke="#d8d8ce" stroke-width="3" fill="none"/>
+      
+      <!-- Neck Support -->
+      <path d="M142 105 L178 105 L170 125 L150 125 Z" fill="#1a1e22"/>
+      
+      <!-- Iconic Bone Mask (Bird Beak Skull) -->
+      <g transform="translate(160, 80)">
+        <!-- Mask Base -->
+        <path d="M0 -45 C28 -45 38 -20 36 5 C34 25 15 48 0 65 C-15 48 -34 25 -36 5 C-38 -20 -28 -45 0 -45 Z" fill="url(#sac-bone)" stroke="#1a202c" stroke-width="3"/>
+        <!-- Hollow Black Eyes -->
+        <ellipse cx="-13" cy="-5" rx="5" ry="9" fill="#080808" transform="rotate(-12 -13 -5)"/>
+        <ellipse cx="13" cy="-5" rx="5" ry="9" fill="#080808" transform="rotate(12 13 -5)"/>
+        <!-- Red Eye Glint -->
+        <circle cx="-13" cy="-4" r="2" fill="#ff0033"/>
+        <circle cx="13" cy="-4" r="2" fill="#ff0033"/>
+        <!-- Beak Ridge & Nostrils -->
+        <path d="M0 -25 L0 35" stroke="#909080" stroke-width="2"/>
+        <circle cx="-4" cy="18" r="1.5" fill="#4a5568"/>
+        <circle cx="4" cy="18" r="1.5" fill="#4a5568"/>
+        <!-- Cross / Horn indents -->
+        <path d="M-22 -30 Q-15 -15 -18 0" stroke="#718096" stroke-width="1.5" fill="none"/>
+        <path d="M22 -30 Q15 -15 18 0" stroke="#718096" stroke-width="1.5" fill="none"/>
+      </g>
+    </svg>`
+  },
+  {
+    id: 'shamshel',
+    name: 'SHAMSHEL',
+    title: 'THE 4TH ANGEL // ĐỆ TỨ TÔNG ĐỒ',
+    desc: 'Thiên thần côn trùng bay với hai chiếc roi xúc tu năng lượng phát xạ nhiệt cực cao rực lửa.',
+    episode: 'PHASE 2/5 // EPISODE 03 / REBUILD 1.0',
+    layers: 2,
+    shieldHpPerLayer: 100,
+    coreHp: 220,
+    svg: `<svg viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="sham-core" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff7744"/>
+          <stop offset="40%" stop-color="#ff2200"/>
+          <stop offset="100%" stop-color="#550000"/>
+        </radialGradient>
+        <linearGradient id="sham-skin" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#382436"/>
+          <stop offset="50%" stop-color="#211520"/>
+          <stop offset="100%" stop-color="#110a11"/>
+        </linearGradient>
+        <linearGradient id="whip-energy" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffff66"/>
+          <stop offset="30%" stop-color="#ff6600"/>
+          <stop offset="80%" stop-color="#ff0044"/>
+          <stop offset="100%" stop-color="#990022"/>
+        </linearGradient>
+        <filter id="sham-whip-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+      </defs>
+      
+      <!-- Energy Whips (Glowing Tendrils) -->
+      <path d="M100 130 C40 160 20 220 35 280 C45 320 15 350 25 370" stroke="url(#whip-energy)" stroke-width="8" stroke-linecap="round" filter="url(#sham-whip-glow)" fill="none"/>
+      <path d="M100 130 C40 160 20 220 35 280 C45 320 15 350 25 370" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      
+      <path d="M220 130 C280 160 300 220 285 280 C275 320 305 350 295 370" stroke="url(#whip-energy)" stroke-width="8" stroke-linecap="round" filter="url(#sham-whip-glow)" fill="none"/>
+      <path d="M220 130 C280 160 300 220 285 280 C275 320 305 350 295 370" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+      <!-- Tail / Segmented Abdomen -->
+      <g>
+        <ellipse cx="160" cy="270" rx="30" ry="16" fill="url(#sham-skin)" stroke="#ff4488" stroke-width="1.5"/>
+        <ellipse cx="160" cy="295" rx="24" ry="14" fill="url(#sham-skin)" stroke="#ff4488" stroke-width="1.5"/>
+        <ellipse cx="160" cy="318" rx="18" ry="12" fill="url(#sham-skin)" stroke="#ff4488" stroke-width="1.5"/>
+        <path d="M148 325 L160 355 L172 325 Z" fill="#211520" stroke="#ff4488" stroke-width="1.5"/>
+      </g>
+      
+      <!-- Main Arthropod Body Cylinder -->
+      <path d="M120 70 C120 50 200 50 200 70 L210 230 C210 260 110 260 110 230 Z" fill="url(#sham-skin)" stroke="#4a2a46" stroke-width="3"/>
+      
+      <!-- Lateral Wing / Shield Flaps -->
+      <path d="M120 90 C90 100 75 140 90 180 C100 160 115 140 120 130 Z" fill="#2d1d2c" stroke="#ff4488" stroke-width="1.5"/>
+      <path d="M200 90 C230 100 245 140 230 180 C220 160 205 140 200 130 Z" fill="#2d1d2c" stroke="#ff4488" stroke-width="1.5"/>
+      
+      <!-- False Eyespots (Mysterious Oval Marks) -->
+      <ellipse cx="140" cy="95" rx="9" ry="18" fill="#ffffff" stroke="#110a11" stroke-width="3" transform="rotate(-15 140 95)"/>
+      <circle cx="140" cy="95" r="5" fill="#000000"/>
+      <ellipse cx="180" cy="95" rx="9" ry="18" fill="#ffffff" stroke="#110a11" stroke-width="3" transform="rotate(15 180 95)"/>
+      <circle cx="180" cy="95" r="5" fill="#000000"/>
+      
+      <!-- Segmental Bands -->
+      <path d="M122 135 Q160 150 198 135" stroke="#794874" stroke-width="3" fill="none"/>
+      <path d="M120 165 Q160 180 200 165" stroke="#794874" stroke-width="3" fill="none"/>
+      <path d="M118 195 Q160 210 202 195" stroke="#794874" stroke-width="3" fill="none"/>
+
+      <!-- Glowing S2 Core -->
+      <circle cx="160" cy="225" r="22" fill="url(#sham-core)" filter="url(#sham-whip-glow)"/>
+      <circle cx="160" cy="225" r="14" fill="#ff3300"/>
+      <ellipse cx="155" cy="220" rx="5" ry="3" fill="#ffffff" opacity="0.8"/>
+      <circle cx="160" cy="225" r="24" stroke="#ff8800" stroke-width="2.5" fill="none"/>
+    </svg>`
+  },
+  {
+    id: 'ramiel',
+    name: 'RAMIEL',
+    title: 'THE 5TH ANGEL // ĐỆ NGŨ TÔNG ĐỒ',
+    desc: 'Khối bát diện pha lê hoàn mỹ với khiên AT-Field tuyệt đối cực dày và đại pháo hạt Positron xuyên giáp.',
+    episode: 'PHASE 3/5 // EPISODE 05 & 06 / OPERATION YASHIMA',
+    layers: 3,
+    shieldHpPerLayer: 150,
+    coreHp: 360,
+    svg: `<svg viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ram-top-left" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#00f2ff"/>
+          <stop offset="100%" stop-color="#0066cc"/>
+        </linearGradient>
+        <linearGradient id="ram-top-right" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#4de8ff"/>
+          <stop offset="100%" stop-color="#004499"/>
+        </linearGradient>
+        <linearGradient id="ram-bot-left" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#002b66"/>
+          <stop offset="100%" stop-color="#0055aa"/>
+        </linearGradient>
+        <linearGradient id="ram-bot-right" x1="100%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stop-color="#001838"/>
+          <stop offset="100%" stop-color="#003880"/>
+        </linearGradient>
+        <filter id="ram-aura" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="12" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+        <radialGradient id="ram-core-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff3366"/>
+          <stop offset="60%" stop-color="#cc0022"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Resonant Energy Halo -->
+      <polygon points="160,20 280,180 160,340 40,180" fill="none" stroke="#00d4ff" stroke-width="1.5" opacity="0.3" filter="url(#ram-aura)"/>
+      <circle cx="160" cy="180" r="110" stroke="#00e5ff" stroke-dasharray="6 8" stroke-width="1" opacity="0.4"/>
+
+      <!-- Inner Morphing Core Glimpse -->
+      <circle cx="160" cy="180" r="26" fill="url(#ram-core-glow)" filter="url(#ram-aura)"/>
+      <circle cx="160" cy="180" r="16" fill="#ff1a40"/>
+
+      <!-- PERFECT OCTAHEDRON FACETS -->
+      <!-- Top Left Facet -->
+      <polygon points="160,35 45,180 160,180" fill="url(#ram-top-left)" opacity="0.94"/>
+      <!-- Top Right Facet -->
+      <polygon points="160,35 275,180 160,180" fill="url(#ram-top-right)" opacity="0.96"/>
+      <!-- Bottom Left Facet -->
+      <polygon points="160,325 45,180 160,180" fill="url(#ram-bot-left)" opacity="0.95"/>
+      <!-- Bottom Right Facet -->
+      <polygon points="160,325 275,180 160,180" fill="url(#ram-bot-right)" opacity="0.98"/>
+
+      <!-- Crisp Crystal Edges -->
+      <line x1="160" y1="35" x2="45" y2="180" stroke="#cceeff" stroke-width="3"/>
+      <line x1="160" y1="35" x2="275" y2="180" stroke="#e6f7ff" stroke-width="3"/>
+      <line x1="160" y1="325" x2="45" y2="180" stroke="#66b2ff" stroke-width="2.5"/>
+      <line x1="160" y1="325" x2="275" y2="180" stroke="#80bfff" stroke-width="2.5"/>
+      <line x1="160" y1="35" x2="160" y2="325" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="45" y1="180" x2="275" y2="180" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+
+      <!-- Apex Positron Particle Charge Spark -->
+      <circle cx="160" cy="35" r="6" fill="#ffffff" filter="url(#ram-aura)"/>
+      <line x1="160" y1="15" x2="160" y2="55" stroke="#ffffff" stroke-width="2"/>
+      <line x1="140" y1="35" x2="180" y2="35" stroke="#ffffff" stroke-width="2"/>
+    </svg>`
+  },
+  {
+    id: 'sahaquiel',
+    name: 'SAHAQUIEL',
+    title: 'THE 8TH ANGEL // ĐỆ BÁT TÔNG ĐỒ',
+    desc: 'Thiên thần khổng lồ rơi từ tầng bình lưu, hình dạng thiên thể với con mắt vĩ đại và họa tiết sặc sỡ.',
+    episode: 'PHASE 4/5 // EPISODE 12 / REBUILD 2.0',
+    layers: 4,
+    shieldHpPerLayer: 200,
+    coreHp: 520,
+    svg: `<svg viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="sah-main-eye" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="25%" stop-color="#ff0044"/>
+          <stop offset="60%" stop-color="#ffaa00"/>
+          <stop offset="85%" stop-color="#0a192f"/>
+          <stop offset="100%" stop-color="#000000"/>
+        </radialGradient>
+        <linearGradient id="sah-wing" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff9900"/>
+          <stop offset="50%" stop-color="#ff3300"/>
+          <stop offset="100%" stop-color="#660022"/>
+        </linearGradient>
+        <filter id="sah-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="8" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+      </defs>
+
+      <!-- Outer Celestial Wings / Petals -->
+      <g filter="url(#sah-glow)">
+        <path d="M160 180 Q80 80 20 120 Q30 200 160 210 Z" fill="url(#sah-wing)" opacity="0.9"/>
+        <path d="M160 180 Q240 80 300 120 Q290 200 160 210 Z" fill="url(#sah-wing)" opacity="0.9"/>
+        <path d="M160 180 Q100 280 60 320 Q120 340 160 240 Z" fill="url(#sah-wing)" opacity="0.85"/>
+        <path d="M160 180 Q220 280 260 320 Q200 340 160 240 Z" fill="url(#sah-wing)" opacity="0.85"/>
+        <path d="M160 180 Q160 40 130 20 Q160 10 190 20 Q160 40 160 180 Z" fill="url(#sah-wing)" opacity="0.9"/>
+      </g>
+
+      <!-- Wing Eyespots / Satellite Eyes -->
+      <circle cx="50" cy="150" r="16" fill="#000000" stroke="#ffcc00" stroke-width="3"/>
+      <circle cx="50" cy="150" r="9" fill="#ff0033"/>
+      <circle cx="50" cy="150" r="4" fill="#ffffff"/>
+
+      <circle cx="270" cy="150" r="16" fill="#000000" stroke="#ffcc00" stroke-width="3"/>
+      <circle cx="270" cy="150" r="9" fill="#ff0033"/>
+      <circle cx="270" cy="150" r="4" fill="#ffffff"/>
+
+      <circle cx="95" cy="300" r="12" fill="#000000" stroke="#ffcc00" stroke-width="2.5"/>
+      <circle cx="95" cy="300" r="6" fill="#ff0033"/>
+
+      <circle cx="225" cy="300" r="12" fill="#000000" stroke="#ffcc00" stroke-width="2.5"/>
+      <circle cx="225" cy="300" r="6" fill="#ff0033"/>
+
+      <!-- Main Great Celestial Eye (Central Mass) -->
+      <circle cx="160" cy="180" r="62" fill="#0d1117" stroke="#ffaa00" stroke-width="5"/>
+      <circle cx="160" cy="180" r="52" fill="url(#sah-main-eye)"/>
+
+      <!-- Pupil & Iris Rings -->
+      <circle cx="160" cy="180" r="28" fill="#110508" stroke="#ff3300" stroke-width="3"/>
+      <circle cx="160" cy="180" r="14" fill="#ff0044" filter="url(#sah-glow)"/>
+      <circle cx="160" cy="180" r="6" fill="#ffffff"/>
+      <!-- Radiating geometric lines -->
+      <path d="M160 120 L160 240 M100 180 L220 180 M118 138 L202 222 M118 222 L202 138" stroke="#ffcc00" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.6"/>
+    </svg>`
+  },
+  {
+    id: 'zeruel',
+    name: 'ZERUEL',
+    title: 'THE 10TH ANGEL // ĐỆ THẬP TÔNG ĐỒ',
+    desc: 'Thiên thần chiến đấu tối thượng. Sở hữu mặt nạ đầu lâu gớm ghiếc và đôi cánh tay lưỡi dao ruy băng xé toạc mọi vật chất.',
+    episode: 'PHASE 5/5 // EPISODE 19 / REBUILD 2.0',
+    layers: 5,
+    shieldHpPerLayer: 280,
+    coreHp: 750,
+    svg: `<svg viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="zer-core" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff5577"/>
+          <stop offset="40%" stop-color="#dd0022"/>
+          <stop offset="100%" stop-color="#440008"/>
+        </radialGradient>
+        <linearGradient id="zer-body" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2a2e33"/>
+          <stop offset="50%" stop-color="#14181c"/>
+          <stop offset="100%" stop-color="#0a0c0e"/>
+        </linearGradient>
+        <linearGradient id="zer-ribbon" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#e8e8e2"/>
+          <stop offset="50%" stop-color="#b8b8b0"/>
+          <stop offset="100%" stop-color="#808078"/>
+        </linearGradient>
+        <filter id="zer-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="10" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+      </defs>
+
+      <!-- Immense Shoulder Silhouette -->
+      <path d="M60 120 C40 80 110 60 160 80 C210 60 280 80 260 120 L270 240 C270 310 50 310 50 240 Z" fill="url(#zer-body)" stroke="#4a5568" stroke-width="3"/>
+      
+      <!-- Upper Body Mantle Armor -->
+      <path d="M70 110 C110 130 160 135 250 110 L240 180 C190 200 130 200 80 180 Z" fill="#1c2126" stroke="#2d3748" stroke-width="2"/>
+
+      <!-- Razor Ribbon Arms (Folded Accordion Blades) -->
+      <g>
+        <!-- Left Arm Ribbon Fold -->
+        <path d="M75 140 C35 150 25 210 40 270 C50 310 30 350 45 370 C60 350 70 290 65 240 C60 190 85 160 75 140 Z" fill="url(#zer-ribbon)" stroke="#222" stroke-width="2"/>
+        <line x1="38" y1="180" x2="68" y2="180" stroke="#555" stroke-width="2"/>
+        <line x1="32" y1="220" x2="62" y2="220" stroke="#555" stroke-width="2"/>
+        <line x1="36" y1="260" x2="66" y2="260" stroke="#555" stroke-width="2"/>
+        <line x1="42" y1="300" x2="68" y2="300" stroke="#555" stroke-width="2"/>
+
+        <!-- Right Arm Ribbon Fold -->
+        <path d="M245 140 C285 150 295 210 280 270 C270 310 290 350 275 370 C260 350 250 290 255 240 C260 190 235 160 245 140 Z" fill="url(#zer-ribbon)" stroke="#222" stroke-width="2"/>
+        <line x1="252" y1="180" x2="282" y2="180" stroke="#555" stroke-width="2"/>
+        <line x1="258" y1="220" x2="288" y2="220" stroke="#555" stroke-width="2"/>
+        <line x1="254" y1="260" x2="284" y2="260" stroke="#555" stroke-width="2"/>
+        <line x1="252" y1="300" x2="278" y2="300" stroke="#555" stroke-width="2"/>
+      </g>
+
+      <!-- S2 Core (Heavy Red Orb inside Rib Cage) -->
+      <circle cx="160" cy="235" r="28" fill="url(#zer-core)" filter="url(#zer-glow)"/>
+      <circle cx="160" cy="235" r="18" fill="#ff0033"/>
+      <ellipse cx="152" cy="227" rx="7" ry="4" fill="#ffffff" opacity="0.75"/>
+      <!-- Core Cage Bones -->
+      <path d="M125 210 C140 235 140 255 128 270 M195 210 C180 235 180 255 192 270" stroke="#e8e8e2" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+      <!-- Distorted Skull Face Mask -->
+      <g transform="translate(160, 95)">
+        <!-- Skull Contour -->
+        <path d="M0 -36 C24 -36 34 -15 32 10 C30 28 16 46 0 54 C-16 46 -30 28 -32 10 C-34 -15 -24 -36 0 -36 Z" fill="#f0f0ea" stroke="#111" stroke-width="3"/>
+        <!-- Eyes (Sunken Horror Eyes) -->
+        <ellipse cx="-12" cy="-4" rx="6" ry="11" fill="#050505" transform="rotate(-8 -12 -4)"/>
+        <ellipse cx="12" cy="-4" rx="6" ry="11" fill="#050505" transform="rotate(8 12 -4)"/>
+        <!-- Crimson Pinpoint Glint -->
+        <circle cx="-12" cy="-3" r="2.5" fill="#ff0022"/>
+        <circle cx="12" cy="-3" r="2.5" fill="#ff0022"/>
+        <!-- Hollow Nostril & Skull Seams -->
+        <path d="M-3 15 L0 12 L3 15 Z" fill="#222"/>
+        <path d="M-15 28 Q0 35 15 28" stroke="#444" stroke-width="2" fill="none"/>
+        <path d="M-10 32 L-10 38 M-4 34 L-4 40 M2 34 L2 40 M8 32 L8 38" stroke="#333" stroke-width="2"/>
+        <!-- Mask Stripes (Characteristic Dark Lines) -->
+        <path d="M-22 -15 Q-14 -5 -16 12" stroke="#666" stroke-width="1.5" fill="none"/>
+        <path d="M22 -15 Q14 -5 16 12" stroke="#666" stroke-width="1.5" fill="none"/>
+      </g>
+    </svg>`
+  }
+];
+
+let combatState = {
+  isActive: false,
+  currentIdx: 0,
+  coreHp: 120,
+  coreMaxHp: 120,
+  layers: 1,
+  maxLayers: 1,
+  shieldHp: 60,
+  maxShieldHp: 60,
+  isDefeated: false,
+  cooldowns: {
+    punch: 0,
+    knife: 0,
+    rifle: 0,
+    bomb: 0
+  },
+  cdDurations: {
+    punch: 150,
+    knife: 1000,
+    rifle: 3000,
+    bomb: 8000
+  }
+};
+
+// Open or close Combat
+function toggleAngelCombat(force) {
+  const section = document.getElementById('angelCombatSection');
+  const weaponBar = document.getElementById('angelWeaponBar');
+  const navBadge = document.getElementById('angelCombatNavBadge');
+  if (!section) return;
+
+  const willOpen = typeof force === 'boolean' ? force : section.classList.contains('hidden');
+
+  if (willOpen) {
+    if (typeof showSection === 'function') {
+      showSection('mainMenu');
+    }
+    section.classList.remove('hidden');
+    if (weaponBar) weaponBar.classList.remove('hidden');
+    combatState.isActive = true;
+    if (navBadge) {
+      navBadge.textContent = 'ACTIVE';
+      navBadge.style.background = '#22c55e';
+    }
+    if (typeof playSfx === 'function') playSfx('alarm');
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    initAngelCombat();
+  } else {
+    section.classList.add('hidden');
+    if (weaponBar) weaponBar.classList.add('hidden');
+    combatState.isActive = false;
+    if (navBadge) {
+      navBadge.textContent = 'DEFCON 1';
+      navBadge.style.background = '#dc2626';
+    }
+  }
+}
+
+// Select Angel by Index
+function selectAngel(idx) {
+  if (idx < 0 || idx >= ANGELS_LIST.length) return;
+  combatState.currentIdx = idx;
+  const angel = ANGELS_LIST[idx];
+
+  combatState.coreHp = angel.coreHp;
+  combatState.coreMaxHp = angel.coreHp;
+  combatState.layers = angel.layers;
+  combatState.maxLayers = angel.layers;
+  combatState.shieldHp = angel.shieldHpPerLayer;
+  combatState.maxShieldHp = angel.shieldHpPerLayer;
+  combatState.isDefeated = false;
+
+  // Update UI Elements
+  const nameEl = document.getElementById('angelTargetName');
+  const epEl = document.getElementById('angelTargetEpisode');
+  const svgEl = document.getElementById('angelSvgContainer');
+  const tagEl = document.getElementById('angelStatusTag');
+  const tickerEl = document.getElementById('angelCombatTicker');
+
+  if (nameEl) nameEl.textContent = angel.name + ' // ' + angel.title.split('//')[1].trim();
+  if (epEl) epEl.textContent = angel.episode + ' // ' + angel.desc;
+  if (svgEl) svgEl.innerHTML = angel.svg;
+  if (tagEl) {
+    tagEl.textContent = 'BLOOD TYPE: BLUE';
+    tagEl.style.background = '#dc2626';
+  }
+  if (tickerEl) {
+    tickerEl.textContent = '[CẢNH BÁO GEOFRONT] ' + angel.name + ' ĐÃ XUẤT HIỆN! ĐỘ DÀY AT-FIELD: ' + angel.layers + ' TẦNG. HÃY TRIỂN KHAI VŨ KHÍ EVA!';
+  }
+
+  // Update Sequence Buttons Active Class
+  for (let i = 0; i < 5; i++) {
+    const btn = document.getElementById('seqBtn' + i);
+    if (btn) {
+      if (i === idx) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  }
+
+  // Ensure AT Field overlay is visible if layers > 0
+  const atOverlay = document.getElementById('angelAtFieldOverlay');
+  if (atOverlay) {
+    if (combatState.layers > 0) atOverlay.classList.remove('hidden');
+    else atOverlay.classList.add('hidden');
+  }
+
+  updateCombatGauges();
+  if (typeof playSfx === 'function') playSfx('confirm');
+}
+
+// Random Angel Encounter
+function randomAngel() {
+  let nextIdx;
+  do {
+    nextIdx = Math.floor(Math.random() * ANGELS_LIST.length);
+  } while (nextIdx === combatState.currentIdx && ANGELS_LIST.length > 1);
+  selectAngel(nextIdx);
+}
+
+// Initialize Combat
+function initAngelCombat() {
+  if (!document.getElementById('angelSvgContainer')?.innerHTML) {
+    selectAngel(combatState.currentIdx);
+  } else {
+    updateCombatGauges();
+  }
+}
+
+// Update UI Telemetry Gauges
+function updateCombatGauges() {
+  // Shield
+  const shieldText = document.getElementById('shieldHpText');
+  const shieldBar = document.getElementById('shieldHpBar');
+  const badgesRow = document.getElementById('shieldLayersBadges');
+
+  if (shieldText) {
+    if (combatState.layers > 0) {
+      shieldText.textContent = combatState.shieldHp + ' / ' + combatState.maxShieldHp + ' (' + combatState.layers + ' TẦNG)';
+    } else {
+      shieldText.textContent = 'VỠ HOÀN TOÀN (0 TẦNG)';
+    }
+  }
+  if (shieldBar) {
+    if (combatState.layers > 0) {
+      const pct = Math.max(0, Math.min(100, (combatState.shieldHp / combatState.maxShieldHp) * 100));
+      shieldBar.style.width = pct + '%';
+      shieldBar.style.background = 'linear-gradient(90deg, #ff9900, #ffbb33)';
+    } else {
+      shieldBar.style.width = '0%';
+    }
+  }
+
+  // Shield Badges
+  if (badgesRow) {
+    let badgesHTML = '';
+    for (let l = 1; l <= combatState.maxLayers; l++) {
+      const isBroken = l > combatState.layers;
+      badgesHTML += '<span class="nerv-layer-badge ' + (isBroken ? 'broken' : '') + '">⬡ L' + l + '</span>';
+    }
+    badgesRow.innerHTML = badgesHTML;
+  }
+
+  // Core HP
+  const coreText = document.getElementById('coreHpText');
+  const coreBar = document.getElementById('coreHpBar');
+  const corePctText = document.getElementById('corePercentText');
+
+  const corePct = Math.max(0, Math.min(100, (combatState.coreHp / combatState.coreMaxHp) * 100));
+  if (coreText) coreText.textContent = combatState.coreHp + ' / ' + combatState.coreMaxHp;
+  if (coreBar) coreBar.style.width = corePct + '%';
+  if (corePctText) corePctText.textContent = Math.round(corePct) + '%';
+}
+
+// Trigger AT-Field Ripple Visual
+function triggerAtFieldRipple() {
+  const atOverlay = document.getElementById('angelAtFieldOverlay');
+  if (!atOverlay) return;
+  atOverlay.classList.remove('atfield-ripple-active');
+  void atOverlay.offsetWidth;
+  atOverlay.classList.add('atfield-ripple-active');
+  setTimeout(() => atOverlay.classList.remove('atfield-ripple-active'), 500);
+}
+
+// Spawn Floating Damage Text
+function spawnDamageNumber(dmg, isCrit, isShieldHit) {
+  const arena = document.getElementById('angelArena');
+  if (!arena) return;
+
+  const pop = document.createElement('div');
+  pop.className = 'nerv-dmg-pop';
+  
+  const offX = (Math.random() - 0.5) * 140;
+  const offY = (Math.random() - 0.5) * 80;
+  pop.style.left = 'calc(50% + ' + offX + 'px)';
+  pop.style.top = 'calc(45% + ' + offY + 'px)';
+
+  if (isShieldHit) {
+    pop.style.color = '#ffaa00';
+    pop.style.fontSize = isCrit ? '22px' : '15px';
+    pop.textContent = '-' + dmg + ' [AT-FIELD]';
+  } else if (isCrit) {
+    pop.style.color = '#ff3333';
+    pop.style.fontSize = '26px';
+    pop.textContent = '-' + dmg + ' CRITICAL!';
+  } else {
+    pop.style.color = '#ffff66';
+    pop.style.fontSize = '17px';
+    pop.textContent = '-' + dmg;
+  }
+
+  arena.appendChild(pop);
+  setTimeout(() => pop.remove(), 950);
+}
+
+// Screen Shake
+function triggerScreenShake() {
+  const app = document.getElementById('app') || document.body;
+  app.classList.remove('nerv-combat-shake');
+  void app.offsetWidth;
+  app.classList.add('nerv-combat-shake');
+  setTimeout(() => app.classList.remove('nerv-combat-shake'), 380);
+}
+
+// Angel Flinch Animation
+function triggerAngelFlinch() {
+  const stage = document.getElementById('angelStage');
+  if (!stage) return;
+  stage.classList.remove('hit-flinch');
+  void stage.offsetWidth;
+  stage.classList.add('hit-flinch');
+  setTimeout(() => stage.classList.remove('hit-flinch'), 300);
+}
+
+// Attack Weapon Visual Effects
+function triggerWeaponVfx(type) {
+  const container = document.getElementById('angelVfxContainer');
+  if (!container) return;
+
+  if (type === 'knife') {
+    const slash = document.createElement('div');
+    slash.className = 'nerv-knife-slash';
+    container.appendChild(slash);
+    setTimeout(() => slash.remove(), 400);
+  } else if (type === 'rifle') {
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        const tracer = document.createElement('div');
+        tracer.className = 'nerv-rifle-tracer';
+        tracer.style.left = 'calc(50% + ' + ((i - 1) * 35 + (Math.random() - 0.5) * 20) + 'px)';
+        container.appendChild(tracer);
+        setTimeout(() => tracer.remove(), 320);
+      }, i * 70);
+    }
+  } else if (type === 'bomb') {
+    const cross = document.createElement('div');
+    cross.className = 'nerv-n2-cross';
+    cross.innerHTML = '<div class="nerv-n2-vertical"></div><div class="nerv-n2-horizontal"></div>';
+    container.appendChild(cross);
+    setTimeout(() => cross.remove(), 1250);
+  }
+}
+
+// Cooldown Management
+function startWeaponCooldown(type) {
+  const now = Date.now();
+  const duration = combatState.cdDurations[type];
+  combatState.cooldowns[type] = now + duration;
+
+  const slot = document.getElementById('slot' + type.charAt(0).toUpperCase() + type.slice(1));
+  const sweep = document.getElementById('cdSweep' + type.charAt(0).toUpperCase() + type.slice(1));
+  const text = document.getElementById('cdText' + type.charAt(0).toUpperCase() + type.slice(1));
+
+  if (slot) slot.classList.add('on-cooldown');
+
+  function update() {
+    const remaining = combatState.cooldowns[type] - Date.now();
+    if (remaining <= 0) {
+      if (slot) slot.classList.remove('on-cooldown');
+      if (sweep) sweep.style.height = '0%';
+      if (text) text.textContent = '';
+      return;
+    }
+    const pct = (remaining / duration) * 100;
+    if (sweep) sweep.style.height = pct + '%';
+    if (text) text.textContent = (remaining / 1000).toFixed(1) + 's';
+    requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// Attack Execution Engine
+function attackAngel(weaponType, event) {
+  if (combatState.isDefeated) return;
+  const now = Date.now();
+
+  // Cooldown check
+  if (combatState.cooldowns[weaponType] && now < combatState.cooldowns[weaponType]) {
+    return;
+  }
+
+  // Weapon specs (Strict damage hierarchy: dao < súng < bom)
+  let dmg = 0;
+  let isCrit = false;
+  let weaponName = '';
+
+  if (weaponType === 'punch') {
+    dmg = 8 + Math.floor(Math.random() * 4); // 8 - 11
+    weaponName = 'ĐÒN ĐÁNH CẬN CHIẾN (CHUỘT CHAY)';
+    startWeaponCooldown('punch');
+    if (typeof playSfx === 'function') playSfx('punch');
+  } else if (weaponType === 'knife') {
+    dmg = 25 + Math.floor(Math.random() * 8); // 25 - 32
+    weaponName = 'DAO CAO TẦN';
+    startWeaponCooldown('knife');
+    triggerWeaponVfx('knife');
+    if (typeof playSfx === 'function') playSfx('knife');
+  } else if (weaponType === 'rifle') {
+    dmg = 65 + Math.floor(Math.random() * 16); // 65 - 80
+    weaponName = 'SÚNG TRƯỜNG PALLET';
+    startWeaponCooldown('rifle');
+    triggerWeaponVfx('rifle');
+    if (typeof playSfx === 'function') playSfx('rifle');
+  } else if (weaponType === 'bomb') {
+    dmg = 220 + Math.floor(Math.random() * 40); // 220 - 259
+    isCrit = true;
+    weaponName = 'BOM N²';
+    startWeaponCooldown('bomb');
+    triggerWeaponVfx('bomb');
+    triggerScreenShake();
+    if (typeof playSfx === 'function') playSfx('bomb');
+  }
+
+  triggerAngelFlinch();
+
+  // Shield vs Core Damage Resolution
+  const ticker = document.getElementById('angelCombatTicker');
+
+  if (combatState.layers > 0) {
+    // AT-Field absorbs damage
+    triggerAtFieldRipple();
+    spawnDamageNumber(dmg, isCrit, true);
+    combatState.shieldHp -= dmg;
+    if (typeof playSfx === 'function' && weaponType !== 'knife' && weaponType !== 'rifle' && weaponType !== 'bomb') {
+      playSfx('shield_hit');
+    }
+
+    if (combatState.shieldHp <= 0) {
+      // Shield layer breached!
+      combatState.layers--;
+      if (typeof playSfx === 'function') playSfx('shield_break');
+
+      if (combatState.layers > 0) {
+        combatState.shieldHp = combatState.maxShieldHp;
+        if (ticker) ticker.textContent = '💥 [CẢNH BÁO] 1 TẦNG AT-FIELD ĐÃ BỊ PHÁ! CÒN LẠI ' + combatState.layers + ' TẦNG KHIÊN!';
+      } else {
+        combatState.shieldHp = 0;
+        const atOverlay = document.getElementById('angelAtFieldOverlay');
+        if (atOverlay) atOverlay.classList.add('hidden');
+        if (ticker) ticker.textContent = '⚠️ [TOKYO-3] TOÀN BỘ AT-FIELD ĐÃ BỊ PHÁ VỠ! S² CORE CỦA THIÊN THẦN ĐÃ LỘ DIỆN, HÃY TIÊU DIỆT NÓ!';
+      }
+    } else {
+      if (ticker) ticker.textContent = '[EVA-01] ' + weaponName + ' GÂY ' + dmg + ' SÁT THƯƠNG LÊN LỚP KHIÊN AT-FIELD!';
+    }
+  } else {
+    // Direct Core Damage
+    combatState.coreHp -= dmg;
+    spawnDamageNumber(dmg, isCrit, false);
+    if (combatState.coreHp <= 0) {
+      combatState.coreHp = 0;
+      onAngelDefeated();
+      return;
+    } else {
+      if (ticker) ticker.textContent = '🔥 [TRỰC TIẾP] ' + weaponName + ' GÂY ' + dmg + ' SÁT THƯƠNG TRỰC DIỆN VÀO S² CORE!';
+    }
+  }
+
+  updateCombatGauges();
+}
+
+// Click Directly on Angel Stage (Chuột chay)
+function handleAngelDirectClick(e) {
+  if (combatState.isDefeated) return;
+  attackAngel('punch', e);
+}
+
+// Angel Defeat Sequence & Chronological Progression
+function onAngelDefeated() {
+  combatState.isDefeated = true;
+  updateCombatGauges();
+
+  const currentAngel = ANGELS_LIST[combatState.currentIdx];
+  const ticker = document.getElementById('angelCombatTicker');
+  const tagEl = document.getElementById('angelStatusTag');
+  const stage = document.getElementById('angelStage');
+
+  if (typeof playSfx === 'function') playSfx('angel_death');
+  triggerScreenShake();
+
+  if (tagEl) {
+    tagEl.textContent = 'PATTERN: ORANGE // NEUTRALIZED';
+    tagEl.style.background = '#f97316';
+  }
+
+  if (stage) {
+    stage.style.filter = 'brightness(2) drop-shadow(0 0 40px #ff3300)';
+    stage.style.transition = 'filter 0.5s ease, transform 1.5s ease';
+    stage.style.transform = 'scale(0.8) translateY(20px)';
+  }
+
+  if (ticker) {
+    ticker.textContent = '🎉 [CHIẾN THẮNG] ' + currentAngel.name + ' ĐÃ BỊ TIÊU DIỆT HOÀN TOÀN! DẠNG SÓNG XANH ĐÃ TAN BIẾN!';
+  }
+
+  // Automatic advance to next Angel in sequence after 2.4 seconds
+  setTimeout(() => {
+    if (stage) {
+      stage.style.filter = '';
+      stage.style.transform = '';
+    }
+    const nextIdx = (combatState.currentIdx + 1) % ANGELS_LIST.length;
+    if (combatState.currentIdx === ANGELS_LIST.length - 1) {
+      // Completed all 5 Angels!
+      if (typeof playSfx === 'function') playSfx('confirm');
+      if (ticker) {
+        ticker.textContent = '🏆 [XUẤT SẮC] BẠN ĐÃ TIÊU DIỆT TOÀN BỘ 5 THIÊN THẦN TỪ CÁC PHẦN PHIM! TOKYO-3 ĐÃ AN TOÀN!';
+      }
+      setTimeout(() => selectAngel(0), 2000);
+    } else {
+      selectAngel(nextIdx);
+    }
+  }, 2400);
+}
+
+// Global Keyboard Shortcuts (1, 2, 3) for weapons when combat is active
+
+// Explicit Window Exports for Bulletproof Inline Onclick Execution
+window.ANGELS_LIST = ANGELS_LIST;
+window.combatState = combatState;
+window.toggleAngelCombat = toggleAngelCombat;
+window.selectAngel = selectAngel;
+window.randomAngel = randomAngel;
+window.attackAngel = attackAngel;
+window.handleAngelDirectClick = handleAngelDirectClick;
+window.initAngelCombat = initAngelCombat;
+
+document.addEventListener('keydown', (e) => {
+  if (!combatState.isActive || combatState.isDefeated) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.key === '1') {
+    e.preventDefault();
+    attackAngel('knife');
+  } else if (e.key === '2') {
+    e.preventDefault();
+    attackAngel('rifle');
+  } else if (e.key === '3') {
+    e.preventDefault();
+    attackAngel('bomb');
+  }
+});
+
 </script>
+
+
+<!-- EVA TACTICAL WEAPON ACTION BAR (COCKPIT DOCK) -->
+<div id="angelWeaponBar" class="nerv-weapon-bar-dock hidden">
+  <div class="nerv-cockpit-indicator">
+    <div class="nerv-cockpit-pilot">EVA-01 // TÁC CHIẾN</div>
+    <div class="nerv-cockpit-hint">PHÍM [1], [2], [3] HOẶC CLICK CHAY</div>
+  </div>
+
+  <!-- Weapon 1: Dao Cao Tần (Progressive Knife) -->
+  <div class="nerv-weapon-slot" id="slotKnife" onclick="attackAngel('knife')" title="Phím tắt: 1">
+    <span class="nerv-weapon-key">1</span>
+    <span class="nerv-weapon-icon">🗡️</span>
+    <span class="nerv-weapon-name">DAO CAO TẦN</span>
+    <span class="nerv-weapon-dmg">25 DMG · 1.0s</span>
+    <div class="nerv-cooldown-overlay" id="cdOverlayKnife">
+      <div class="nerv-cooldown-sweep" id="cdSweepKnife"></div>
+      <span id="cdTextKnife">1.0s</span>
+    </div>
+  </div>
+
+  <!-- Weapon 2: Súng Trường Pallet (Pallet Rifle) -->
+  <div class="nerv-weapon-slot" id="slotRifle" onclick="attackAngel('rifle')" title="Phím tắt: 2">
+    <span class="nerv-weapon-key">2</span>
+    <span class="nerv-weapon-icon">🔫</span>
+    <span class="nerv-weapon-name">SÚNG PALLET</span>
+    <span class="nerv-weapon-dmg">65 DMG · 3.0s</span>
+    <div class="nerv-cooldown-overlay" id="cdOverlayRifle">
+      <div class="nerv-cooldown-sweep" id="cdSweepRifle"></div>
+      <span id="cdTextRifle">3.0s</span>
+    </div>
+  </div>
+
+  <!-- Weapon 3: Bom N² (N² Mine) -->
+  <div class="nerv-weapon-slot" id="slotBomb" onclick="attackAngel('bomb')" title="Phím tắt: 3">
+    <span class="nerv-weapon-key">3</span>
+    <span class="nerv-weapon-icon">💣</span>
+    <span class="nerv-weapon-name">BOM N²</span>
+    <span class="nerv-weapon-dmg">220 DMG · 8.0s</span>
+    <div class="nerv-cooldown-overlay" id="cdOverlayBomb">
+      <div class="nerv-cooldown-sweep" id="cdSweepBomb"></div>
+      <span id="cdTextBomb">8.0s</span>
+    </div>
+  </div>
+
+  <button class="nerv-weapon-bar-close" onclick="toggleAngelCombat(false)" title="Thu gọn giao tranh">
+    <span class="material-icons" style="font-size:14px">close</span> ĐÓNG
+  </button>
+</div>
 </body>
 </html>
