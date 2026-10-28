@@ -5695,78 +5695,85 @@ async function deleteExam(id){
 
 function parseInput(txt){
   if(!txt?.trim())return[];
-  const blocks=txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[.:：）)\]\s])/im);
-  return blocks.map(block=>{
-    block=block.trim();if(!block)return null;
-    const lines=block.replace(/^(?:Câu|Question|Q)\s*\d+\s*[.:：）)\]]\s*/im,'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
-    if(!lines.length)return null;
-    const optRe=/^[A-Da-d]\s*[.)：:]\s*\S/;
-    let optStart=lines.findIndex(l=>optRe.test(l));
-    if(optStart<0)optStart=1;
-    if(optStart<=0)return null;
-    const qText=lines.slice(0,optStart).join(' ').trim();
 
-    // Detect TF from header tags
-    const isTfHeader=/\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI|DUNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai|Dung\/Sai)\)|đúng\s*(?:hay|hoặc)\s*sai/i.test(block);
+  // Normalize line endings
+  let cleanTxt = txt.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-    // Collect raw option lines
-    const rawOpts=lines.slice(optStart);
+  // Strip Markdown bold/italic artifacts if any (e.g. **sống có lý tưởng**)
+  // Keep original question text clean
 
-    // --- WAY 2: Check for "Đáp án: X" line at the end ---
-    let answerLineLetter=null;
-    const lastLine=rawOpts[rawOpts.length-1]||'';
-    const ansMatch=lastLine.match(/^(?:Đáp\s*án|Dap\s*an|Answer|Ans|DA)\s*[:.]\s*([A-Da-d])\s*$/i);
+  // 1. Split questions by: "Câu 1:", "Câu 1.", "Bài 1:", "Q 1:", OR standalone "1. ", "1) ", "1/ " at beginning of line
+  // Azota standard pattern:
+  const qSplitRegex = /(?:^|\n)(?=(?:(?:Câu|Question|Bài|Q)\s*\d+|\d+)\s*[:.）)\/\-]\s*\S)/i;
+  
+  const blocks = cleanTxt.split(qSplitRegex);
+
+  return blocks.map(block => {
+    block = block.trim();
+    if(!block) return null;
+
+    // Remove the leading "Câu X:" or "1." from the block
+    const headerStripRegex = /^(?:(?:Câu|Question|Bài|Q)\s*\d+|\d+)\s*[:.）)\/\-]\s*/i;
+    const body = block.replace(headerStripRegex, '').trim();
+    const lines = body.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    if(!lines.length) return null;
+
+    // Detect options start: line starting with A., B., C., D. or A), B), a., b.
+    const optRegex = /^[A-Da-d]\s*[.)：:\/\-]\s*\S/;
+    let optStartIdx = lines.findIndex(l => optRegex.test(l));
+    if(optStartIdx < 0) return null;
+
+    const qText = lines.slice(0, optStartIdx).join(' ').trim();
+    const rawOpts = lines.slice(optStartIdx);
+
+    // Check for "Đáp án: B" line at end
+    let answerLineLetter = null;
+    const lastLine = rawOpts[rawOpts.length - 1] || '';
+    const ansMatch = lastLine.match(/^(?:Đáp\s*án|Dap\s*an|Answer|Ans|DA)\s*[:.]\s*([A-Da-d])\s*$/i);
     if(ansMatch){
-      answerLineLetter=ansMatch[1].toUpperCase();
-      rawOpts.pop(); // remove the answer line from options
+      answerLineLetter = ansMatch[1].toUpperCase();
+      rawOpts.pop();
     }
 
-    // --- Parse each option ---
-    let hasStar=false, hasAtMarker=false, hasAtS=false;
-    const opts=rawOpts.map((l,li)=>{
-      const letter=String.fromCharCode(65+li);
+    // Explicit True/False indicator in question
+    const isExplicitTf = /\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI|DUNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai|Dung\/Sai)\)|chọn\s*câu\s*đúng|chọn\s*đúng\s*sai/i.test(block);
+    const hasExplicitSaiTag = rawOpts.some(l => /@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(l));
 
-      // Check WAY 1: star prefix  →  "A. *text" or "A) *text"
-      const starMatch=l.match(/^[A-Da-d]\s*[.)：:]\s*\*(.+)$/);
+    const opts = rawOpts.map((l, li) => {
+      const letter = String.fromCharCode(65 + li);
 
-      // Check WAY 3: @t/@đ/@s suffix
-      const hasAtT=/@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(l);
-      const hasAtSLocal=/@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(l);
+      // Star prefix: A. *Text
+      const starMatch = l.match(/^[A-Da-d]\s*[.)：:\/\-]\s*\*(.+)$/);
 
-      if(starMatch) hasStar=true;
-      if(hasAtT||hasAtSLocal) hasAtMarker=true;
-      if(hasAtSLocal) hasAtS=true;
+      // Check @t / @đ / @true / @dung
+      const hasAtT = /@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(l);
+      const hasAtS = /@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(l);
 
-      // Determine correctness
-      let isCorrect=false;
-      if(starMatch) isCorrect=true;
-      else if(hasAtT) isCorrect=true;
-      else if(answerLineLetter && letter===answerLineLetter) isCorrect=true;
+      let isCorrect = false;
+      if(starMatch) isCorrect = true;
+      else if(hasAtT) isCorrect = true;
+      else if(answerLineLetter && letter === answerLineLetter) isCorrect = true;
 
-      // Clean the text: remove star, @markers, and letter prefix
-      let cleanText=l;
+      // Clean text
+      let cleanText = l;
       if(starMatch){
-        cleanText=starMatch[1].trim();
-      }else{
-        cleanText=l.replace(/^[A-Da-d]\s*[.)：:]\s*/,'');
+        cleanText = starMatch[1].trim();
+      } else {
+        cleanText = l.replace(/^[A-Da-d]\s*[.)：:\/\-]\s*/, '');
       }
-      cleanText=cleanText.replace(/[\s.,;:_]*@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi,'').trim();
+      cleanText = cleanText.replace(/[\s.,;:_]*@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi, '').trim();
 
-      return {t:cleanText, c:isCorrect};
-    }).filter(o=>o.t.length>0);
+      return { t: cleanText, c: isCorrect };
+    }).filter(o => o.t.length > 0);
 
-    if(!qText||opts.length<2)return null;
+    if(!qText || opts.length < 2) return null;
 
-    // Determine type: TF if header tag, @s present, or multiple correct
-    const multiCorrect=opts.filter(o=>o.c).length>1;
-    const isTf=isTfHeader||hasAtS||multiCorrect;
+    // Type decision: ONLY mark as 'tf' if explicitly specified or has @s tag!
+    // Standard questions with A, B, C, D are ALWAYS MCQ unless explicitly marked as [Đ/S]
+    const isTf = isExplicitTf || hasExplicitSaiTag;
 
-    // For TF without explicit markers: if no star/at/answerLine used,
-    // default all to false (user must mark correct ones)
-    // This handles the case where TF header is present but no markers
-
-    const res={q:qText, opts};
-    if(isTf) res.type='tf';
+    const res = { q: qText, opts };
+    if(isTf) res.type = 'tf';
     return res;
   }).filter(Boolean);
 }
