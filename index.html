@@ -4834,7 +4834,7 @@ function initExamKeyboard(){
     const numMap={'1':0,'2':1,'3':2,'4':3,'a':0,'b':1,'c':2,'d':3};const key=e.key.toLowerCase();
     if(numMap[key]!==undefined&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
       const optIdx=numMap[key];const q=state.currentExam.questions[state.activeQIdx];
-      if(q&&optIdx<q.opts.length){pick(state.activeQIdx,optIdx);const dot=document.querySelectorAll('.nav-dot')[state.activeQIdx];if(dot){dot.style.transform='scale(1.3)';setTimeout(()=>dot.style.transform='',200)}e.preventDefault()}
+      if(q&&q.type!=='tf'&&optIdx<q.opts.length){pick(state.activeQIdx,optIdx);const dot=document.querySelectorAll('.nav-dot')[state.activeQIdx];if(dot){dot.style.transform='scale(1.3)';setTimeout(()=>dot.style.transform='',200)}e.preventDefault()}
     }
     if((e.key==='n'||e.key==='N')&&!e.ctrlKey){scrollToFirstUnanswered();e.preventDefault()}
   });
@@ -4935,9 +4935,9 @@ function startExam(id){
   const ex=state.exams.find(e=>e.id===id);if(!ex)return;
   state.currentExam=JSON.parse(JSON.stringify(ex));
   state.currentExam.questions.forEach((q,qi)=>{q._origQIdx=qi;q.opts.forEach((o,oi)=>{o._origOptIdx=oi})});
-  if(shuffleEnabled&&(shuffleMode==='both'||shuffleMode==='opts'))state.currentExam.questions.forEach(q=>shuffleArr(q.opts));
+  if(shuffleEnabled&&(shuffleMode==='both'||shuffleMode==='opts'))state.currentExam.questions.forEach(q=>{if(q.type!=='tf')shuffleArr(q.opts)});
   if(shuffleEnabled&&(shuffleMode==='both'||shuffleMode==='q'))shuffleArr(state.currentExam.questions);
-  state.userAns=new Array(state.currentExam.questions.length).fill(null);
+  state.userAns=state.currentExam.questions.map(q=>q.type==='tf'?{}:null);
   state.submitted=false;state.cheatCount=0;state.startTime=Date.now();_submitting=false;state.activeQIdx=0;
   const saved=restoreAnswersFromSession(id);
   if(saved&&saved.answers&&saved.answers.length===state.userAns.length){state.userAns=saved.answers;state.time=Math.max(1,saved.timeLeft||900);showToast('Đã khôi phục bài làm dang dở!','success',3000)}else{state.time=900}
@@ -5039,7 +5039,7 @@ function updateMobileExamStickyHUD(){
   const total = state.currentExam.questions.length;
   const currentIdx = (state.activeQIdx || 0) + 1;
   const answered = state.userAns.filter((_, i) => isQuestionAnswered(i)).length;
-  const timeText = document.getElementById('timerDisplay')?.textContent || '--:--';
+  const timeText = document.getElementById('timer')?.textContent || '--:--';
   hud.innerHTML = `
     <div style="display:flex;align-items:center;gap:8px">
       <span style="font-family:var(--font-tech),'Orbitron',monospace;font-size:10px;font-weight:900;color:var(--nerv-green,#00ff66);background:rgba(0,255,102,.1);padding:3px 8px;border-radius:4px">CÂU ${currentIdx}/${total}</span>
@@ -5048,7 +5048,7 @@ function updateMobileExamStickyHUD(){
     <div style="display:flex;align-items:center;gap:6px">
       <span style="font-family:var(--font-tech),'Orbitron',monospace;font-size:12px;font-weight:900;color:var(--primary);background:rgba(0,0,0,.6);padding:3px 8px;border-radius:4px;border:1px solid rgba(249,115,22,.3)" id="mobileStickyTimer">${timeText}</span>
       <button onclick="scrollToFirstUnanswered()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:white;font-size:9px;font-weight:800;padding:5px 8px;border-radius:4px" title="Câu kế">TIẾP ▶</button>
-      <button onclick="confirmSubmitExam()" style="background:var(--nerv-green,#00ff66);color:#000;font-size:9px;font-weight:900;padding:5px 10px;border-radius:4px;border:none">NỘP</button>
+      <button onclick="customConfirm('BẠN CÓ CHẮC MUỐN NỘP BÀI KHÔNG?',submitExam)" style="background:var(--nerv-green,#00ff66);color:#000;font-size:9px;font-weight:900;padding:5px 10px;border-radius:4px;border:none">NỘP</button>
     </div>
   `;
 }
@@ -5142,7 +5142,7 @@ const ps={exam:null,questions:[],qIdx:0,answers:[],correctCount:0};
 function startPractice(id){
   const ex=state.exams.find(e=>e.id===id);if(!ex)return;
   ps.exam=JSON.parse(JSON.stringify(ex));ps.questions=[...ps.exam.questions];
-  if(shuffleEnabled){if(shuffleMode==='both'||shuffleMode==='opts')ps.questions.forEach(q=>shuffleArr(q.opts));if(shuffleMode==='both'||shuffleMode==='q')shuffleArr(ps.questions)}
+  if(shuffleEnabled){if(shuffleMode==='both'||shuffleMode==='opts')ps.questions.forEach(q=>{if(q.type!=='tf')shuffleArr(q.opts)});if(shuffleMode==='both'||shuffleMode==='q')shuffleArr(ps.questions)}
   ps.qIdx=0;ps.answers=new Array(ps.questions.length).fill(null);ps.correctCount=0;
   const sub=document.getElementById('practiceTitleSub');if(sub)sub.textContent=ex.title+' · '+ps.questions.length+' câu';
   showSection('practicePage');renderPracticeQ();
@@ -5348,7 +5348,25 @@ function nextPractice(){
   },220);
 }
 function showPracticeResult(){
-  const total=ps.questions.length,correct=ps.correctCount;const score=total>0?(correct/total*10).toFixed(1):0;const info=getScoreInfo(parseFloat(score));
+  const total=ps.questions.length;
+  let totalEarned=0;
+  ps.questions.forEach((q,i)=>{
+    if(q.type==='tf'){
+      const ua=ps.answers[i]||{};
+      let subCorrect=0;
+      q.opts.forEach((o,oi)=>{if(ua[oi]!==undefined&&ua[oi]===Boolean(o.c))subCorrect++});
+      if(q.opts.length===4){
+        if(subCorrect===4)totalEarned+=1.0;
+        else if(subCorrect===3)totalEarned+=0.5;
+        else if(subCorrect===2)totalEarned+=0.25;
+        else if(subCorrect===1)totalEarned+=0.1;
+      }else{totalEarned+=subCorrect/(q.opts.length||1)}
+    }else{
+      if(ps.answers[i]!==null&&Boolean(q.opts[ps.answers[i]]?.c))totalEarned+=1.0;
+    }
+  });
+  const correct=parseFloat(totalEarned.toFixed(2));
+  const score=total>0?(totalEarned/total*10).toFixed(1):0;const info=getScoreInfo(parseFloat(score));
   document.getElementById('practiceArea').innerHTML=`<div class="text-center py-6"><p class="text-[10px] font-black uppercase tracking-widest text-orange-500 mb-4">KẾT QUẢ LUYỆN TẬP</p><div class="text-8xl font-black italic ${info.cls} mb-3">${score}</div><p class="text-sm font-black uppercase ${info.cls} mb-8">${info.label}</p><div class="grid grid-cols-3 gap-4 max-w-xs mx-auto mb-8"><div class="glass p-4 text-center rounded-2xl"><div class="text-2xl font-black text-green-400">${correct}</div><div class="text-[9px] opacity-40 uppercase mt-1">Đúng</div></div><div class="glass p-4 text-center rounded-2xl"><div class="text-2xl font-black text-red-400">${total-correct}</div><div class="text-[9px] opacity-40 uppercase mt-1">Sai</div></div><div class="glass p-4 text-center rounded-2xl"><div class="text-2xl font-black" style="color:var(--primary)">${total}</div><div class="text-[9px] opacity-40 uppercase mt-1">Tổng</div></div></div><button onclick="startPractice(${ps.exam.id})" class="w-full btn-premium py-4 rounded-xl font-black uppercase text-sm mb-3">🔄 THỬ LẠI</button><button onclick="showSection('selectExamPage')" class="w-full glass py-4 rounded-xl font-bold uppercase text-sm text-orange-500">CHỌN BÀI KHÁC</button></div>`;
   if(parseFloat(score)>=8)setTimeout(launchConfetti,400);
 }
@@ -5358,7 +5376,7 @@ function startTimer(){
   state.timer=setInterval(()=>{
     state.time=Math.max(0,state.time-1);const m=Math.floor(state.time/60),s=state.time%60;
     const el=document.getElementById('timer');
-    if(el){el.innerText=`${m}:${s<10?'0'+s:s}`;el.className=state.time<=60?'text-xl font-black timer-urgent leading-none':state.time<=180?'text-xl font-black timer-warn leading-none':'text-xl font-black timer-normal leading-none'}
+    if(el){el.innerText=`${m}:${s<10?'0'+s:s}`;const mst=document.getElementById('mobileStickyTimer');if(mst)mst.textContent=`${m}:${s<10?'0'+s:s}`;el.className=state.time<=60?'text-xl font-black timer-urgent leading-none':state.time<=180?'text-xl font-black timer-warn leading-none':'text-xl font-black timer-normal leading-none'}
     const sidebar=document.getElementById('examSidebar');if(sidebar){if(state.time<=60&&state.time>0)sidebar.classList.add('sidebar-urgent');else sidebar.classList.remove('sidebar-urgent')}
     const bar=document.getElementById('topProgressBar');if(bar)bar.style.width=(state.time/900*100)+'%';
     if(state.time<=0)submitExam();
@@ -5455,6 +5473,7 @@ async function submitExam(){
   document.getElementById('resultCorrect').textContent=correct;document.getElementById('resultWrong').textContent=wrong;document.getElementById('resultTotal').textContent=total;
   const mm=Math.floor(timeUsed/60),ss=timeUsed%60;document.getElementById('timeFinish').textContent=`Hoàn thành trong ${mm}:${ss<10?'0'+ss:ss}  ·  Rời tab: ${state.cheatCount} lần`;
   showSection('resultPage');if(state.finalScore>=8)setTimeout(launchConfetti,400);_submitting=false;
+  const sBtn=document.getElementById('submitBtn');if(sBtn){sBtn.disabled=false;sBtn.innerText='NỘP BÀI'}
 }
 function renderReview(){
   showSection('reviewPage');
@@ -5659,7 +5678,7 @@ async function handleSaveExam(){
   const title=(document.getElementById('examTitle').value||'').trim();const raw=(document.getElementById('rawInput').value||'').trim();
   if(!title)return showAdminStatus('THIẾU TÊN BÀI TẬP!');if(!raw)return showAdminStatus('THIẾU NỘI DUNG CÂU HỎI!');
   const questions=parseInput(raw);if(!questions.length)return showAdminStatus('KHÔNG PARSE ĐƯỢC CÂU HỎI!');
-  const inv=questions.find(q=>!q.opts.some(o=>o.c));if(inv)return showAdminStatus(`CÂU "${inv.q.substring(0,30)}..." THIẾU @t`);
+  const inv=questions.find(q=>q.type!=='tf'&&!q.opts.some(o=>o.c));if(inv)return showAdminStatus(`CÂU "${inv.q.substring(0,30)}..." THIẾU @t`);
   if(questions.some(q=>q.opts.length<2))return showAdminStatus('MỖI CÂU CẦN ÍT NHẤT 2 ĐÁP ÁN!');
   const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerText='ĐANG LƯU...';
   let res;if(state.editingId)res=await _sb.from('exams').update({title,questions}).eq('id',state.editingId);else res=await _sb.from('exams').insert([{title,questions}]);
@@ -5676,7 +5695,7 @@ async function deleteExam(id){
 
 function parseInput(txt){
   if(!txt?.trim())return[];
-  const blocks=txt.split(/(?=(?:Câu|Question|Q)\s*\d+[\s.:：）)\]])/im);
+  const blocks=txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[.:：）)\]\s])/im);
   return blocks.map(block=>{
     block=block.trim();if(!block)return null;
     const lines=block.replace(/^(?:Câu|Question|Q)\s*\d+[\s.:：）)\]]\s*/im,'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
