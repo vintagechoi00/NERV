@@ -4217,7 +4217,7 @@ body[data-theme="light"] .opt-practice-dim {
     <p class="text-[9px] opacity-30 uppercase tracking-widest mb-8">Gõ thủ công: thêm @t sau đáp án đúng &nbsp;|&nbsp; Hoặc nhấn WORD để nhập từ file</p>
     <div class="space-y-4">
       <input type="text" id="examTitle" placeholder="Tên bài tập..." class="w-full p-5 rounded-2xl outline-none" maxlength="200">
-      <textarea id="rawInput" rows="10" class="w-full p-5 rounded-2xl font-mono text-sm outline-none" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án sai&#10;B. Đáp án đúng @t&#10;C. Đáp án sai&#10;&#10;Câu 2: Câu hỏi 2?&#10;A. Đúng @t&#10;B. Sai"></textarea>
+      <textarea id="rawInput" rows="10" class="w-full p-5 rounded-2xl font-mono text-sm outline-none" placeholder="Câu 1: Thủ đô của Việt Nam?&#10;A. Hà Nội&#10;B. *Đà Nẵng&#10;C. Huế&#10;D. Cần Thơ&#10;&#10;(Thêm * trước đáp án đúng, hoặc ghi 'Đáp án: B' ở cuối)"></textarea>
       <div class="flex gap-3 items-center flex-wrap">
         <button type="button" onclick="insertTfTemplate()" class="glass py-4 px-5 rounded-2xl font-black uppercase text-xs tracking-wider border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition flex items-center gap-1.5"><span class="material-icons text-sm">post_add</span> MẪU ĐÚNG / SAI</button>
       <button id="saveBtn" onclick="handleSaveExam()" class="flex-1 btn-premium py-4 rounded-2xl font-black uppercase text-sm tracking-wider">LƯU DỮ LIỆU</button>
@@ -5678,7 +5678,7 @@ async function handleSaveExam(){
   const title=(document.getElementById('examTitle').value||'').trim();const raw=(document.getElementById('rawInput').value||'').trim();
   if(!title)return showAdminStatus('THIẾU TÊN BÀI TẬP!');if(!raw)return showAdminStatus('THIẾU NỘI DUNG CÂU HỎI!');
   const questions=parseInput(raw);if(!questions.length)return showAdminStatus('KHÔNG PARSE ĐƯỢC CÂU HỎI!');
-  const inv=questions.find(q=>q.type!=='tf'&&!q.opts.some(o=>o.c));if(inv)return showAdminStatus(`CÂU "${inv.q.substring(0,30)}..." THIẾU @t`);
+  const inv=questions.find(q=>q.type!=='tf'&&!q.opts.some(o=>o.c));if(inv)return showAdminStatus(`CÂU "${inv.q.substring(0,30)}..." CHƯA ĐÁNH DẤU ĐÁP ÁN (dùng * hoặc "Đáp án: X")`);
   if(questions.some(q=>q.opts.length<2))return showAdminStatus('MỖI CÂU CẦN ÍT NHẤT 2 ĐÁP ÁN!');
   const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerText='ĐANG LƯU...';
   let res;if(state.editingId)res=await _sb.from('exams').update({title,questions}).eq('id',state.editingId);else res=await _sb.from('exams').insert([{title,questions}]);
@@ -5698,27 +5698,75 @@ function parseInput(txt){
   const blocks=txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[.:：）)\]\s])/im);
   return blocks.map(block=>{
     block=block.trim();if(!block)return null;
-    const lines=block.replace(/^(?:Câu|Question|Q)\s*\d+[\s.:：）)\]]\s*/im,'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    const lines=block.replace(/^(?:Câu|Question|Q)\s*\d+\s*[.:：）)\]]\s*/im,'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
     if(!lines.length)return null;
-    const optRegex=/^[A-Da-d]\s*[.)：:]\s*\S/;let optStartIdx=lines.findIndex(l=>optRegex.test(l));
-    if(optStartIdx<0)optStartIdx=1;if(optStartIdx<=0)return null;
-    const q=lines.slice(0,optStartIdx).join(' ').trim();
-    
-    // Check True/False question
-    const isTfHeader = /\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI|DUNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai|Dung\/Sai)\)|đúng\s*hay\s*sai|đúng\s*hoặc\s*sai/i.test(block);
-    const hasExplicitS = lines.slice(optStartIdx).some(l => /@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(l));
-    const multipleT = lines.slice(optStartIdx).filter(l => /@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(l)).length > 1;
-    const isTf = isTfHeader || hasExplicitS || multipleT;
+    const optRe=/^[A-Da-d]\s*[.)：:]\s*\S/;
+    let optStart=lines.findIndex(l=>optRe.test(l));
+    if(optStart<0)optStart=1;
+    if(optStart<=0)return null;
+    const qText=lines.slice(0,optStart).join(' ').trim();
 
-    const opts=lines.slice(optStartIdx).map(l=>{
-      const isCorrect = /@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(l);
-      const cleanT = l.replace(/@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi, '').replace(/^[A-Da-d]\s*[.)：:]\s*/,'').trim();
-      return { t: cleanT, c: isCorrect };
+    // Detect TF from header tags
+    const isTfHeader=/\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI|DUNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai|Dung\/Sai)\)|đúng\s*(?:hay|hoặc)\s*sai/i.test(block);
+
+    // Collect raw option lines
+    const rawOpts=lines.slice(optStart);
+
+    // --- WAY 2: Check for "Đáp án: X" line at the end ---
+    let answerLineLetter=null;
+    const lastLine=rawOpts[rawOpts.length-1]||'';
+    const ansMatch=lastLine.match(/^(?:Đáp\s*án|Dap\s*an|Answer|Ans|DA)\s*[:.]\s*([A-Da-d])\s*$/i);
+    if(ansMatch){
+      answerLineLetter=ansMatch[1].toUpperCase();
+      rawOpts.pop(); // remove the answer line from options
+    }
+
+    // --- Parse each option ---
+    let hasStar=false, hasAtMarker=false, hasAtS=false;
+    const opts=rawOpts.map((l,li)=>{
+      const letter=String.fromCharCode(65+li);
+
+      // Check WAY 1: star prefix  →  "A. *text" or "A) *text"
+      const starMatch=l.match(/^[A-Da-d]\s*[.)：:]\s*\*(.+)$/);
+
+      // Check WAY 3: @t/@đ/@s suffix
+      const hasAtT=/@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(l);
+      const hasAtSLocal=/@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(l);
+
+      if(starMatch) hasStar=true;
+      if(hasAtT||hasAtSLocal) hasAtMarker=true;
+      if(hasAtSLocal) hasAtS=true;
+
+      // Determine correctness
+      let isCorrect=false;
+      if(starMatch) isCorrect=true;
+      else if(hasAtT) isCorrect=true;
+      else if(answerLineLetter && letter===answerLineLetter) isCorrect=true;
+
+      // Clean the text: remove star, @markers, and letter prefix
+      let cleanText=l;
+      if(starMatch){
+        cleanText=starMatch[1].trim();
+      }else{
+        cleanText=l.replace(/^[A-Da-d]\s*[.)：:]\s*/,'');
+      }
+      cleanText=cleanText.replace(/[\s.,;:_]*@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi,'').trim();
+
+      return {t:cleanText, c:isCorrect};
     }).filter(o=>o.t.length>0);
 
-    if(!q||opts.length<2)return null;
-    const res = { q, opts };
-    if(isTf) res.type = 'tf';
+    if(!qText||opts.length<2)return null;
+
+    // Determine type: TF if header tag, @s present, or multiple correct
+    const multiCorrect=opts.filter(o=>o.c).length>1;
+    const isTf=isTfHeader||hasAtS||multiCorrect;
+
+    // For TF without explicit markers: if no star/at/answerLine used,
+    // default all to false (user must mark correct ones)
+    // This handles the case where TF header is present but no markers
+
+    const res={q:qText, opts};
+    if(isTf) res.type='tf';
     return res;
   }).filter(Boolean);
 }
@@ -5735,33 +5783,54 @@ async function handleWordFile(input){
     showWordModal(questions);
   }catch(e){showFileStatus('s-err','❌ LỖI: '+(e.message||'').substring(0,60))}
 }
-function parseWordHTML(html){
-  const doc=new DOMParser().parseFromString(html,'text/html');const paras=Array.from(doc.querySelectorAll('p,li'));
-  const questions=[],qRe=/^(Câu|Question|Q)\s*(\d+)\s*[:.）)]/i,optRe=/^([A-Da-d])\s*[.)]\s*/;let cur=null;
+function parseWordHTML(rawHtml){
+  const doc=new DOMParser().parseFromString(rawHtml,'text/html');
+  const paras=Array.from(doc.querySelectorAll('p,li'));
+  const questions=[];
+  const qRe=/^(?:Câu|Question|Q)\s*\d+\s*[.:）)]/i;
+  const optRe=/^([A-Da-d])\s*[.)]\s*/;
+  let cur=null;
+
   for(const p of paras){
     const txt=p.textContent.trim();if(!txt)continue;
+
+    // Check for answer line: "Đáp án: B"
+    const ansLineMatch=txt.match(/^(?:Đáp\s*án|Dap\s*an|Answer|Ans|DA)\s*[:.]\s*([A-Da-d])\s*$/i);
+    if(ansLineMatch&&cur&&cur.opts.length>0){
+      const letter=ansLineMatch[1].toUpperCase();
+      const idx=letter.charCodeAt(0)-65;
+      if(idx>=0&&idx<cur.opts.length){
+        if(cur.type!=='tf') cur.opts.forEach((o,i)=>{o.c=(i===idx)});
+        else cur.opts[idx].c=true;
+      }
+      continue;
+    }
+
     if(qRe.test(txt)){
       if(cur&&cur.opts.length>0)questions.push(cur);
-      const qText = txt.replace(qRe,'').trim();
-      const isTf = /\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai)\)|đúng\s*hay\s*sai|đúng\s*hoặc\s*sai/i.test(txt);
-      cur={q: qText, opts:[], type: isTf ? 'tf' : undefined};
+      const qText=txt.replace(qRe,'').trim();
+      const isTf=/\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai)\)|đúng\s*(?:hay|hoặc)\s*sai/i.test(txt);
+      cur={q:qText, opts:[], type:isTf?'tf':undefined};
     }
     else if(optRe.test(txt)&&cur){
-      const hasRed=p.querySelector('.correct-answer')!==null||p.querySelector('span[style*="color:red"],span[style*="color: red"],span[style*="color:#ff"],span[style*="color: #ff"],span[style*="color: rgb(255"],font[color="red"],mark')!==null;
+      // Detect correct answer from: red text, bold, *, @t
+      const hasRed=p.querySelector('.correct-answer')!==null||
+        p.querySelector('span[style*="color:red"],span[style*="color: red"],span[style*="color:#ff"],span[style*="color: #ff"],span[style*="color: rgb(255"],font[color="red"],mark,b,strong')!==null;
+      const hasStar=/^[A-Da-d]\s*[.)]\s*\*/.test(txt);
       const hasAtT=/@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(txt);
       const hasAtS=/@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(txt);
-      if(hasAtS) cur.type = 'tf';
-      const isCorrect=hasRed||hasAtT;
-      const t=txt.replace(optRe,'').replace(/[\s.,;:_]*@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi,'').trim();
+      if(hasAtS&&cur) cur.type='tf';
+      const isCorrect=hasRed||hasStar||hasAtT;
+      let t=txt.replace(optRe,'').replace(/^\*/,'').replace(/[\s.,;:_]*@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi,'').trim();
       if(t)cur.opts.push({t,c:isCorrect});
     }
     else if(cur&&cur.opts.length===0&&txt){cur.q+=' '+txt}
   }
   if(cur&&cur.opts.length>0)questions.push(cur);
+
+  // Auto-detect TF: multiple correct answers
   questions.forEach(q=>{
-    if(!q.type && q.opts.filter(o=>o.c).length > 1){
-      q.type = 'tf';
-    }
+    if(!q.type&&q.opts.filter(o=>o.c).length>1) q.type='tf';
   });
   return questions;
 }
@@ -5780,10 +5849,10 @@ function showWordModal(questions){
       ${q.opts.map((o,oi)=>`
         <p class="${o.c?'wq-correct':'wq-wrong'}" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleWordAnswer(${i},${oi})">
           <span>${String.fromCharCode(65+oi)}. ${esc(o.t)}</span>
-          <span style="font-size:9px;font-weight:900">${q.type==='tf'?(o.c?'[ĐÚNG ✓]':'[SAI ✗]'):(o.c?'[ĐÁP ÁN ĐÚNG ✓]':'')}</span>
+          <span style="font-size:9px;font-weight:900">${q.type==='tf'?(o.c?'[ĐÚNG ✓]':'[SAI ✗]'):(o.c?'[ĐÁP ÁN ✓]':'')}</span>
         </p>
       `).join('')}
-      ${!q.opts.some(o=>o.c)&&q.type!=='tf'?'<p style="color:#ef4444;font-family:var(--font-tech),monospace;font-size:9px;margin-top:6px;font-weight:700;letter-spacing:.1em">⚠ CHƯA PHÁT HIỆN ĐÁP ÁN</p>':''}
+      ${!q.opts.some(o=>o.c)&&q.type!=='tf'?'<p style="color:#ef4444;font-family:var(--font-tech),monospace;font-size:9px;margin-top:6px;font-weight:700;letter-spacing:.1em">⚠ BẤM VÀO ĐÁP ÁN ĐÚNG ĐỂ ĐÁNH DẤU</p>':''}
     </div>
   `).join('');
   document.getElementById('wordModal').style.display='flex';
@@ -5806,9 +5875,9 @@ function applyWordImport(){
     const optsStr = q.opts.map((o,idx)=>{
       const letter = String.fromCharCode(65+idx);
       if(q.type==='tf'){
-        return `${letter}. ${o.t} ${o.c?'@t':'@s'}`;
+        return o.c ? `${letter}. *${o.t}` : `${letter}. ${o.t}`;
       }
-      return `${letter}. ${o.t}${o.c?' @t':''}`;
+      return o.c ? `${letter}. *${o.t}` : `${letter}. ${o.t}`;
     }).join('\n');
     return `Câu ${i+1}${tag}: ${q.q}\n${optsStr}`;
   }).join('\n\n');
@@ -6490,10 +6559,10 @@ if(_origOpenProfile){
 function insertTfTemplate(){
   const ta = document.getElementById('rawInput');
   if(!ta)return;
-  const sample = "Câu 1 [Đ/S]: Cho đoạn tư liệu sau: \"Năm 1945, nhân dân Việt Nam đã tiến hành Tổng khởi nghĩa giành chính quyền.\"\nA. Khởi nghĩa diễn ra nhanh chóng, thắng lợi trong vòng 15 ngày. @t\nB. Chính quyền về tay nhân dân trên toàn bộ cả nước. @đ\nC. Cuộc khởi nghĩa nổ ra sau khi quân Đồng minh tiến vào Việt Nam. @s\nD. Lực lượng chính trị quần chúng giữ vai trò quyết định thắng lợi. @t\n\n";
+  const sample = "Câu 1 [Đ/S]: Cho đoạn tư liệu sau: \"Năm 1945, nhân dân Việt Nam đã tiến hành Tổng khởi nghĩa giành chính quyền.\"\nA. *Khởi nghĩa diễn ra nhanh chóng, thắng lợi trong vòng 15 ngày.\nB. Chính quyền về tay nhân dân trên toàn bộ cả nước.\nC. *Cuộc khởi nghĩa được Đảng Cộng sản Đông Dương lãnh đạo.\nD. Lực lượng quân Đồng minh hỗ trợ trực tiếp cuộc khởi nghĩa.\n\n";
   ta.value = (ta.value ? ta.value.trim() + "\n\n" : "") + sample;
   ta.focus();
-  showToast("Đã thêm mẫu câu hỏi Đúng / Sai!","success",2500);
+  showToast("Đã thêm mẫu câu Đúng / Sai (dùng * đánh dấu)!","success",2500);
 }
 </script>
 
