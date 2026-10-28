@@ -770,7 +770,7 @@ body.theme-eva00 .nerv-btn-confirm:hover{background:#fff;color:#000;box-shadow:0
 .wq-correct{background:rgba(34,197,94,.15);color:#22c55e;font-weight:700;padding:5px 12px;margin-bottom:4px;border-left:3px solid #22c55e;font-family:var(--font-tech),'Share Tech Mono',monospace;font-size:11px}
 .wq-wrong{opacity:.55;padding:5px 12px;margin-bottom:4px;border-left:3px solid transparent;font-size:11px}
 
-#mobileNav{position:fixed;bottom:0;left:0;right:0;z-index:5000;background:rgba(8,8,8,.95);backdrop-filter:blur(20px);border-top:1px solid rgba(249,115,22,.15);padding:6px 0 max(6px,env(safe-area-inset-bottom))}
+#mobileNav{position:fixed;bottom:0;left:0;right:0;z-index:5000;background:rgba(6,10,8,.97);backdrop-filter:blur(24px);border-top:1.5px solid var(--nerv-green,#00ff66);box-shadow:0 -6px 24px rgba(0,255,102,.2);clip-path:polygon(0 8px,16px 0,calc(100% - 16px) 0,100% 8px,100% 100%,0 100%);padding:8px 0 max(8px,env(safe-area-inset-bottom))}
 #mobileNav.hidden{display:none}
 @media(min-width:768px){#mobileNav{display:none!important}}
 .mob-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;cursor:pointer;transition:.2s;border-radius:12px;color:rgba(255,255,255,.35);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border:none;background:none}
@@ -788,11 +788,12 @@ body.theme-eva00 .nerv-btn-confirm:hover{background:#fff;color:#000;box-shadow:0
 .lb-filter-btn:hover,.lb-filter-btn.active{border-color:var(--primary);background:rgba(249,115,22,.12);color:var(--primary)}
 
 @media(max-width:640px){
-  #mainMenu{grid-template-columns:1fr!important;gap:16px!important;padding:0 10px}
-  .glass{padding:20px!important;border-radius:20px}
-  header{flex-direction:column;gap:16px;text-align:center}
-  .nerv-logo-img{margin:0 auto}
-}
+  #mainMenu{grid-template-columns:1fr!important;gap:14px!important;padding:0 8px}
+  #mainMenu>div{padding:18px 16px!important;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))!important}
+  .glass{padding:18px 14px!important}
+  header{flex-direction:row!important;justify-content:space-between!important;align-items:center!important;text-align:left!important;padding:10px 12px!important;gap:8px!important}
+  .nerv-logo-img{margin:0}
+}}
 
 .admin-login-modal-panel{background:#111;border:1px solid rgba(249,115,22,.25);border-radius:28px;padding:40px 36px;max-width:400px;width:100%;animation:authFadeIn .4s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
 .admin-login-modal-panel::before{content:'🔐';font-size:80px;position:absolute;top:-10px;right:-10px;opacity:.04;transform:rotate(15deg);pointer-events:none}
@@ -803,6 +804,325 @@ body.theme-eva00 .nerv-btn-confirm:hover{background:#fff;color:#000;box-shadow:0
 .rei-av-item.selected{border-color:var(--nerv-green,#00ff66);box-shadow:0 0 20px rgba(0,255,102,.35)}
 .rei-av-item.selected::after{content:'✓';position:absolute;top:2px;right:2px;width:16px;height:16px;background:var(--nerv-green,#00ff66);color:#000;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border-radius:50%}
 .rei-av-item img{width:100%;height:100%;object-fit:cover}
+
+/* ═══ NERV TACTICAL TRUE/FALSE QUESTION MODULES ═══ */
+.nerv-q-num-badge {
+  font-family: var(--font-tech), 'Orbitron', monospace;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nerv-green, #00ff66);
+  background: rgba(0, 255, 102, 0.08);
+  border: 1px solid rgba(0, 255, 102, 0.25);
+  padding: 3px 10px;
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  display: inline-flex;
+  align-items: center;
+}
+
+.nerv-q-type-badge {
+  font-family: var(--font-tech), 'Share Tech Mono', monospace;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 4px;
+}
+.nerv-q-type-badge.tf-badge {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+}
+.nerv-q-type-badge.mcq-badge {
+  color: #fb923c;
+  background: rgba(251, 146, 60, 0.1);
+  border: 1px solid rgba(251, 146, 60, 0.25);
+}
+
+.nerv-passage-box {
+  background: rgba(0, 255, 102, 0.02);
+  border: 1px solid rgba(0, 255, 102, 0.15);
+  border-left: 3px solid var(--nerv-green, #00ff66);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  padding: 16px 20px;
+  margin: 12px 0 18px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.nerv-passage-header {
+  font-family: var(--font-tech), 'Share Tech Mono', monospace;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--nerv-green, #00ff66);
+  opacity: 0.75;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tf-statement-row {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+@media (max-width: 640px) {
+  .tf-statement-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 14px;
+  }
+}
+.tf-statement-row:hover {
+  border-color: rgba(0, 255, 102, 0.25);
+  background: rgba(0, 255, 102, 0.03);
+}
+.tf-statement-row.has-answer {
+  border-color: rgba(0, 255, 102, 0.35);
+  box-shadow: 0 0 16px rgba(0, 255, 102, 0.08);
+}
+
+.tf-stmt-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+.tf-stmt-letter {
+  font-family: var(--font-tech), 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--nerv-green, #00ff66);
+  background: rgba(0, 255, 102, 0.1);
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.tf-stmt-text {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+.tf-stmt-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .tf-stmt-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
+.tf-choice-btn {
+  font-family: var(--font-tech), 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  user-select: none;
+  min-height: 44px;
+}
+.tf-choice-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.2);
+}
+.tf-choice-btn:active {
+  transform: scale(0.97);
+}
+
+.tf-btn-true:hover {
+  border-color: rgba(34, 197, 94, 0.6);
+  color: #22c55e;
+}
+.tf-btn-true.active {
+  background: #22c55e !important;
+  color: #000000 !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.4) !important;
+  font-weight: 900 !important;
+}
+
+.tf-btn-false:hover {
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #ef4444;
+}
+.tf-btn-false.active {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.3) !important;
+  font-weight: 900 !important;
+}
+
+.tf-review-row {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .tf-review-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.tf-review-row.tf-rev-correct {
+  border-left: 3px solid #22c55e;
+  background: rgba(34, 197, 94, 0.04);
+}
+.tf-review-row.tf-rev-wrong {
+  border-left: 3px solid #ef4444;
+  background: rgba(239, 68, 68, 0.04);
+}
+.tf-review-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.tf-rev-badge {
+  font-family: var(--font-tech), monospace;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+
+/* Nav-dot partial state */
+.nav-dot.partial {
+  border-color: #fbbf24 !important;
+  color: #fbbf24 !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+/* ═══ MOBILE TACTICAL HUD ENHANCEMENTS ═══ */
+@media (max-width: 900px) {
+  body::before {
+    content: '';
+    position: fixed;
+    top: 48px;
+    bottom: 74px;
+    left: 2px;
+    width: 2.5px;
+    background: linear-gradient(180deg, transparent, var(--nerv-green, #00ff66) 15%, var(--nerv-green, #00ff66) 85%, transparent);
+    box-shadow: 0 0 10px var(--nerv-green, #00ff66);
+    opacity: 0.75;
+    z-index: 90;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    top: 48px;
+    bottom: 74px;
+    right: 2px;
+    width: 2.5px;
+    background: linear-gradient(180deg, transparent, var(--nerv-green, #00ff66) 15%, var(--nerv-green, #00ff66) 85%, transparent);
+    box-shadow: 0 0 10px var(--nerv-green, #00ff66);
+    opacity: 0.75;
+    z-index: 90;
+    pointer-events: none;
+  }
+}
+
+#mobileExamStickyHUD {
+  display: none;
+}
+@media (max-width: 768px) {
+  #mobileExamStickyHUD {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 400;
+    background: rgba(6, 10, 8, 0.96);
+    backdrop-filter: blur(20px);
+    border-bottom: 1.5px solid rgba(0, 255, 102, 0.3);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+    padding: 8px 14px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+  }
+}
+
+/* Light mode for True/False */
+[data-theme="light"] .tf-statement-row {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+[data-theme="light"] .nerv-passage-box {
+  background: #f8fafc !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+  border-left-color: #059669 !important;
+}
+[data-theme="light"] .nerv-passage-header {
+  color: #059669 !important;
+}
+[data-theme="light"] .tf-stmt-letter {
+  background: rgba(5, 150, 105, 0.1) !important;
+  color: #059669 !important;
+}
+[data-theme="light"] .tf-choice-btn {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+[data-theme="light"] .tf-btn-true.active {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+}
+[data-theme="light"] .tf-btn-false.active {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+}
 </style>
 
 
@@ -1681,9 +2001,15 @@ body, input, button, textarea, select {
     display: none !important;
   }
   #nervTopBar .nerv-ticker-text {
-    display: none;
+    display: inline-block !important;
+    max-width: 140px !important;
+    font-size: 8px !important;
+    letter-spacing: 0.12em !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
-}
+}}
 
 /* ═══ NERV DYNAMIC PILOT THEME UTILITIES ═══ */
 /* Ensure all highlight & accent elements map dynamically to active pilot color */
@@ -3893,7 +4219,8 @@ body[data-theme="light"] .opt-practice-dim {
       <input type="text" id="examTitle" placeholder="Tên bài tập..." class="w-full p-5 rounded-2xl outline-none" maxlength="200">
       <textarea id="rawInput" rows="10" class="w-full p-5 rounded-2xl font-mono text-sm outline-none" placeholder="Câu 1: Câu hỏi?&#10;A. Đáp án sai&#10;B. Đáp án đúng @t&#10;C. Đáp án sai&#10;&#10;Câu 2: Câu hỏi 2?&#10;A. Đúng @t&#10;B. Sai"></textarea>
       <div class="flex gap-3 items-center flex-wrap">
-        <button id="saveBtn" onclick="handleSaveExam()" class="flex-1 btn-premium py-4 rounded-2xl font-black uppercase text-sm tracking-wider">LƯU DỮ LIỆU</button>
+        <button type="button" onclick="insertTfTemplate()" class="glass py-4 px-5 rounded-2xl font-black uppercase text-xs tracking-wider border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition flex items-center gap-1.5"><span class="material-icons text-sm">post_add</span> MẪU ĐÚNG / SAI</button>
+      <button id="saveBtn" onclick="handleSaveExam()" class="flex-1 btn-premium py-4 rounded-2xl font-black uppercase text-sm tracking-wider">LƯU DỮ LIỆU</button>
         <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden glass px-6 py-4 rounded-2xl font-bold text-xs uppercase">HỦY</button>
         <div class="flex gap-2">
           <button onclick="document.getElementById('wordFileInput').click()" class="w-14 h-14 glass rounded-2xl flex items-center justify-center hover:scale-110 transition-all border border-white/20" title="Nhập từ Word">
@@ -4627,19 +4954,190 @@ function startExam(id){
 const KEY_LABELS=['1','2','3','4'];
 function renderAllQuestions(){
   const area=document.getElementById('questionArea');
-  area.innerHTML=state.currentExam.questions.map((q,idx)=>`<div id="q-container-${idx}" class="space-y-6"><span class="text-orange-500 font-black text-[10px] tracking-widest uppercase">Câu ${idx+1}</span><h2 class="text-xl md:text-2xl font-bold mt-2">${esc(q.q)}</h2><div class="grid grid-cols-1 gap-3">${q.opts.map((o,oi)=>`<div onclick="pick(${idx},${oi})" id="opt-${idx}-${oi}" class="opt-card ${state.userAns[idx]===oi?'selected':''}" data-key="${oi+1}"><span class="opt-text flex-1">${esc(o.t)}</span><span class="opt-num-sub">${oi+1}</span></div>`).join('')}</div></div>`).join('<hr class="opacity-10 my-10 border-orange-500">');
+  if(!area)return;
+  
+  let stickyHud = document.getElementById('mobileExamStickyHUD');
+  if(!stickyHud){
+    stickyHud = document.createElement('div');
+    stickyHud.id = 'mobileExamStickyHUD';
+    area.parentElement.insertBefore(stickyHud, area);
+  }
+  updateMobileExamStickyHUD();
+
+  area.innerHTML=state.currentExam.questions.map((q,idx)=>{
+    const isTf = q.type === 'tf';
+    if(isTf){
+      return `
+        <div id="q-container-${idx}" class="space-y-5 q-tf-block">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="nerv-q-num-badge">CÂU ${idx+1}</span>
+              <span class="nerv-q-type-badge tf-badge"><span class="material-icons" style="font-size:12px">rule</span>ĐÚNG / SAI</span>
+            </div>
+            <span class="text-[9px] opacity-40 font-mono tracking-wider">CHỌN ĐÚNG HOẶC SAI CHO MỖI Ý</span>
+          </div>
+
+          <div class="nerv-passage-box">
+            <div class="nerv-passage-header"><span class="material-icons" style="font-size:13px">article</span>DỮ LIỆU ĐỀ BÀI // MAGI INTEL</div>
+            <div class="text-base md:text-lg font-bold leading-relaxed text-slate-100">${esc(q.q)}</div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3">
+            ${q.opts.map((o,oi)=>{
+              const letter = String.fromCharCode(65+oi);
+              const ua = (state.userAns[idx] && typeof state.userAns[idx]==='object') ? state.userAns[idx][oi] : undefined;
+              const isT = ua === true;
+              const isF = ua === false;
+              return `
+                <div class="tf-statement-row ${ua!==undefined?'has-answer':''}" id="tf-row-${idx}-${oi}">
+                  <div class="tf-stmt-left">
+                    <span class="tf-stmt-letter">${letter}</span>
+                    <span class="tf-stmt-text">${esc(o.t)}</span>
+                  </div>
+                  <div class="tf-stmt-actions">
+                    <button type="button" onclick="pickTf(${idx},${oi},true)" class="tf-choice-btn tf-btn-true ${isT?'active':''}" id="tf-btn-${idx}-${oi}-t">
+                      <span class="material-icons" style="font-size:14px">check_circle</span> ĐÚNG
+                    </button>
+                    <button type="button" onclick="pickTf(${idx},${oi},false)" class="tf-choice-btn tf-btn-false ${isF?'active':''}" id="tf-btn-${idx}-${oi}-f">
+                      <span class="material-icons" style="font-size:14px">cancel</span> SAI
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div id="q-container-${idx}" class="space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="nerv-q-num-badge">CÂU ${idx+1}</span>
+            <span class="nerv-q-type-badge mcq-badge"><span class="material-icons" style="font-size:12px">radio_button_checked</span>TRẮC NGHIỆM</span>
+          </div>
+        </div>
+        <h2 class="text-xl md:text-2xl font-bold mt-2 leading-snug">${esc(q.q)}</h2>
+        <div class="grid grid-cols-1 gap-3">
+          ${q.opts.map((o,oi)=>`
+            <div onclick="pick(${idx},${oi})" id="opt-${idx}-${oi}" class="opt-card ${state.userAns[idx]===oi?'selected':''}" data-key="${oi+1}">
+              <span class="opt-text flex-1">${esc(o.t)}</span>
+              <span class="opt-num-sub">${oi+1}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('<hr class="opacity-10 my-10 border-orange-500">');
   renderMap();
 }
-function pick(qi,oi){if(state.submitted)return;state.userAns[qi]=oi;document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(el=>el.classList.remove('selected'));document.getElementById(`opt-${qi}-${oi}`)?.classList.add('selected');state.activeQIdx=qi;renderMap();updateProgress();saveAnswersToSession()}
-function renderMap(){const dots=state.userAns.map((a,i)=>`<div onclick="scrollToQuestion(${i})" class="nav-dot ${a!==null?'answered':''} ${i===state.activeQIdx?'active-q':''}" title="Câu ${i+1}">${i+1}</div>`).join('');document.getElementById('questionMap').innerHTML=dots}
-function scrollToQuestion(idx){state.activeQIdx=idx;document.getElementById(`q-container-${idx}`)?.scrollIntoView({behavior:'smooth',block:'start'});renderMap()}
-function scrollToFirstUnanswered(){const idx=state.userAns.findIndex(a=>a===null);if(idx>=0)scrollToQuestion(idx);else showToast('Bạn đã trả lời tất cả câu hỏi!','success',2500)}
-function updateProgress(){
-  const total=state.userAns.length,answered=state.userAns.filter(a=>a!==null).length;const pct=total?(answered/total):0;
-  const ring=document.getElementById('progressRing');if(ring){const circ=2*Math.PI*38;ring.style.strokeDasharray=circ;ring.style.strokeDashoffset=circ*(1-pct)}
-  const cnt=document.getElementById('answeredCount');if(cnt)cnt.textContent=`${answered}/${total}`;
+
+function updateMobileExamStickyHUD(){
+  const hud = document.getElementById('mobileExamStickyHUD');
+  if(!hud || !state.currentExam)return;
+  const total = state.currentExam.questions.length;
+  const currentIdx = (state.activeQIdx || 0) + 1;
+  const answered = state.userAns.filter((_, i) => isQuestionAnswered(i)).length;
+  const timeText = document.getElementById('timerDisplay')?.textContent || '--:--';
+  hud.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-family:var(--font-tech),'Orbitron',monospace;font-size:10px;font-weight:900;color:var(--nerv-green,#00ff66);background:rgba(0,255,102,.1);padding:3px 8px;border-radius:4px">CÂU ${currentIdx}/${total}</span>
+      <span style="font-family:var(--font-tech),'Share Tech Mono',monospace;font-size:10px;color:#22c55e;font-weight:800">${answered}/${total} XONG</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-family:var(--font-tech),'Orbitron',monospace;font-size:12px;font-weight:900;color:var(--primary);background:rgba(0,0,0,.6);padding:3px 8px;border-radius:4px;border:1px solid rgba(249,115,22,.3)" id="mobileStickyTimer">${timeText}</span>
+      <button onclick="scrollToFirstUnanswered()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:white;font-size:9px;font-weight:800;padding:5px 8px;border-radius:4px" title="Câu kế">TIẾP ▶</button>
+      <button onclick="confirmSubmitExam()" style="background:var(--nerv-green,#00ff66);color:#000;font-size:9px;font-weight:900;padding:5px 10px;border-radius:4px;border:none">NỘP</button>
+    </div>
+  `;
 }
 
+function pick(qi,oi){
+  if(state.submitted)return;
+  state.userAns[qi]=oi;
+  document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`opt-${qi}-${oi}`)?.classList.add('selected');
+  state.activeQIdx=qi;
+  renderMap();
+  updateProgress();
+  updateMobileExamStickyHUD();
+  saveAnswersToSession();
+}
+
+function pickTf(qi, oi, val){
+  if(state.submitted)return;
+  if(!state.userAns[qi] || typeof state.userAns[qi] !== 'object'){
+    state.userAns[qi] = {};
+  }
+  state.userAns[qi][oi] = val;
+
+  const btnT = document.getElementById(`tf-btn-${qi}-${oi}-t`);
+  const btnF = document.getElementById(`tf-btn-${qi}-${oi}-f`);
+  const row = document.getElementById(`tf-row-${qi}-${oi}`);
+
+  if(btnT) btnT.classList.toggle('active', val === true);
+  if(btnF) btnF.classList.toggle('active', val === false);
+  if(row) row.classList.add('has-answer');
+
+  playSfx('select');
+  state.activeQIdx=qi;
+  renderMap();
+  updateProgress();
+  updateMobileExamStickyHUD();
+  saveAnswersToSession();
+}
+
+function isQuestionAnswered(qi){
+  const q = state.currentExam?.questions?.[qi];
+  if(!q) return false;
+  if(q.type === 'tf'){
+    const ua = state.userAns[qi];
+    return ua && typeof ua === 'object' && Object.keys(ua).length === q.opts.length;
+  }
+  return state.userAns[qi] !== null && state.userAns[qi] >= 0;
+}
+
+function isQuestionPartiallyAnswered(qi){
+  const q = state.currentExam?.questions?.[qi];
+  if(!q || q.type !== 'tf') return false;
+  const ua = state.userAns[qi];
+  if(!ua || typeof ua !== 'object') return false;
+  const count = Object.keys(ua).length;
+  return count > 0 && count < q.opts.length;
+}
+
+function renderMap(){
+  const dots=state.userAns.map((a,i)=>{
+    const isDone = isQuestionAnswered(i);
+    const isPart = isQuestionPartiallyAnswered(i);
+    const cls = isDone ? 'answered' : (isPart ? 'partial' : '');
+    return `<div onclick="scrollToQuestion(${i})" class="nav-dot ${cls} ${i===state.activeQIdx?'active-q':''}" title="Câu ${i+1}">${i+1}</div>`;
+  }).join('');
+  document.getElementById('questionMap').innerHTML=dots;
+}
+
+function scrollToQuestion(idx){
+  state.activeQIdx=idx;
+  document.getElementById(`q-container-${idx}`)?.scrollIntoView({behavior:'smooth',block:'start'});
+  renderMap();
+  updateMobileExamStickyHUD();
+}
+
+function scrollToFirstUnanswered(){
+  const idx=state.userAns.findIndex((_, i) => !isQuestionAnswered(i));
+  if(idx>=0)scrollToQuestion(idx);else showToast('Bạn đã trả lời tất cả câu hỏi!','success',2500);
+}
+
+function updateProgress(){
+  const total=state.userAns.length;
+  const answered=state.userAns.filter((_, i) => isQuestionAnswered(i)).length;
+  const pct=total?(answered/total):0;
+  const ring=document.getElementById('progressRing');
+  if(ring){const circ=2*Math.PI*38;ring.style.strokeDasharray=circ;ring.style.strokeDashoffset=circ*(1-pct)}
+  const cnt=document.getElementById('answeredCount');
+  if(cnt)cnt.textContent=`${answered}/${total}`;
+}
 const ps={exam:null,questions:[],qIdx:0,answers:[],correctCount:0};
 function startPractice(id){
   const ex=state.exams.find(e=>e.id===id);if(!ex)return;
@@ -4655,6 +5153,52 @@ function renderPracticeQ(){
   const pct=((ps.qIdx)/total)*100;
   const area=document.getElementById('practiceArea');
   if(!area)return;
+
+  const isTf = q.type === 'tf';
+
+  if(isTf){
+    area.innerHTML=`
+      <div class="tactical-scan-line"></div>
+      <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded" style="background:rgba(var(--primary-rgb),0.12);color:var(--primary);border:1px solid rgba(var(--primary-rgb),0.3)">CÂU ${ps.qIdx+1} / ${total}</span>
+          <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">ĐÚNG / SAI</span>
+        </div>
+        <span class="text-[10px] font-black text-green-500 bg-green-500/10 border border-green-500/30 px-3 py-1 rounded">✓ ${ps.correctCount} ĐÚNG</span>
+      </div>
+      <div class="practice-progress-bar">
+        <div class="practice-progress-fill" style="width:${pct}%"></div>
+      </div>
+      
+      <div class="nerv-passage-box mb-6">
+        <div class="nerv-passage-header"><span class="material-icons" style="font-size:13px">article</span>DỮ LIỆU ĐỀ BÀI // MAGI INTEL</div>
+        <div class="text-base md:text-xl font-black leading-snug practice-q-text text-slate-100">${esc(q.q)}</div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3.5" id="practiceOpts">
+        ${q.opts.map((o,oi)=>`
+          <div class="tf-statement-row" id="ptf-row-${oi}">
+            <div class="tf-stmt-left">
+              <span class="tf-stmt-letter">${String.fromCharCode(65+oi)}</span>
+              <span class="tf-stmt-text">${esc(o.t)}</span>
+            </div>
+            <div class="tf-stmt-actions" id="ptf-actions-${oi}">
+              <button type="button" onclick="pickPracticeTf(${oi},true)" class="tf-choice-btn tf-btn-true" id="ptf-btn-${oi}-t">
+                <span class="material-icons" style="font-size:14px">check_circle</span> ĐÚNG
+              </button>
+              <button type="button" onclick="pickPracticeTf(${oi},false)" class="tf-choice-btn tf-btn-false" id="ptf-btn-${oi}-f">
+                <span class="material-icons" style="font-size:14px">cancel</span> SAI
+              </button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div id="practiceResult" class="hidden mt-6"></div>
+    `;
+    setupCardSpotlight();
+    return;
+  }
+
   area.innerHTML=`
     <div class="tactical-scan-line"></div>
     <div class="flex justify-between items-center mb-4">
@@ -4677,6 +5221,66 @@ function renderPracticeQ(){
   `;
   setupCardSpotlight();
 }
+
+function pickPracticeTf(oi, val){
+  if(!ps.answers[ps.qIdx] || typeof ps.answers[ps.qIdx] !== 'object'){
+    ps.answers[ps.qIdx] = {};
+  }
+  const curAns = ps.answers[ps.qIdx];
+  if(curAns[oi] !== undefined) return;
+  curAns[oi] = val;
+
+  const q = ps.questions[ps.qIdx];
+  const expected = Boolean(q.opts[oi]?.c);
+  const isRight = val === expected;
+
+  const row = document.getElementById(`ptf-row-${oi}`);
+  const btnT = document.getElementById(`ptf-btn-${oi}-t`);
+  const btnF = document.getElementById(`ptf-btn-${oi}-f`);
+
+  if(btnT) btnT.disabled = true;
+  if(btnF) btnF.disabled = true;
+
+  if(isRight){
+    playSfx('correct');
+    if(row){
+      row.style.borderColor = '#22c55e';
+      row.style.background = 'rgba(34,197,94,0.12)';
+      row.style.boxShadow = '0 0 20px rgba(34,197,94,0.3)';
+    }
+    if(val === true && btnT) btnT.classList.add('active');
+    if(val === false && btnF) btnF.classList.add('active');
+  } else {
+    playSfx('wrong');
+    if(row){
+      row.style.borderColor = '#ef4444';
+      row.style.background = 'rgba(239,68,68,0.12)';
+      row.style.boxShadow = '0 0 20px rgba(239,68,68,0.3)';
+    }
+    if(val === true && btnT) btnT.classList.add('active');
+    if(val === false && btnF) btnF.classList.add('active');
+  }
+
+  if(Object.keys(curAns).length === q.opts.length){
+    let allRight = true;
+    q.opts.forEach((o, i)=>{
+      if(curAns[i] !== Boolean(o.c)) allRight = false;
+    });
+    if(allRight) ps.correctCount++;
+
+    const result = document.getElementById('practiceResult');
+    const total = ps.questions.length;
+    if(result){
+      result.classList.remove('hidden');
+      result.innerHTML = `
+        <button onclick="nextPractice()" class="w-full btn-premium py-4 rounded-xl font-black uppercase text-sm tracking-widest flex items-center justify-center gap-2 shadow-2xl hover:scale-[1.01] active:scale-[0.99] transition-all">
+          ${ps.qIdx<total-1?'CÂU TIẾP THEO <span class="material-icons text-base">arrow_forward</span>':'XEM KẾT QUẢ <span class="material-icons text-base">assessment</span>'}
+        </button>
+      `;
+    }
+  }
+}
+
 function pickPractice(oi){
   if(ps.answers[ps.qIdx]!==null)return;
   ps.answers[ps.qIdx]=oi;
@@ -4684,14 +5288,12 @@ function pickPractice(oi){
   const isCorrect=Boolean(q.opts[oi]?.c);
   if(isCorrect)ps.correctCount++;
 
-  // Play distinct sound effect
   if(isCorrect){
     playSfx('correct');
   }else{
     playSfx('wrong');
   }
 
-  // Intensely highlight the correct & wrong boxes directly (no added badges/text)
   q.opts.forEach((o,i)=>{
     const el=document.getElementById(`popt-${i}`);
     if(!el)return;
@@ -4699,18 +5301,14 @@ function pickPractice(oi){
     el.style.cursor='default';
 
     if(o.c){
-      // Correct option: intensely highlighted with neon green aura
       el.classList.add('opt-practice-correct');
     }else if(i===oi&&!o.c){
-      // Wrong option: intensely highlighted with red warning pulse
       el.classList.add('opt-practice-wrong');
     }else{
-      // Other options: gracefully dimmed
       el.classList.add('opt-practice-dim');
     }
   });
 
-  // Render ONLY the Next button (remove the explanation box below as requested)
   const result=document.getElementById('practiceResult');
   const total=ps.questions.length;
   result.classList.remove('hidden');
@@ -4785,15 +5383,67 @@ async function submitExam(){
   const realElapsed=Math.floor((Date.now()-state.startTime)/1000);const timeUsed=Math.min(realElapsed,900);
   state.submitted=true;clearInterval(state.timer);state.timer=null;stopCheatGuard();clearAnswersSession();
   const bar=document.getElementById('topProgressBar');if(bar)bar.classList.add('hidden');
-  const total=state.currentExam.questions.length;let correct=0;
-  state.currentExam.questions.forEach((q,i)=>{const ua=state.userAns[i];if(ua!==null&&ua>=0&&q.opts[ua]?.c)correct++});
-  let wrong=Math.max(0,total-correct-state.userAns.filter(a=>a===null).length);
-  state.finalScore=total>0?parseFloat(((correct/total)*10).toFixed(1)):0;
-  const originalAnswers=new Array(total).fill(-1);
-  state.currentExam.questions.forEach((q,shuffledQIdx)=>{const ua=state.userAns[shuffledQIdx];if(ua!==null&&ua>=0){const origQIdx=(q._origQIdx!==undefined)?q._origQIdx:shuffledQIdx;const origOptIdx=(q.opts[ua]?._origOptIdx!==undefined)?q.opts[ua]._origOptIdx:ua;originalAnswers[origQIdx]=origOptIdx}});
+  const stickyHud=document.getElementById('mobileExamStickyHUD');if(stickyHud)stickyHud.style.display='none';
+
+  const total=state.currentExam.questions.length;
+  let totalEarned=0;
+
+  state.currentExam.questions.forEach((q,i)=>{
+    if(q.type === 'tf'){
+      const ua = state.userAns[i] || {};
+      let subCorrect = 0;
+      q.opts.forEach((o, oi)=>{
+        const userChoice = ua[oi];
+        const expected = Boolean(o.c);
+        if(userChoice !== undefined && userChoice === expected){
+          subCorrect++;
+        }
+      });
+      let qPoints = 0;
+      if(q.opts.length === 4){
+        if(subCorrect === 4) qPoints = 1.0;
+        else if(subCorrect === 3) qPoints = 0.5;
+        else if(subCorrect === 2) qPoints = 0.25;
+        else if(subCorrect === 1) qPoints = 0.1;
+        else qPoints = 0;
+      } else {
+        qPoints = subCorrect / (q.opts.length || 1);
+      }
+      totalEarned += qPoints;
+    } else {
+      const ua = state.userAns[i];
+      if(ua!==null&&ua>=0&&q.opts[ua]?.c) totalEarned += 1.0;
+    }
+  });
+
+  const correct = parseFloat(totalEarned.toFixed(2));
+  const wrong = parseFloat(Math.max(0, total - correct).toFixed(2));
+  state.finalScore = total>0 ? parseFloat(((totalEarned/total)*10).toFixed(1)) : 0;
+
+  const originalAnswers=new Array(total).fill(null);
+  state.currentExam.questions.forEach((q,shuffledQIdx)=>{
+    const ua=state.userAns[shuffledQIdx];
+    const origQIdx=(q._origQIdx!==undefined)?q._origQIdx:shuffledQIdx;
+    if(q.type==='tf'){
+      originalAnswers[origQIdx] = ua;
+    } else if(ua!==null&&ua>=0){
+      const origOptIdx=(q.opts[ua]?._origOptIdx!==undefined)?q.opts[ua]._origOptIdx:ua;
+      originalAnswers[origQIdx]=origOptIdx;
+    }
+  });
+
   try{
-    const{data:result,error:rpcErr}=await _sb.rpc('submit_exam',{p_name:state.displayUser,p_user_class:state.userClass,p_exam_id:state.currentExam.id,p_user_answers:originalAnswers,p_ip_address:state.userIP,p_cheat_count:state.cheatCount,p_time_used:timeUsed});
-    if(!rpcErr&&result&&!result.error&&result.score!==undefined){state.finalScore=parseFloat(result.score);correct=result.correct??correct;wrong=result.wrong??wrong}else throw new Error(rpcErr?.message||'RPC no score');
+    const{data:result,error:rpcErr}=await _sb.rpc('submit_exam_secure',{
+      p_exam_title:state.currentExam.title,
+      p_user_class:state.userClass,
+      p_answers:originalAnswers,
+      p_time_used:timeUsed,
+      p_cheat_count:state.cheatCount,
+      p_token:state.token
+    });
+    if(!rpcErr&&result&&result.status==='ok'){
+      if(result.score!==undefined)state.finalScore=parseFloat(Number(result.score).toFixed(1));
+    }else throw new Error(rpcErr?.message||'RPC no score');
   }catch(e){
     try{await _sb.from('history').insert([{name:state.displayUser,user_class:state.userClass,exam:state.currentExam.title,score:state.finalScore,correct_count:correct,wrong_count:wrong,ip_address:state.userIP,cheat_count:state.cheatCount,time_used:timeUsed,date:new Date().toLocaleDateString('vi-VN'),submit_time:new Date().toLocaleTimeString('vi-VN')}]);showToast('Đã lưu kết quả (chế độ dự phòng)','normal',3000)}
     catch(_){showToast('Lỗi lưu kết quả — kiểm tra mạng!','error')}
@@ -4806,10 +5456,76 @@ async function submitExam(){
   const mm=Math.floor(timeUsed/60),ss=timeUsed%60;document.getElementById('timeFinish').textContent=`Hoàn thành trong ${mm}:${ss<10?'0'+ss:ss}  ·  Rời tab: ${state.cheatCount} lần`;
   showSection('resultPage');if(state.finalScore>=8)setTimeout(launchConfetti,400);_submitting=false;
 }
-
 function renderReview(){
   showSection('reviewPage');
   document.getElementById('reviewContent').innerHTML=state.currentExam.questions.map((q,qi)=>{
+    const isTf = q.type === 'tf';
+
+    if(isTf){
+      const ua = state.userAns[qi] || {};
+      let subCorrect = 0;
+      q.opts.forEach((o, oi)=>{
+        if(ua[oi] !== undefined && ua[oi] === Boolean(o.c)) subCorrect++;
+      });
+      let qPoints = 0;
+      if(q.opts.length === 4){
+        if(subCorrect === 4) qPoints = 1.0;
+        else if(subCorrect === 3) qPoints = 0.5;
+        else if(subCorrect === 2) qPoints = 0.25;
+        else if(subCorrect === 1) qPoints = 0.1;
+      } else {
+        qPoints = subCorrect / (q.opts.length || 1);
+      }
+      const borderCls = qPoints >= 1.0 ? 'border-green-500' : (qPoints > 0 ? 'border-amber-500' : 'border-red-500');
+
+      return `
+        <div class="glass p-6 md:p-10 border-l-4 ${borderCls}">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-orange-500 font-black text-[10px] tracking-widest uppercase">Câu ${qi+1}</span>
+              <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">ĐÚNG / SAI</span>
+            </div>
+            <span class="text-[10px] font-black uppercase ${qPoints>=1.0?'text-green-500':(qPoints>0?'text-amber-500':'text-red-500')}">
+              ${subCorrect}/${q.opts.length} Ý ĐÚNG (${qPoints>=1.0?'+1.0 ĐIỂM':`+${qPoints} ĐIỂM`})
+            </span>
+          </div>
+
+          <div class="nerv-passage-box mb-5">
+            <div class="nerv-passage-header"><span class="material-icons" style="font-size:13px">article</span>DỮ LIỆU ĐỀ BÀI</div>
+            <div class="text-base font-bold text-slate-100">${esc(q.q)}</div>
+          </div>
+
+          <div class="space-y-3">
+            ${q.opts.map((o, oi)=>{
+              const userChoice = ua[oi];
+              const expected = Boolean(o.c);
+              const isSubRight = userChoice !== undefined && userChoice === expected;
+              const letter = String.fromCharCode(65+oi);
+              return `
+                <div class="tf-review-row ${isSubRight?'tf-rev-correct':'tf-rev-wrong'}">
+                  <div class="flex items-start gap-2 flex-1">
+                    <span class="font-bold text-orange-400">${letter}.</span>
+                    <span class="text-sm text-slate-200">${esc(o.t)}</span>
+                  </div>
+                  <div class="tf-review-status">
+                    <span class="tf-rev-badge ${userChoice===true?'bg-green-500/15 text-green-400 border-green-500/30':(userChoice===false?'bg-red-500/15 text-red-400 border-red-500/30':'bg-slate-500/15 text-slate-400 border-slate-500/30')}">
+                      Bạn chọn: ${userChoice===true?'ĐÚNG':(userChoice===false?'SAI':'CHƯA CHỌN')}
+                    </span>
+                    <span class="tf-rev-badge ${expected?'bg-green-500/20 text-green-400 border-green-500/50':'bg-red-500/20 text-red-400 border-red-500/50'}">
+                      Đáp án: ${expected?'ĐÚNG':'SAI'}
+                    </span>
+                    <span class="material-icons ${isSubRight?'text-green-400':'text-red-400'}" style="font-size:18px">
+                      ${isSubRight?'check_circle':'cancel'}
+                    </span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     const uc=state.userAns[qi];
     const correctIdx=q.opts.findIndex(o=>o.c);
     const userCorrect=(uc!==null)&&Boolean(q.opts[uc]?.c);
@@ -4836,7 +5552,7 @@ function renderReview(){
             badgeHtml=`<span class="review-badge review-badge-key">★ ĐÁP ÁN ĐÚNG</span>`;
           }
           return `<div class="opt-review ${cls}" data-key="${oi+1}">
-            <span class="flex-1">${esc(o.t)}</span>
+            <span class="flex-1">${String.fromCharCode(65+oi)}. ${esc(o.t)}</span>
             ${badgeHtml}
             <span class="opt-num-sub">${oi+1}</span>
           </div>`;
@@ -4960,15 +5676,31 @@ async function deleteExam(id){
 
 function parseInput(txt){
   if(!txt?.trim())return[];
-  const blocks=txt.split(/(?=(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]])/im);
+  const blocks=txt.split(/(?=(?:Câu|Question|Q)\s*\d+[\s.:：）)\]])/im);
   return blocks.map(block=>{
     block=block.trim();if(!block)return null;
-    const lines=block.replace(/^(?:Câu|Question|Q)\s*\d+\s*[:.：）)\]]\s*/im,'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
-    if(!lines.length)return null;const optRegex=/^[A-Da-d]\s*[.)：:]\s*\S/;let optStartIdx=lines.findIndex(l=>optRegex.test(l));
+    const lines=block.replace(/^(?:Câu|Question|Q)\s*\d+[\s.:：）)\]]\s*/im,'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    if(!lines.length)return null;
+    const optRegex=/^[A-Da-d]\s*[.)：:]\s*\S/;let optStartIdx=lines.findIndex(l=>optRegex.test(l));
     if(optStartIdx<0)optStartIdx=1;if(optStartIdx<=0)return null;
     const q=lines.slice(0,optStartIdx).join(' ').trim();
-    const opts=lines.slice(optStartIdx).map(l=>({t:l.replace(/@t\s*/g,'').replace(/^[A-Da-d]\s*[.)：:]\s*/,'').trim(),c:l.includes('@t')})).filter(o=>o.t.length>0);
-    if(!q||opts.length<2)return null;return{q,opts};
+    
+    // Check True/False question
+    const isTfHeader = /\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI|DUNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai|Dung\/Sai)\)|đúng\s*hay\s*sai|đúng\s*hoặc\s*sai/i.test(block);
+    const hasExplicitS = lines.slice(optStartIdx).some(l => /@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(l));
+    const multipleT = lines.slice(optStartIdx).filter(l => /@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(l)).length > 1;
+    const isTf = isTfHeader || hasExplicitS || multipleT;
+
+    const opts=lines.slice(optStartIdx).map(l=>{
+      const isCorrect = /@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(l);
+      const cleanT = l.replace(/@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi, '').replace(/^[A-Da-d]\s*[.)：:]\s*/,'').trim();
+      return { t: cleanT, c: isCorrect };
+    }).filter(o=>o.t.length>0);
+
+    if(!q||opts.length<2)return null;
+    const res = { q, opts };
+    if(isTf) res.type = 'tf';
+    return res;
   }).filter(Boolean);
 }
 
@@ -4989,28 +5721,78 @@ function parseWordHTML(html){
   const questions=[],qRe=/^(Câu|Question|Q)\s*(\d+)\s*[:.）)]/i,optRe=/^([A-Da-d])\s*[.)]\s*/;let cur=null;
   for(const p of paras){
     const txt=p.textContent.trim();if(!txt)continue;
-    if(qRe.test(txt)){if(cur&&cur.opts.length>0)questions.push(cur);cur={q:txt.replace(qRe,'').trim(),opts:[]}}
+    if(qRe.test(txt)){
+      if(cur&&cur.opts.length>0)questions.push(cur);
+      const qText = txt.replace(qRe,'').trim();
+      const isTf = /\[(?:Đ\/S|D\/S|TF|ĐÚNG\/SAI)\]|\((?:Đ\/S|D\/S|TF|Đúng\/Sai)\)|đúng\s*hay\s*sai|đúng\s*hoặc\s*sai/i.test(txt);
+      cur={q: qText, opts:[], type: isTf ? 'tf' : undefined};
+    }
     else if(optRe.test(txt)&&cur){
       const hasRed=p.querySelector('.correct-answer')!==null||p.querySelector('span[style*="color:red"],span[style*="color: red"],span[style*="color:#ff"],span[style*="color: #ff"],span[style*="color: rgb(255"],font[color="red"],mark')!==null;
-      const hasAtT=/@t\b/i.test(txt)||/@đ\b/i.test(txt);
+      const hasAtT=/@(t|đ|true|dung)(?![a-zA-Z0-9_])/i.test(txt);
+      const hasAtS=/@(s|sai|f|false)(?![a-zA-Z0-9_])/i.test(txt);
+      if(hasAtS) cur.type = 'tf';
       const isCorrect=hasRed||hasAtT;
-      const t=txt.replace(optRe,'').replace(/[\s.,;:_]*@[tTđĐ]\b/gi,'').trim();
-      if(t)cur.opts.push({t,c:isCorrect})
+      const t=txt.replace(optRe,'').replace(/[\s.,;:_]*@(t|đ|true|dung|s|sai|f|false)(?![a-zA-Z0-9_])/gi,'').trim();
+      if(t)cur.opts.push({t,c:isCorrect});
     }
     else if(cur&&cur.opts.length===0&&txt){cur.q+=' '+txt}
   }
-  if(cur&&cur.opts.length>0)questions.push(cur);return questions;
+  if(cur&&cur.opts.length>0)questions.push(cur);
+  questions.forEach(q=>{
+    if(!q.type && q.opts.filter(o=>o.c).length > 1){
+      q.type = 'tf';
+    }
+  });
+  return questions;
 }
 function showWordModal(questions){
-  const hasAns=questions.filter(q=>q.opts.some(o=>o.c)).length;
-  document.getElementById('wordStats').innerHTML=`<span style="color:var(--nerv-green,#00ff66)">TỔNG: ${questions.length}</span> <span style="opacity:.3">|</span> <span style="color:#22c55e">CÓ ĐÁP ÁN: ${hasAns}</span> <span style="opacity:.3">|</span> <span style="color:${questions.length-hasAns>0?'#ef4444':'#22c55e'}">THIẾU: ${questions.length-hasAns}</span>`;
-  document.getElementById('wordPreviewContent').innerHTML=questions.map((q,i)=>`<div class="wq-card"><p style="font-family:var(--font-tech),'Share Tech Mono',monospace;font-weight:800;color:var(--nerv-green,#00ff66);margin-bottom:8px;font-size:11px"><span style="background:rgba(0,255,102,.1);padding:2px 8px;margin-right:8px;font-size:9px;letter-spacing:.1em">CÂU ${i+1}</span> ${esc(q.q)}</p>${q.opts.map((o,oi)=>`<p class="${o.c?'wq-correct':'wq-wrong'}">${String.fromCharCode(65+oi)}. ${esc(o.t)}${o.c?' ✓':''}</p>`).join('')}${!q.opts.some(o=>o.c)?'<p style="color:#ef4444;font-family:var(--font-tech),monospace;font-size:9px;margin-top:6px;font-weight:700;letter-spacing:.1em">⚠ CHƯA PHÁT HIỆN ĐÁP ÁN</p>':''}</div>`).join('');
+  const hasAns=questions.filter(q=>q.type==='tf'?q.opts.length>0:q.opts.some(o=>o.c)).length;
+  document.getElementById('wordStats').innerHTML=`<span style="color:var(--nerv-green,#00ff66)">TỔNG: ${questions.length}</span> <span style="opacity:.3">|</span> <span style="color:#22c55e">HỢP LỆ: ${hasAns}</span> <span style="opacity:.3">|</span> <span style="color:${questions.length-hasAns>0?'#ef4444':'#22c55e'}">CẦN KIỂM TRA: ${questions.length-hasAns}</span>`;
+  document.getElementById('wordPreviewContent').innerHTML=questions.map((q,i)=>`
+    <div class="wq-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <p style="font-family:var(--font-tech),'Share Tech Mono',monospace;font-weight:800;color:var(--nerv-green,#00ff66);font-size:11px;margin:0">
+          <span style="background:rgba(0,255,102,.1);padding:2px 8px;margin-right:8px;font-size:9px;letter-spacing:.1em">CÂU ${i+1}</span>
+          ${q.type==='tf'?'<span style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3);padding:1px 6px;border-radius:3px;font-size:8px;margin-right:8px">ĐÚNG / SAI</span>':''}
+          ${esc(q.q)}
+        </p>
+      </div>
+      ${q.opts.map((o,oi)=>`
+        <p class="${o.c?'wq-correct':'wq-wrong'}" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleWordAnswer(${i},${oi})">
+          <span>${String.fromCharCode(65+oi)}. ${esc(o.t)}</span>
+          <span style="font-size:9px;font-weight:900">${q.type==='tf'?(o.c?'[ĐÚNG ✓]':'[SAI ✗]'):(o.c?'[ĐÁP ÁN ĐÚNG ✓]':'')}</span>
+        </p>
+      `).join('')}
+      ${!q.opts.some(o=>o.c)&&q.type!=='tf'?'<p style="color:#ef4444;font-family:var(--font-tech),monospace;font-size:9px;margin-top:6px;font-weight:700;letter-spacing:.1em">⚠ CHƯA PHÁT HIỆN ĐÁP ÁN</p>':''}
+    </div>
+  `).join('');
   document.getElementById('wordModal').style.display='flex';
+}
+function toggleWordAnswer(qi, oi){
+  if(!state.wordParsed||!state.wordParsed[qi]||!state.wordParsed[qi].opts[oi])return;
+  const q=state.wordParsed[qi];
+  if(q.type==='tf'){
+    q.opts[oi].c = !q.opts[oi].c;
+  }else{
+    q.opts.forEach((o,i)=>{o.c = (i===oi)?!o.c:false});
+  }
+  showWordModal(state.wordParsed);
 }
 function closeWordModal(){document.getElementById('wordModal').style.display='none';state.wordParsed=null}
 function applyWordImport(){
   if(!state.wordParsed?.length)return;
-  document.getElementById('rawInput').value=state.wordParsed.map((q,i)=>`Câu ${i+1}: ${q.q}\n${q.opts.map(o=>`${o.t}${o.c?' @t':''}`).join('\n')}`).join('\n\n');
+  document.getElementById('rawInput').value=state.wordParsed.map((q,i)=>{
+    const tag = q.type==='tf'?' [Đ/S]':'';
+    const optsStr = q.opts.map((o,idx)=>{
+      const letter = String.fromCharCode(65+idx);
+      if(q.type==='tf'){
+        return `${letter}. ${o.t} ${o.c?'@t':'@s'}`;
+      }
+      return `${letter}. ${o.t}${o.c?' @t':''}`;
+    }).join('\n');
+    return `Câu ${i+1}${tag}: ${q.q}\n${optsStr}`;
+  }).join('\n\n');
   const count=state.wordParsed.length;closeWordModal();showFileStatus('s-ok',`✅ ĐÃ ÁP DỤNG ${count} CÂU HỎI`);state.wordParsed=null;
 }
 function showFileStatus(cls,msg){const el=document.getElementById('fileStatus');el.className='';el.textContent=msg;el.classList.add(cls);if(cls!=='s-load')setTimeout(()=>{el.style.display='none';el.className=''},5000)}
@@ -5684,6 +6466,15 @@ if(_origOpenProfile){
     renderReiAvatarGrid();
   };
   // We'll hook it below
+}
+
+function insertTfTemplate(){
+  const ta = document.getElementById('rawInput');
+  if(!ta)return;
+  const sample = "Câu 1 [Đ/S]: Cho đoạn tư liệu sau: \"Năm 1945, nhân dân Việt Nam đã tiến hành Tổng khởi nghĩa giành chính quyền.\"\nA. Khởi nghĩa diễn ra nhanh chóng, thắng lợi trong vòng 15 ngày. @t\nB. Chính quyền về tay nhân dân trên toàn bộ cả nước. @đ\nC. Cuộc khởi nghĩa nổ ra sau khi quân Đồng minh tiến vào Việt Nam. @s\nD. Lực lượng chính trị quần chúng giữ vai trò quyết định thắng lợi. @t\n\n";
+  ta.value = (ta.value ? ta.value.trim() + "\n\n" : "") + sample;
+  ta.focus();
+  showToast("Đã thêm mẫu câu hỏi Đúng / Sai!","success",2500);
 }
 </script>
 
